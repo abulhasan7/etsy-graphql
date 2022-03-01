@@ -1,0 +1,65 @@
+const { Order, Order_Detail } = require("../models/index");
+
+async function get(user_id) {
+  try {
+    const orders = await Order.findAll({
+      where: {
+        user_id: user_id,
+      },
+      include: [Order_Detail],
+    });
+    if (orders.length === 0) {
+      throw new Error("No orders found for the user");
+    }
+    return orders;
+  } catch (error) {
+    console.log("Error occurred while getting orders", error);
+    throw new Error(error.message);
+  }
+}
+
+async function create(order) {
+  try {
+    const datearr = order.order_date.split("-");
+    const createdOrder = await Order.create({
+      user_id: order.user_id,
+      order_date: new Date(datearr[0],datearr[1]-1,datearr[2]),
+      total_price:order.total_price,
+      total_quantity:order.total_quantity,
+    });
+    if (createdOrder) {
+        const finalArray = order.orderDetails.map(
+            order_det =>{
+                return {
+                order_id:createdOrder.order_id,
+                item_quantity:order_det.item_quantity,
+                unit_price : order_det.unit_price,
+                shop_id: order_det.shop_id,
+                item_name:order_det.item_name,
+                item_pic:order_det.item_pic,
+                category:order_det.category,
+                description:order_det.description
+                }
+            }
+        );
+        console.log("final is ",finalArray)
+        const orderDetails = await Order_Detail.bulkCreate(
+            finalArray
+        )
+        
+        console.log("orderdetails are ",orderDetails);
+        if(orderDetails>0){
+            return "Order created successfully";
+        }
+    }
+    // throw new Error("Some error occurred while adding favourite");
+  } catch (error) {
+    console.log("Error occurred while creating Order", error);
+    if(error.name && error.name ==='SequelizeUniqueConstraintError'){
+        throw new Error(`Order already exists`);
+    }
+    throw new Error(error.message);
+  }
+}
+
+module.exports = {get,create}
