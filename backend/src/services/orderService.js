@@ -42,17 +42,17 @@ async function create(order) {
                 }
             }
         );
-        console.log("final is ",finalArray)
+        // console.log("final is ",finalArray)
         const orderDetails = await Order_Detail.bulkCreate(
             finalArray
         )
         
-        console.log("orderdetails are ",orderDetails);
-        if(orderDetails>0){
-            return "Order created successfully";
+        // console.log("orderdetails are ",orderDetails);
+        if(orderDetails.length>0){
+            return `Order created successfully with OrderId:${createdOrder.order_id}`;
         }
     }
-    // throw new Error("Some error occurred while adding favourite");
+    throw new Error("Some error occurred while creating Order");
   } catch (error) {
     console.log("Error occurred while creating Order", error);
     if(error.name && error.name ==='SequelizeUniqueConstraintError'){
