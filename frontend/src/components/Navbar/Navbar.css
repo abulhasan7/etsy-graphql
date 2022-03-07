@@ -1,0 +1,73 @@
+.header{
+    border-bottom: 2px solid #DEDEDE;
+    /* to make items appear either in a row or in a columns */
+    display: flex;
+    /* controls alignment of items inside the flexbox vertically if flex is horizontal */
+    align-items: center;
+    /* align content along the flex direction*/
+    justify-content: center;
+}
+.header__logo{
+    width: 75px;
+    /* margin-left:200px; */
+    margin-right:20px;
+    margin-top: 10px;
+    /* height: 5%; */
+}
+
+.header__search{
+    margin-left: 10px;
+    display: flex;
+    /* flex: 1; */
+    width: 70%;
+    border: 2px solid #222222;
+    border-radius: 35px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #F4F4F4 !important;
+    margin: 10px 0px;
+}
+
+.header__inputsearchbox{
+    border: 0;
+    outline: 0;
+    flex: 1;
+    background-color: inherit;
+    margin-left: 20px;
+    /* margin-top: 1px; */
+    /* margin-bottom: 1px; */
+    /* padding-top: 1px !important; */
+    /* height: 100%; */
+    padding-bottom:none !important;
+
+}
+.header__inputsearchbox:focus{
+    outline: none;
+    border:none;
+  
+
+}
+.header__inputsearchicon{
+    margin-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.header__login{
+    margin-left: 20px;
+    font-weight: 600;
+}
+
+.header__shoppingcart{
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.header__favourite,.header__shop{
+    margin-left: 20px;
+}
+
+.header__link{
+    text-decoration: none;
+    color: inherit;
+}
