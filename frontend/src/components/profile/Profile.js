@@ -5,7 +5,8 @@ export default class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      profile_pic: "",
+      profile_pic_url: "",
+      profile_pic_file:"",
       fullname: "",
       gender: "",
       address_1: "",
@@ -45,7 +46,7 @@ export default class Profile extends Component {
         } else {
           json = json.message;
           let currentState = {
-            profile_pic: json.profile_pic,
+            profile_pic_url: json.profile_pic_url,
             fullname: json.fullname,
             gender: json.gender,
             address_1: json.address_1,
@@ -67,7 +68,9 @@ export default class Profile extends Component {
 
   handleChange(event) {
     if (event.target.name === "file") {
-      this.setState({ profile_pic: event.target.files[0] });
+      let fr = new FileReader();
+      fr.onload = ()=> {console.log("fr is ",fr);this.setState({profile_pic_url:fr.result,profile_pic_file: event.target.files[0]})};
+      fr.readAsDataURL(event.target.files[0]);
     } else if (event.target.name === "fullname") {
       this.setState({ fullname: event.target.value });
     } else if (event.target.id === "profileform__gender_male") {
@@ -96,10 +99,10 @@ export default class Profile extends Component {
   handleValidation() {
     return new Promise((resolve, reject) => {
       let message = "";
-      if (this.state.profile_pic === "") {
+      if (this.state.profile_pic_url === "" && this.state.profile_pic_file =="") {
         message = "Profile picture can't be empty";
-      } else if (!this.state.profile_pic.type.startsWith("image")) {
-        console.log(this.state.profile_pic.type);
+      } else if ( this.state.profile_pic_file && !this.state.profile_pic_file.type.startsWith("image")) {
+        console.log(this.state.profile_pic_file.type);
         message = "Profile picture has to be an image file only";
       } else if (this.state.fullname === "") {
         message = "Full Name can't be empty";
@@ -162,7 +165,9 @@ export default class Profile extends Component {
           country: this.state.country,
         };
         const formdata = new FormData();
-        formdata.append("profile_pic", this.state.profile_pic);
+        if(this.state.profile_pic_file){
+          formdata.append("profile_pic_file", this.state.profile_pic_file);
+        }
         formdata.append("form", JSON.stringify(form));
         fetch(url, {
           method: "PUT",
@@ -225,7 +230,7 @@ export default class Profile extends Component {
         <div className="profileform__heading">Your Public Profile</div>
         <div className="profileform__formmessage">{this.state.message}</div>
         <div className="profileform__formimagegrid">
-        <img src={this.state.profile_pic} className="profileform__formimage"></img>
+        <img src={this.state.profile_pic_url} className="profileform__formimage"></img>
       </div>
         <div className="profileform__formgroup">
           <label htmlFor="file">Profile Picture</label>
@@ -355,12 +360,14 @@ export default class Profile extends Component {
             })}
           </select>
         </div>
+        <div className="profileform__formbuttoncontrol">
         <input
           type="submit"
           name="update"
           value="Update Profile"
           className="profileform__formbutton"
         />
+        </div>
       </form>
       </div>
     );

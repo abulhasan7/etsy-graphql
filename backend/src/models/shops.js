@@ -12,7 +12,7 @@ module.exports = (DataTypes) => {
         // allowNull defaults to true
         allowNull: false,
       },
-      shop_pic: {
+      shop_pic_url: {
         type: DataTypes.STRING(45),
         // allowNull defaults to true
         allowNull: false,

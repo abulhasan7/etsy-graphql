@@ -49,7 +49,7 @@ router.post("/logout", function (req, res, next) {
 });
 
 /* UPDATE PROFILE */
-router.put("/update",upload.single('profile_pic'), function (req, res) {
+router.put("/update",upload.single('profile_pic_file'), function (req, res) {
   userService
     .updateProfile(req.file,req.body.form)
     .then((success) => res.status(200).json({ message: success }))

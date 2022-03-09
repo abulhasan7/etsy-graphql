@@ -38,9 +38,8 @@ async function get(userDetails) {
       throw new Error("User not found");
     } else {
       console.log(dbUser);
-        return dbUser;
-      }
-    
+      return dbUser;
+    }
   } catch (error) {
     console.error("Error occured:", error);
     throw error;
@@ -72,32 +71,33 @@ function register(userDetails) {
   });
 }
 
-function updateProfile(profile_pic, user) {
+function updateProfile(profile_pic_file, user) {
   console.log;
   return new Promise((resolve, reject) => {
     const userDetails = JSON.parse(user);
-    upload(profile_pic)
+    upload(profile_pic_file)
       .then((res) => {
         console.log(res);
         const dob = userDetails.dob.split("-");
-        return User.update(
-          {
-            fullname: userDetails.fullname,
-            phone: userDetails.phone,
-            gender: userDetails.gender,
-            dob: new Date(dob[0], dob[1] - 1, dob[2]),
-            about: userDetails.about,
-            profile_pic: res.Location, //key
-            address_1: userDetails.address_1,
-            address_2: userDetails.address_2,
-            city: userDetails.city,
-            country: userDetails.country,
-          },
-          {
-            //TODO remove hardcoding of 26
-            where: { user_id: 26 },
-          }
-        );
+        let datatoUpdate = {
+          fullname: userDetails.fullname,
+          phone: userDetails.phone,
+          gender: userDetails.gender,
+          dob: new Date(dob[0], dob[1] - 1, dob[2]),
+          about: userDetails.about,
+
+          address_1: userDetails.address_1,
+          address_2: userDetails.address_2,
+          city: userDetails.city,
+          country: userDetails.country,
+        };
+        if (res.Location) {
+          datatoUpdate.profile_pic_url = res.Location; //key
+        }
+        return User.update(datatoUpdate, {
+          //TODO remove hardcoding of 26
+          where: { user_id: 26 },
+        });
       })
       .then((created) => {
         if (created[0] > 0) {
@@ -117,4 +117,4 @@ function updateProfile(profile_pic, user) {
       });
   });
 }
-module.exports = { login,get, register, updateProfile };
+module.exports = { login, get, register, updateProfile };

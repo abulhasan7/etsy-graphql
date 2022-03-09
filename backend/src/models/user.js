@@ -34,7 +34,7 @@ module.exports = (DataTypes) => {
     about: {
       type: DataTypes.STRING,
     },
-    profile_pic: {
+    profile_pic_url: {
       type: DataTypes.STRING,
     },
     address_1: {
