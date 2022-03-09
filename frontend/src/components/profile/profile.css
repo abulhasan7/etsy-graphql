@@ -1,0 +1,59 @@
+*{
+    font-size: medium;
+    box-sizing: border-box;
+
+}
+.profileform{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    /* grid-template-rows: repeat(auto-fit, minmax(50px, 160px)); */
+    /* grid-auto-rows: 50px; */
+    row-gap: 15px;
+    margin-top: 50px;
+}
+.profileform__formmessage{
+    grid-column: 2/3;
+
+}
+.profileform__formimagegrid{
+    grid-column: 2/3;
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+}
+.profileform__formimage{
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+
+}
+ .profileform__formgroup{
+     grid-column: 2/3;
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     justify-items: start;
+     border-bottom: 1px solid grey;
+     padding-bottom: 5px;
+     
+} 
+.profileform__formcontrol{
+    border: none;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+.profileform__formbutton{
+    grid-column: 2/3;
+    border: none;
+    border: 2px solid black;
+    border-radius: 5px;
+    background-color: black;
+    color: whitesmoke;
+}
+.profileform__heading{
+    font-weight: bold;
+    font-size: larger;
+    grid-column: 2/3;
+    justify-self: center;
+}

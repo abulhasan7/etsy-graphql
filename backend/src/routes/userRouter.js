@@ -2,6 +2,9 @@ var express = require("express");
 var router = express.Router();
 const userService = require("../services/userService");
 
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' })
+
 /* REGISTER USER */
 router.post("/register", function (req, res) {
   userService
@@ -10,7 +13,7 @@ router.post("/register", function (req, res) {
     .catch((error) =>
       res
         .status(400)
-        .json({ message: error || "Some error occured during regsitration" })
+        .json({ error: error || "Some error occured during regsitration" })
     );
 });
 
@@ -22,7 +25,20 @@ router.post("/login", async function (req, res) {
   } catch (error) {
     res
       .status(401)
-      .json({ message: error.message || "Some error occured during login" });
+      .json({ error: error.message || "Some error occured during login" });
+  }
+});
+
+/* GET USER DETAILS */
+router.get("/get", async function (req, res) {
+  try {
+    //TODO REMOVE STRING HARDCODED
+    let userDetails = await userService.get("");
+    res.status(200).json({ message: userDetails });
+  } catch (error) {
+    res
+      .status(401)
+      .json({ error: error.message || "Some error occured during login" });
   }
 });
 
@@ -33,14 +49,14 @@ router.post("/logout", function (req, res, next) {
 });
 
 /* UPDATE PROFILE */
-router.post("/update", function (req, res) {
+router.put("/update",upload.single('profile_pic'), function (req, res) {
   userService
-    .updateProfile(req.body)
+    .updateProfile(req.file,req.body.form)
     .then((success) => res.status(200).json({ message: success }))
     .catch((error) =>
       res
         .status(400)
-        .json({ message: error || "Some error occured during update" })
+        .json({ error: error || "Some error occured during update" })
     );
 });
 

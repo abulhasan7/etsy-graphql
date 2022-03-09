@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Outlet, Link } from "react-router-dom";
-import "./Navbar.css";
+import "./navbar.css";
 import etsylogo from "../../images/Etsy_logo.svg.png";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";

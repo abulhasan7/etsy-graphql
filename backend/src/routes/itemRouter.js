@@ -7,7 +7,7 @@ router.get('/get-all',async (req,res) =>{
     const success = await itemService.getAll();
     res.json({ message: success });
   }catch(error){
-    res.status(400).json({ message: error.message });  
+    res.status(400).json({ error: error.message });  
   }
 })
 
@@ -16,7 +16,7 @@ router.post("/add", async (req, res) => {
       const success = await itemService.addItem(req.body);
       res.json({ message: success });
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.status(400).json({ error: error.message });
     }
 });
   
@@ -25,7 +25,7 @@ router.post("/update", async (req, res) => {
     const success = await itemService.updateItem(req.body);
     res.json({ message: success });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 

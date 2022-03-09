@@ -6,7 +6,7 @@ router.get("/check-availability", (req, res) => {
   shopService
     .checkAvailability(req.query.shopname)
     .then((success) => res.json({ message: success }))
-    .catch((error) => res.status(400).json({ message: error }));
+    .catch((error) => res.status(400).json({ error: error }));
 });
 
 router.get("/get", async (req, res, next) => {
@@ -25,7 +25,7 @@ router.post("/register", async (req, res) => {
         res.json({ message: success });
     }catch(error){
         console.log("error is ",error)
-        res.status(400).json({ message: error.message })
+        res.status(400).json({ error: error.message })
     }
 });
 
@@ -33,7 +33,7 @@ router.post("/update", (req, res) => {
     shopService.update(req.body).then(
         success =>  res.json({ message: success })
     ).catch(
-        error => res.status(400).json({ message: error })
+        error => res.status(400).json({ error: error })
     )
 });
 

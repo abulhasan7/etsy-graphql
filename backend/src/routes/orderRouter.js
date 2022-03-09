@@ -8,7 +8,7 @@ router.post('/create',async (req,res)=>{
         const success = await orderService.create(req.body);
         res.json({ message: success });
       } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ error: error.message });
       }
 })
 
@@ -17,7 +17,7 @@ router.get('/get',async (req,res)=>{
         const success = await orderService.get(req.query.user_id);
         res.json({ message: success });
       } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ error: error.message });
       }
 })
 

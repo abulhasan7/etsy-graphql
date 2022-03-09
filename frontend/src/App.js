@@ -1,17 +1,20 @@
 import './App.css';
-import Navbar from './components/Navbar/Navbar';
+import Navbar from './components/navbar/Navbar';
+import Login from './components/login/Login';
+import Profile from './components/profile/Profile';
 import {BrowserRouter,Routes,Route,Outlet} from 'react-router-dom';
+import Register from './components/register/Register';
 function App() {
   return (
     <BrowserRouter>
     <Routes>
       <Route path='/' element = {<Navbar/>}>
-      <Route path='login' element = {
-        <div>Hey This is login page</div>}>
+      <Route path='login' element = {<Login/>}/>
+      <Route path='register' element = {<Register/>}/>
+      <Route path='profile' element = {<Profile/>}/>
       </Route>
       {/*If nothing ;matches then the below page is displayedd */}
       <Route path = '*' element = {<div>Hey this is error page</div>}></Route>
-      </Route>
     </Routes>
     </BrowserRouter>
         /* 
