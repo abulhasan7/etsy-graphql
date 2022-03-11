@@ -42,10 +42,10 @@ async function get(user_id) {
     } else {
       console.log("signed url is ", upload_s3_url);
       dbUser.dataValues.upload_s3_url = upload_s3_url;
-      const shop = await dbUser.getShops();
-      if (shop) {
-        dbUser.setDataValue("shop", shop);
-      }
+      // const shop = await dbUser.getShops();
+      // if (shop) {
+      //   dbUser.setDataValue("shop", shop);
+      // }
       console.log("dbuser is ", dbUser);
       return dbUser;
     }

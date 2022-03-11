@@ -1,7 +1,10 @@
+import { Navigate } from "react-router";
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { getToken } from "../../redux/selectors";
 import "./shophome.css";
 
-export default class ShopHome extends Component {
+class ShopHome extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -13,7 +16,8 @@ export default class ShopHome extends Component {
           profile_pic_url:"",
           fullname:"",
           phone:""
-      }
+      },
+      redirectVar:""
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -22,15 +26,22 @@ export default class ShopHome extends Component {
 
   componentDidMount() {
     let url = "http://localhost:3001/shops/get";
-    fetch(url, { credentials: "include", mode: "cors" })
+    fetch(url, { credentials: "include", mode: "cors",headers:{'Authorization':this.props.token} })
     .then(response=>response.json())
     .then(jsonresponse=>{
-        console.log(jsonresponse);
-        this.setState({
-            shop_name:jsonresponse.shop_name,
-            shop_pic_url:jsonresponse.shop_pic_url,
-            user:jsonresponse.user
-        });
+      console.log(jsonresponse)
+        if(jsonresponse.error){
+          let redirectVar = <Navigate replace to="/shop/register" ></Navigate>
+          this.setState({redirectVar:redirectVar})
+        }else{
+          console.log(jsonresponse);
+          this.setState({
+              shop_name:jsonresponse.shop_name,
+              shop_pic_url:jsonresponse.shop_pic_url,
+              user:jsonresponse.user
+          });
+        }
+
     })
     .catch(error=>console.log(error))
 }
@@ -43,6 +54,7 @@ export default class ShopHome extends Component {
   render() {
     return (
             <form className="shopform">
+              {this.state.redirectVar}
                 <div className="shopform__child1">
                     <img src={this.state.shop_pic_url} className="shopform__image"/>
                     <div>
@@ -65,3 +77,4 @@ export default class ShopHome extends Component {
     )
   }
 }
+export default connect(getToken, null)(ShopHome);

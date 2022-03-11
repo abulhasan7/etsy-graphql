@@ -2,14 +2,17 @@ import React, { Component } from "react";
 import "./shopreg.css";
 import { Alert } from "@mui/material";
 import { Navigate } from "react-router-dom";
-export default class ShopReg extends Component {
+import { connect } from "react-redux";
+import { getToken } from "../../redux/selectors";
+
+class ShopReg extends Component {
   constructor(props) {
     super(props);
     this.state = {
       shop_name: "",
       isAvailable: false,
       message: "",
-      isRegistered:false
+      isRegistered: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleShopNameSubmit = this.handleShopNameSubmit.bind(this);
@@ -50,7 +53,9 @@ export default class ShopReg extends Component {
       .then((message) => {
         return fetch(url, {
           mode: "cors",
-          credentials: "include",
+          headers: {
+            Authorization: this.props.token,
+          },
         });
       })
       .then((response) => response.json())
@@ -82,33 +87,29 @@ export default class ShopReg extends Component {
       });
   }
 
-  handleShopRegSubmit(event){
+  handleShopRegSubmit(event) {
     event.preventDefault();
-    if(this.state.isAvailable){
+    if (this.state.isAvailable) {
       let url = "http://localhost:3001/shops/register";
       this.handleValidation()
         .then((message) => {
           return fetch(url, {
             mode: "cors",
-            method:'POST',
-            body:JSON.stringify(
-              {
-                shop_name:this.state.shop_name
-              }
-            ),
-            headers:{
-              'Content-Type':'application/json'
-            },
-            credentials: "include",
+            method: "POST",
+            body: JSON.stringify({
+              shop_name: this.state.shop_name,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: this.props.token,
+            }
           });
         })
         .then((response) => response.json())
         .then((jsonresp) => {
           if (jsonresp.message) {
             this.setState({
-              isRegistered: (
-                <Navigate  replace to="/shop/home"/>
-              ),
+              isRegistered: <Navigate replace to="/shop/home" />,
               isAvailable: true,
             });
             console.log(jsonresp);
@@ -129,7 +130,7 @@ export default class ShopReg extends Component {
             isAvailable: false,
           });
         });
-    }else{
+    } else {
       this.setState({
         message: (
           <Alert severity="error" onClose={this.handleChange}>
@@ -139,11 +140,9 @@ export default class ShopReg extends Component {
         isAvailable: false,
       });
     }
-  
   }
   render() {
     return (
-      
       <div className="shopreg__parent">
         {this.state.isRegistered}
         <form className="shopreg__form">
@@ -185,3 +184,4 @@ export default class ShopReg extends Component {
     );
   }
 }
+export default connect(getToken, null)(ShopReg);

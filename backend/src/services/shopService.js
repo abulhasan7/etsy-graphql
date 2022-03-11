@@ -1,8 +1,8 @@
 const { Shop } = require("../models/index");
 
-async function getDetails(shopName) {
+async function getDetails(user_id) {
   try {
-    const shop = await Shop.findOne({ where: { shop_name: shopName } });
+    const shop = await Shop.findOne({ where: { user_id: user_id } });
     if (!shop) {
       throw new Error("Shop doesn't exist");
     }
@@ -15,7 +15,7 @@ async function getDetails(shopName) {
     return shop;
   } catch (error) {
     console.log("error occurred", error);
-    throw error;
+    throw error.message;
   }
 }
 
@@ -37,11 +37,9 @@ function checkAvailability(shopName) {
 
 async function register(shop) {
   try {
-    const createdShop = await Shop.create({
+    const createdShop = await Shop.create({ 
       shop_name: shop.shop_name,
-      shop_pic: shop.shop_pic,
-      // TODO remove hardcoded userid
-      user_id: 26,
+      user_id: shop.user_id,
     });
     if (createdShop) {
       return `Shop ${shop.shop_name} registered successfully`;
@@ -61,7 +59,7 @@ async function register(shop) {
 function update(shop){
   return new Promise((resolve,reject)=>{
     Shop.update({
-      shop_pic : shop.shop_pic
+      shop_pic_url : shop.shop_pic_url
     },{
     where:{
       shop_id:shop.shop_id

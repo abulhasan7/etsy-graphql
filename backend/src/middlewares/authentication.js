@@ -22,7 +22,8 @@ function checkAuthenticationHeader(req, res, next) {
       console.error("no authorization header");
     }
     if (isError) {
-      res.status(401).json({ error: "Invalid Token, Please login again" });
+        throw new Error("Invalid Token, Please login again")
+    //   res.status(401).json({ error: "Invalid Token, Please login again" });
     }
   }
   next();
