@@ -2,8 +2,11 @@ import './App.css';
 import Navbar from './components/navbar/Navbar';
 import Login from './components/login/Login';
 import Profile from './components/profile/Profile';
-import {BrowserRouter,Routes,Route,Outlet} from 'react-router-dom';
+import {BrowserRouter,Routes,Route} from 'react-router-dom';
 import Register from './components/register/Register';
+import ShopReg from './components/shopreg/ShopReg';
+import ShopHome from './components/shophome/ShopHome';
+import Home from './components/home/Home'
 function App() {
   return (
     <BrowserRouter>
@@ -12,6 +15,11 @@ function App() {
       <Route path='login' element = {<Login/>}/>
       <Route path='register' element = {<Register/>}/>
       <Route path='profile' element = {<Profile/>}/>
+      <Route path='home' element = {<Home/>}/>
+      <Route path='shop'>
+      <Route path='register' element = {<ShopReg/>}/>
+      <Route path='home' element = {<ShopHome/>}/>
+        </Route>
       </Route>
       {/*If nothing ;matches then the below page is displayedd */}
       <Route path = '*' element = {<div>Hey this is error page</div>}></Route>

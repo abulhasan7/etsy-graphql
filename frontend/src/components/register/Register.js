@@ -1,8 +1,12 @@
 import React, { Component } from "react";
 import "./register.css";
 import { Alert } from "@mui/material";
+import {Navigate} from 'react-router'
+import {getToken} from '../../redux/selectors'
+import {connect} from 'react-redux'
+import {addToken} from '../../redux/tokenSlice'
 
-export default class Register extends Component {
+class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,6 +22,7 @@ export default class Register extends Component {
   }
   handleChange(event) {
     let value = event.target.value;
+    console.log(event)
     if (event.target.name === "email") {
       this.setState({ email: value });
     } else if (event.target.name === "fullname") {
@@ -94,7 +99,9 @@ export default class Register extends Component {
           if(json.error){
             return Promise.reject(json);
           }else{
-          let elem = <Alert onClose={this.handleChange}>{json.message}</Alert>;
+          localStorage.setItem('token',json.token)
+          this.props.addToken(json.token);
+          let elem = <Navigate to="/home"></Navigate>;
           this.setState({ message: elem });
           }
         })
@@ -176,3 +183,4 @@ export default class Register extends Component {
     );
   }
 }
+export default connect(getToken,{addToken})(Register)

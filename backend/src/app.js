@@ -12,23 +12,36 @@ var itemsRouter = require('./routes/itemRouter');
 var ordersRouter = require('./routes/orderRouter');
 var favouritesRouter = require('./routes/favouriteRouter');
 const {checkAuthenticationHeader} = require('./middlewares/authentication');
+
+var corsOptions = {
+  origin: true,
+  methods:"GET,POST,PUT,DELETE,OPTIONS",
+  credentials:true,
+  optionsSuccessStatus: 204 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.use(cors())
+
+
+app.use(cors(corsOptions));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use(checkAuthenticationHeader)
+app.use(checkAuthenticationHeader)
+
+
 app.use('/users', usersRouter);
 app.use('/shops',shopsRouter);
 app.use('/items',itemsRouter);
 app.use('/orders',ordersRouter);
 app.use('/favourites',favouritesRouter);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

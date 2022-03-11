@@ -1,44 +1,27 @@
-// Load the SDK for JavaScript
-var S3 = require("aws-sdk/clients/s3");
-const fs = require("fs");
+const { v4: uuidv4 } = require("uuid");
+// const fs = require("fs");
+const AWS = require("aws-sdk");
 
-let s3 = new S3({
+const s3 = new AWS.S3({signatureVersion: 'v4',region: 'us-east-2'});
+AWS.config.update({
   accessKeyId: process.env.accessKeyId,
   secretAccessKey: process.env.secretAccessKey,
-  region: process.env.region,
 });
+// AWS.config.update({accessKeyId: 'AKIAZLDRU2VAYD2SH6GG', secretAccessKey: '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'})
 
-function upload(file) {
-  return new Promise((resolve, reject) => {
-    if (file != null) {
-      console.log("filedetails", file);
-      const filestream = fs.createReadStream(file.path);
-      const params = {
-        Body: filestream,
-        Key: "profile-pics/" + file.originalname,
-        Bucket: process.env.bucketName,
-      };
-      s3.upload(params, function (err, data) {
-        if (err) {
-          console.log("Error", err);
-          reject(err);
-        }
-        if (data) {
-          console.log("Upload Success", data.Location);
-          fs.unlink(file.path, (err) => {
-            if (err != null) {
-              console.error("error occured during deleting file", err);
-            }
-          });
-          resolve(data);
-        }
-      });
-    }else{
-      resolve("No file")
-    }
+// Tried with and without this. Since s3 is not region-specific, I don't
+// think it should be necessary.
+// AWS.config.update({region: 'us-east-2'})
+
+const myBucket = process.env.bucketName;
+
+const signedUrlExpireSeconds = 60 * 10;
+const generateSignedUrl = () => {
+  return s3.getSignedUrl("putObject", {
+    Bucket: myBucket,
+    Key: 'profile-pics/'+uuidv4(),
+    Expires: signedUrlExpireSeconds,
   });
-}
+};
 
-function download() {}
-
-module.exports = { upload, download };
+module.exports = { generateSignedUrl };

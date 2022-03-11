@@ -4,14 +4,14 @@ const shopService = require("../services/shopService");
 
 router.get("/check-availability", (req, res) => {
   shopService
-    .checkAvailability(req.query.shopname)
+    .checkAvailability(req.query.shop_name)
     .then((success) => res.json({ message: success }))
     .catch((error) => res.status(400).json({ error: error }));
 });
 
 router.get("/get", async (req, res, next) => {
   const response = await shopService
-    .getDetails(req.query.shopname)
+    .getDetails(req.query.shop_name)
     .catch((err) => {
       console.log("why did error");
       throw new Error(err);

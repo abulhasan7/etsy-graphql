@@ -1,12 +1,15 @@
 import React, { Component } from "react";
 import "./profile.css";
 import { Alert } from "@mui/material";
-export default class Profile extends Component {
+import { connect } from "react-redux";
+import { getToken } from "../../redux/selectors";
+
+class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
       profile_pic_url: "",
-      profile_pic_file:"",
+      profile_pic_file: "",
       fullname: "",
       gender: "",
       address_1: "",
@@ -16,10 +19,10 @@ export default class Profile extends Component {
       about: "",
       phone: "",
       country: "Africa",
+      upload_s3_url: "",
       message: "",
       listcountries: ["India", "Africa"],
     };
-
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleValidation = this.handleValidation.bind(this);
@@ -29,6 +32,9 @@ export default class Profile extends Component {
     let url = "http://localhost:3001/users/get";
     fetch(url, {
       mode: "cors",
+      headers: {
+        Authorization: this.props.token,
+      },
       //no header, as we want fetch to set the header itself, if we set then we hve to define boundary
     })
       .then((response) => {
@@ -56,6 +62,7 @@ export default class Profile extends Component {
             about: json.about,
             phone: json.phone,
             country: json.country,
+            upload_s3_url: json.upload_s3_url,
           };
           this.setState(currentState);
         }
@@ -65,11 +72,16 @@ export default class Profile extends Component {
       });
   }
 
-
   handleChange(event) {
     if (event.target.name === "file") {
       let fr = new FileReader();
-      fr.onload = ()=> {console.log("fr is ",fr);this.setState({profile_pic_url:fr.result,profile_pic_file: event.target.files[0]})};
+      fr.onload = () => {
+        console.log("fr is ", fr);
+        this.setState({
+          profile_pic_url: fr.result,
+          profile_pic_file: event.target.files[0],
+        });
+      };
       fr.readAsDataURL(event.target.files[0]);
     } else if (event.target.name === "fullname") {
       this.setState({ fullname: event.target.value });
@@ -99,9 +111,15 @@ export default class Profile extends Component {
   handleValidation() {
     return new Promise((resolve, reject) => {
       let message = "";
-      if (this.state.profile_pic_url === "" && this.state.profile_pic_file =="") {
+      if (
+        this.state.profile_pic_url === "" &&
+        this.state.profile_pic_file == ""
+      ) {
         message = "Profile picture can't be empty";
-      } else if ( this.state.profile_pic_file && !this.state.profile_pic_file.type.startsWith("image")) {
+      } else if (
+        this.state.profile_pic_file &&
+        !this.state.profile_pic_file.type.startsWith("image")
+      ) {
         console.log(this.state.profile_pic_file.type);
         message = "Profile picture has to be an image file only";
       } else if (this.state.fullname === "") {
@@ -152,8 +170,28 @@ export default class Profile extends Component {
     event.preventDefault();
     this.handleValidation()
       .then(() => {
+        if (this.state.profile_pic_file) {
+         return fetch(this.state.upload_s3_url, {
+            method: "PUT",
+            body: this.state.profile_pic_file,
+          })
+        }
+      })
+      .then(s3response => {
+        console.log("s3resoibse",s3response)
+        if(s3response && s3response.status !== 200){
+          return Promise.reject({message:"Error occurred during uploading file"});
+        }else  if(s3response && s3response.status === 200){
+          return Promise.resolve(this.state.upload_s3_url.split("?")[0])
+        }else{
+          return Promise.resolve(this.state.profile_pic_url)
+        }
+      })
+      .then((s3url) => {
+        // console.log("url resonse is ", picresponse);
+        // console.log("url resonse is ", picresponse.status);
         let url = "http://localhost:3001/users/update";
-        const form = {
+        const body = {
           fullname: this.state.fullname,
           gender: this.state.gender,
           address_1: this.state.address_1,
@@ -163,16 +201,16 @@ export default class Profile extends Component {
           about: this.state.about,
           phone: this.state.phone,
           country: this.state.country,
+          profile_pic_url:s3url
         };
-        const formdata = new FormData();
-        if(this.state.profile_pic_file){
-          formdata.append("profile_pic_file", this.state.profile_pic_file);
-        }
-        formdata.append("form", JSON.stringify(form));
         fetch(url, {
           method: "PUT",
           mode: "cors",
-          body: formdata,
+          body: JSON.stringify(body),
+          headers: {
+            Authorization: this.props.token,
+            'Content-type':'application/json'
+          },
           //no header, as we want fetch to set the header itself, if we set then we hve to define boundary
         })
           .then((response) => {
@@ -214,7 +252,7 @@ export default class Profile extends Component {
         if (!this.state.message) {
           let elem = (
             <Alert severity="error" onClose={this.handleChange}>
-              {"Some error occurred during update"}
+              {error.message || "Some error occurred during update"}
             </Alert>
           );
           this.setState({ message: elem });
@@ -226,150 +264,154 @@ export default class Profile extends Component {
     console.log("file", this.state.pic);
     return (
       <div className="profileform__parent">
-      <form className="profileform" onSubmit={this.handleSubmit}>
-        <div className="profileform__heading">Your Public Profile</div>
-        <div className="profileform__formmessage">{this.state.message}</div>
-        <div className="profileform__formimagegrid">
-        <img src={this.state.profile_pic_url} className="profileform__formimage"></img>
-      </div>
-        <div className="profileform__formgroup">
-          <label htmlFor="file">Profile Picture</label>
-          <input
-            type="file"
-            name="file"
-            className="profileform__pic profileform__formcontrol"
-            onChange={this.handleChange}
-          ></input>
-        </div>
-        <div className="profileform__formgroup">
-          <label htmlFor="fullname">Full Name</label>
-          <input
-            type="text"
-            id="fullname"
-            name="fullname"
-            className="profileform__formcontrol"
-            value={this.state.fullname}
-            onChange={this.handleChange}
-          />
-        </div>
-        <div className="profileform__formgroup">
-          <label>Gender:</label>
-          <span>
-            <label htmlFor="male">Male:</label>
+        <form className="profileform" onSubmit={this.handleSubmit}>
+          <div className="profileform__heading">Your Public Profile</div>
+          <div className="profileform__formmessage">{this.state.message}</div>
+          <div className="profileform__formimagegrid">
+            <img
+              src={this.state.profile_pic_url}
+              className="profileform__formimage"
+            ></img>
+          </div>
+          <div className="profileform__formgroup">
+            <label htmlFor="file">Profile Picture</label>
             <input
-              type="radio"
-              name="gender"
-              id="profileform__gender_male"
+              type="file"
+              name="file"
+              className="profileform__pic profileform__formcontrol"
+              onChange={this.handleChange}
+            ></input>
+          </div>
+          <div className="profileform__formgroup">
+            <label htmlFor="fullname">Full Name</label>
+            <input
+              type="text"
+              id="fullname"
+              name="fullname"
               className="profileform__formcontrol"
-              checked={this.state.gender === "M"}
+              value={this.state.fullname}
               onChange={this.handleChange}
             />
-            <label htmlFor="female">FeMale:</label>
+          </div>
+          <div className="profileform__formgroup">
+            <label>Gender:</label>
+            <span>
+              <label htmlFor="male">Male:</label>
+              <input
+                type="radio"
+                name="gender"
+                id="profileform__gender_male"
+                className="profileform__formcontrol"
+                checked={this.state.gender === "M"}
+                onChange={this.handleChange}
+              />
+              <label htmlFor="female">FeMale:</label>
+              <input
+                type="radio"
+                name="gender"
+                id="profileform__gender_female"
+                className="profileform__formcontrol"
+                checked={this.state.gender === "F"}
+                onChange={this.handleChange}
+              />
+            </span>
+          </div>
+          <div className="profileform__formgroup">
+            <label htmlFor="address_1">Street Address:</label>
+
             <input
-              type="radio"
-              name="gender"
-              id="profileform__gender_female"
+              type="text"
+              name="address_1"
+              id="address_1"
               className="profileform__formcontrol"
-              checked={this.state.gender === "F"}
+              value={this.state.address_1}
               onChange={this.handleChange}
             />
-          </span>
-        </div>
-        <div className="profileform__formgroup">
-          <label htmlFor="address_1">Street Address:</label>
+          </div>
+          <div className="profileform__formgroup">
+            <label htmlFor="address_2">Apartment No:</label>
+            <input
+              type="text"
+              name="address_2"
+              id="address_2"
+              className="profileform__formcontrol"
+              value={this.state.address_2}
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="profileform__formgroup">
+            <label htmlFor="city">City</label>
 
-          <input
-            type="text"
-            name="address_1"
-            id="address_1"
-            className="profileform__formcontrol"
-            value={this.state.address_1}
-            onChange={this.handleChange}
-          />
-        </div>
-        <div className="profileform__formgroup">
-          <label htmlFor="address_2">Apartment No:</label>
-          <input
-            type="text"
-            name="address_2"
-            id="address_2"
-            className="profileform__formcontrol"
-            value={this.state.address_2}
-            onChange={this.handleChange}
-          />
-        </div>
-        <div className="profileform__formgroup">
-          <label htmlFor="city">City</label>
+            <input
+              type="text"
+              name="city"
+              id="city"
+              className="profileform__formcontrol"
+              value={this.state.city}
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="profileform__formgroup">
+            <label htmlFor="dob">Date of Birth:</label>
 
-          <input
-            type="text"
-            name="city"
-            id="city"
-            className="profileform__formcontrol"
-            value={this.state.city}
-            onChange={this.handleChange}
-          />
-        </div>
-        <div className="profileform__formgroup">
-          <label htmlFor="dob">Date of Birth:</label>
+            <input
+              type="date"
+              name="dob"
+              id="dob"
+              className="profileform__formcontrol"
+              value={this.state.dob}
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="profileform__formgroup">
+            <label htmlFor="about">About</label>
 
-          <input
-            type="date"
-            name="dob"
-            id="dob"
-            className="profileform__formcontrol"
-            value={this.state.dob}
-            onChange={this.handleChange}
-          />
-        </div>
-        <div className="profileform__formgroup">
-          <label htmlFor="about">About</label>
+            <textarea
+              name="about"
+              id="about"
+              className="profileform__formcontrol"
+              value={this.state.about}
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="profileform__formgroup">
+            <label htmlFor="phone">Phone</label>
 
-          <textarea
-            name="about"
-            id="about"
-            className="profileform__formcontrol"
-            value={this.state.about}
-            onChange={this.handleChange}
-          />
-        </div>
-        <div className="profileform__formgroup">
-          <label htmlFor="phone">Phone</label>
+            <input
+              type="number"
+              id="phone"
+              name="phone"
+              className="profileform__formcontrol"
+              value={this.state.phone}
+              onChange={this.handleChange}
+            />
+          </div>
+          <div className="profileform__formgroup">
+            <label htmlFor="country">Country</label>
 
-          <input
-            type="number"
-            id="phone"
-            name="phone"
-            className="profileform__formcontrol"
-            value={this.state.phone}
-            onChange={this.handleChange}
-          />
-        </div>
-        <div className="profileform__formgroup">
-          <label htmlFor="country">Country</label>
-
-          <select
-            name="country"
-            id="country"
-            className="profileform__formcontrol"
-            value={this.state.country}
-            onChange={this.handleChange}
-          >
-            {this.state.listcountries.map((country) => {
-              return <option>{country}</option>;
-            })}
-          </select>
-        </div>
-        <div className="profileform__formbuttoncontrol">
-        <input
-          type="submit"
-          name="update"
-          value="Update Profile"
-          className="profileform__formbutton"
-        />
-        </div>
-      </form>
+            <select
+              name="country"
+              id="country"
+              className="profileform__formcontrol"
+              value={this.state.country}
+              onChange={this.handleChange}
+            >
+              {this.state.listcountries.map((country) => {
+                return <option>{country}</option>;
+              })}
+            </select>
+          </div>
+          <div className="profileform__formbuttoncontrol">
+            <input
+              type="submit"
+              name="update"
+              value="Update Profile"
+              className="profileform__formbutton"
+            />
+          </div>
+        </form>
       </div>
     );
   }
 }
+export default connect(getToken, null)(Profile);

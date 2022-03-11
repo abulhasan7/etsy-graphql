@@ -29,6 +29,7 @@ const Country = sequelize.define("Country", country(DataTypes), {
   tableName: "countries",
   createdAt: false,
   updatedAt: false,
+  
 });
 
 const User = sequelize.define("User", user(DataTypes), {

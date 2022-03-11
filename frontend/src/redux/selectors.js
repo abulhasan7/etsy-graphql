@@ -1,0 +1,1 @@
+export const getToken = state => {return {token:state.token}}

@@ -2,14 +2,14 @@ var express = require("express");
 var router = express.Router();
 const userService = require("../services/userService");
 
-const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
 /* REGISTER USER */
 router.post("/register", function (req, res) {
   userService
     .register(req.body)
-    .then((success) => res.status(200).json({ message: success }))
+    .then((token) => res.status(200).json({ token: token }))
     .catch((error) =>
       res
         .status(400)
@@ -32,8 +32,7 @@ router.post("/login", async function (req, res) {
 /* GET USER DETAILS */
 router.get("/get", async function (req, res) {
   try {
-    //TODO REMOVE STRING HARDCODED
-    let userDetails = await userService.get("");
+    let userDetails = await userService.get(req.user_id);
     res.status(200).json({ message: userDetails });
   } catch (error) {
     res
@@ -49,14 +48,19 @@ router.post("/logout", function (req, res, next) {
 });
 
 /* UPDATE PROFILE */
-router.put("/update",upload.single('profile_pic_file'), function (req, res) {
+router.put("/update", function (req, res) {
+  let object = {...req.body};
+  object.user_id = req.user_id;
+  console.log("object is ",object)
   userService
-    .updateProfile(req.file,req.body.form)
+    .updateProfile(object)
     .then((success) => res.status(200).json({ message: success }))
-    .catch((error) =>
+    .catch((error) =>{
+      console.log(error)
       res
         .status(400)
         .json({ error: error || "Some error occured during update" })
+    }
     );
 });
 

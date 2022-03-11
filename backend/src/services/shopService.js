@@ -24,9 +24,9 @@ function checkAvailability(shopName) {
     Shop.findOne({ attributes: ["shop_name"], where: { shop_name: shopName } })
       .then((elem) => {
         if (elem) {
-          reject("Shop Name not available");
+          reject("Shop Name Not Available");
         }
-        resolve("Shop Name avaialble");
+        resolve("Shop Name Available");
       })
       .catch((err) => {
         console.log("Error occurred during checkign availability", err);
@@ -40,7 +40,8 @@ async function register(shop) {
     const createdShop = await Shop.create({
       shop_name: shop.shop_name,
       shop_pic: shop.shop_pic,
-      user_id: shop.user_id,
+      // TODO remove hardcoded userid
+      user_id: 26,
     });
     if (createdShop) {
       return `Shop ${shop.shop_name} registered successfully`;

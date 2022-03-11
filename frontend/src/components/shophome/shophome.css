@@ -1,0 +1,45 @@
+
+
+.shopform{
+    margin-top: 2%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas: "shopimage shopdetails ownerdetails";
+    border-bottom: 2px solid black;
+    padding: 10px;
+}
+
+.shopform__child1{
+    grid-area: shopimage;
+    border: 2px solid grey;
+    border-right: 2px solid black;
+
+}
+.shopform__child2{
+    grid-area: shopdetails;
+    border: 2px solid grey;
+
+}
+
+.shopform__child3{
+    grid-area: ownerdetails;
+    border: 2px solid grey;
+
+}
+.shopform__title{
+    font-size: larger;
+    font-weight: bolder;
+}
+.shopform__image{
+    width: 200px;
+    height: 200px;
+}
+
+.shopform__button{
+    border: none;
+    outline: none;
+    background-color: black;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}

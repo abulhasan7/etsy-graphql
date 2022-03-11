@@ -9,43 +9,40 @@ module.exports = (DataTypes) => {
       },
       name: {
         type: DataTypes.STRING(45),
-        // allowNull defaults to true
         allowNull: false,
       },
-      item_pic: {
+      item_pic_url: {
         type: DataTypes.STRING,
-        // allowNull defaults to true
         allowNull: true,
+        get() {
+          if(this.getDataValue('item_pic_url'))
+            return this.getDataValue('item_pic_url')
+          return ""
+        }
       },
       category: {
         type: DataTypes.STRING(45),
-        // allowNull defaults to true
         allowNull: false,
       },
       description: {
         type: DataTypes.STRING,
-        // allowNull defaults to true
         allowNull: false,
       },
       price: {
         type: DataTypes.DECIMAL(10,2),
-        // allowNull defaults to true
         allowNull: false,
       },
       stock: {
         type: DataTypes.INTEGER,
-        // allowNull defaults to true
         allowNull: false,
       },
       sold_count: {
         type: DataTypes.INTEGER,
-        // allowNull defaults to true
-        // allowNull: false,
+        allowNull: false,
       },
       shop_id: {
         type: DataTypes.INTEGER,
-        // allowNull defaults to true
-        // allowNull: false,
+        allowNull: false,
       }
     };
   };

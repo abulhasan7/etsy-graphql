@@ -9,12 +9,10 @@ module.exports = (DataTypes) => {
       },
       order_date: {
         type: DataTypes.DATEONLY,
-        // allowNull defaults to true
         allowNull: false,
       },
       user_id: {
         type: DataTypes.INTEGER,
-        // allowNull defaults to true
         allowNull: false,
       },
       total_price:{
@@ -22,7 +20,6 @@ module.exports = (DataTypes) => {
       },
       total_quantity: {
         type: DataTypes.INTEGER,
-        // allowNull defaults to true
         allowNull: false,
       },
     };

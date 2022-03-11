@@ -1,0 +1,56 @@
+.shopreg__parent{
+    display: grid;
+    justify-items: center;
+    align-items: start;
+    height: 100vh;
+}
+
+.shopreg__form{
+    border: 2px solid slategrey;
+    border-radius: 5px;
+    display: grid;
+    justify-items: center;
+    row-gap: 20px;
+    padding: 20px;
+    margin-top: 5%;
+}
+
+.shopreg__title{
+    font-size: larger;
+    font-weight: bolder;
+}
+
+.shopreg__inputwrapper{
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
+.shopreg__input{
+    border: none;
+    margin-left: 5px;
+}
+.shopreg__input:focus{
+    border: none;
+    outline: none;
+}
+
+.shopreg__button_check{
+    border:none;
+    border-left: 2px solid grey;
+    background-color: white;
+    color: black;
+    padding: 5px;
+    font-size: large;
+    font-weight: bold;
+    margin-right: 5px;
+}
+.shopreg__button_register{
+    border:none;
+    border-radius: 5px;
+    background-color: black;
+    color: white;
+    padding: 5px;
+}
+.shopreg__statusicon{
+    height: inherit !important;
+}

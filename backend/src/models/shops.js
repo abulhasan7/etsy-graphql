@@ -14,11 +14,15 @@ module.exports = (DataTypes) => {
       },
       shop_pic_url: {
         type: DataTypes.STRING(45),
-        // allowNull defaults to true
-        allowNull: false,
+        get() {
+          if(this.getDataValue('shop_pic_url'))
+            return this.getDataValue('shop_pic_url')
+          return ""
+        }
       },
       user_id:{
-          type:DataTypes.INTEGER
+          type:DataTypes.INTEGER,
+          allowNull: false
       }
     };
   };
