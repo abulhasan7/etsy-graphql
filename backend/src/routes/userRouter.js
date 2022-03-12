@@ -33,7 +33,7 @@ router.post("/login", async function (req, res) {
 router.get("/get", async function (req, res) {
   try {
     let userDetails = await userService.get(req.user_id);
-    res.status(200).json({ message: userDetails });
+    res.status(200).json(userDetails);
   } catch (error) {
     res
       .status(401)

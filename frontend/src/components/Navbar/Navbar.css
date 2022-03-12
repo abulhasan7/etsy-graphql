@@ -1,3 +1,6 @@
+body{
+    background-color: white;
+}
 .header{
     border-bottom: 2px solid #DEDEDE;
     /* to make items appear either in a row or in a columns */

@@ -1,0 +1,307 @@
+import React, { Component } from "react";
+import Modal from "react-modal";
+import { connect } from "react-redux";
+import { getToken } from "../../redux/selectors";
+import { Alert } from "@mui/material";
+import "./shopitemform.css";
+
+class ShopItemForm extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      item_pic_url: "",
+      item_pic_file: "",
+      category: "Select",
+      description: "",
+      price: 0.0,
+      stock: 0,
+      itemname: "",
+      categories: [],
+      s3_upload_url: "",
+      alert: "",
+      errmessage: "",
+      manualcategory: "",
+    };
+    Modal.setAppElement("#root");
+    this.customStyles = {
+      content: {
+        top: "10%",
+        left: "20%",
+        right: "20%",
+        bottom: "30%",
+        // marginRight: '-50%',
+        // transform: 'translate(-50%, -50%)',
+      },
+    };
+    this.handleModelClose = this.handleModelClose.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleInputValidation = this.handleInputValidation.bind(this);
+    this.handleInputSubmit = this.handleInputSubmit.bind(this);
+  }
+
+  handleModelClose() {
+    this.props.handleModelClose();
+    // this.setState({isModelOpen:false})
+  }
+  handleInputChange(event) {
+    if (event.target.name === "file") {
+      let url = URL.createObjectURL(event.target.files[0]);
+      this.setState({
+        item_pic_url: url,
+        item_pic_file: event.target.files[0],
+      });
+    } else if (event.target.name === "itemname") {
+      this.setState({ itemname: event.target.value });
+    } else if (event.target.name === "description") {
+      this.setState({ description: event.target.value });
+    } else if (event.target.name === "price") {
+      this.setState({ price: event.target.value });
+    } else if (event.target.name === "stock") {
+      this.setState({ stock: event.target.value });
+    } else if (
+      event.target.name === "category" &&
+      event.target.value === "Create Category"
+    ) {
+      this.setState({ manualcategory: "Create Category Here" });
+    } else if (event.target.name === "category") {
+      this.setState({ category: event.target.value,manualcategory:"" });
+    } else if (event.target.name === "manualcategory") {
+        this.setState({ manualcategory:event.target.value });
+      } else {
+      this.setState({ alert: "" });
+    }
+  }
+
+  handleInputValidation() {
+    return new Promise((resolve, reject) => {
+      let message = "";
+      if (this.state.item_pic_url === "" && this.state.item_pic_file == "") {
+        message = "Item picture can't be empty";
+      } else if (
+        this.state.item_pic_file &&
+        !this.state.item_pic_file.type.startsWith("image")
+      ) {
+        console.log(this.state.item_pic_file.type);
+        message = "Item picture has to be an image file only";
+      } else if (this.state.itemname === "") {
+        message = "Item Name can't be empty";
+      } else if (this.state.itemname.length < 5) {
+        message = "Item Name can't be less than 5 characters";
+      } else if (this.state.description.length < 10) {
+        message = "Description can't be less than 10 characters";
+      } else if (this.state.price === "") {
+        message = "Price can't be empty";
+      } else if (!("" + this.state.price).match("^\\d{1,}.\\d{2}$")) {
+        message = "Price has to be in Dollars.Cents format";
+      } else if (this.state.stock < 1) {
+        message = "Stock can't be less than 1";
+      } else if (this.state.category === "Select") {
+        message = "Category can't be empty";
+      }
+
+      if (message !== "") {
+        console.log(message);
+        reject(message);
+      }
+      resolve(true);
+    });
+  }
+
+  handleInputSubmit(event) {
+    event.preventDefault();
+    this.handleInputValidation()
+      .then(() => {
+        if (this.state.item_pic_file) {
+          return fetch(this.state.s3_upload_url, {
+            method: "PUT",
+            body: this.state.item_pic_file,
+          });
+        }
+      })
+      .then((s3response) => {
+        if (s3response && s3response.status !== 200) {
+          return Promise.reject({
+            message: "Error occurred during uploading file",
+          });
+        } else if (s3response && s3response.status === 200) {
+          return Promise.resolve(this.state.s3_upload_url.split("?")[0]);
+        } else {
+          return Promise.resolve(this.state.item_pic_url);
+        }
+      })
+      .then((item_url) => {
+        console.log(
+          "item ur li s",
+          item_url,
+          parseFloat(this.state.price).toFixed(2)
+        );
+        return fetch("http://localhost:3001/items/add", {
+          method: "POST",
+          body: JSON.stringify({
+            item_pic_url: item_url,
+            category: this.state.manualcategory || this.state.category,
+            description: this.state.description,
+            price: parseFloat(this.state.price).toFixed(2),
+            stock: this.state.stock,
+            name: this.state.itemname,
+          }),
+          headers: {
+            Authorization: this.props.token,
+            "Content-type": "application/json",
+          },
+        });
+      })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response);
+        if (response.message) {
+          let elem = (
+            <Alert onClose={this.props.handleModelClose}>
+              {response.message || "Success"}
+            </Alert>
+          );
+          this.setState({ alert: elem });
+        } else {
+          return Promise.reject(response.error);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        let elem = (
+          <Alert severity="error" onClose={this.handleInputChange}>
+            {error.message || error}
+          </Alert>
+        );
+        this.setState({ alert: elem });
+      });
+  }
+  componentDidMount() {
+    fetch("http://localhost:3001/items/additem-getparams", {
+      headers: {
+        Authorization: this.props.token,
+      },
+    })
+      .then((response) => response.json())
+      .then((jsonresponse) => {
+        this.setState({
+          s3_upload_url: jsonresponse.s3_upload_url,
+          categories: jsonresponse.categories.map((category) => category.name),
+        });
+      });
+  }
+
+  render() {
+    return (
+      <Modal
+        isOpen={"true"}
+        // onAfterOpen={afterOpenModal}
+        // onRequestClose={this.handleModelClose}
+        style={this.customStyles}
+        contentLabel="Example Modal"
+      >
+        <form className="shopitemform" onSubmit={this.handleInputSubmit}>
+          <div className="shopitemform__heading">Add Item</div>
+          {this.state.alert}
+          <div className="shopitemform__formmessage">{this.state.message}</div>
+          <div className="shopitemform__formimagegrid">
+            <img
+              src={
+                this.state.item_pic_url ||
+                "https://d3a1v57rabk2hm.cloudfront.net/callnumber/betterman_mobile-copy-0/images/product_placeholder.jpg?ts=1581594912&host=call-number.cratejoy.com"
+              }
+              className="shopitemform__formimage"
+            ></img>
+          </div>
+          <div className="shopitemform__formgroup">
+            <label htmlFor="file">Item Picture</label>
+            <input
+              type="file"
+              name="file"
+              className="shopitemform__pic shopitemform__formcontrol"
+              onChange={this.handleInputChange}
+            ></input>
+          </div>
+          <div className="shopitemform__formgroup">
+            <label htmlFor="itemname">Item Name</label>
+            <input
+              type="text"
+              id="itemname"
+              name="itemname"
+              className="shopitemform__formcontrol"
+              value={this.state.itemname}
+              onChange={this.handleInputChange}
+            />
+          </div>
+          <div className="shopitemform__formgroup">
+            <label htmlFor="description">Description</label>
+
+            <textarea
+              name="description"
+              id="description"
+              className="shopitemform__formcontrol"
+              value={this.state.description}
+              onChange={this.handleInputChange}
+            />
+          </div>
+          <div className="shopitemform__formgroup">
+            <label htmlFor="price">Price:</label>
+
+            <input
+              type="number"
+              name="price"
+              id="price"
+              className="shopitemform__formcontrol"
+              value={this.state.price}
+              onChange={this.handleInputChange}
+            />
+          </div>
+          <div className="shopitemform__formgroup">
+            <label htmlFor="stock">Stock:</label>
+            <input
+              type="number"
+              name="stock"
+              id="stock"
+              className="shopitemform__formcontrol"
+              value={this.state.stock}
+              onChange={this.handleInputChange}
+            />
+          </div>
+          <div className="shopitemform__formgroup">
+            <label htmlFor="category">Category</label>
+
+            <select
+              name="category"
+              id="category"
+              className="shopitemform__formcontrol"
+              value={this.state.category}
+              onChange={this.handleInputChange}
+            >
+              <option>Select</option>
+              {this.state.categories.map((category) => {
+                return <option>{category}</option>;
+              })}
+              <option>Create Category</option>
+            </select>
+          </div>
+          {this.state.manualcategory && (
+            <div className="shopitemform__formgroup">
+              <label htmlFor="manualcategory">Category Name:</label>
+              <input
+                name="manualcategory"
+                id="manualcategory"
+                className="shopitemform__formcontrol"
+                value={this.state.manualcategory}
+                onChange={this.handleInputChange}
+              />
+            </div>
+          )}
+          <div className="shopitemform__formbuttoncontrol">
+            <button onClick={this.handleModelClose}>Close</button>
+            <input type="submit" value="Save" />
+          </div>
+        </form>
+      </Modal>
+    );
+  }
+}
+export default connect(getToken, null)(ShopItemForm);

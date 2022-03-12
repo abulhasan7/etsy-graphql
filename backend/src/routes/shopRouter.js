@@ -30,7 +30,7 @@ router.post("/register", async (req, res) => {
 
 router.post("/update", (req, res) => {
   shopService
-    .update(req.body)
+    .update({...req.body,shop_id:req.shop_id})
     .then((success) => res.json({ message: success }))
     .catch((error) => res.status(400).json({ error: error }));
 });

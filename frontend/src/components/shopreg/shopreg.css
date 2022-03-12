@@ -6,7 +6,7 @@
 }
 
 .shopreg__form{
-    border: 2px solid slategrey;
+    border: 2px solid #DEDEDE;
     border-radius: 5px;
     display: grid;
     justify-items: center;
@@ -21,7 +21,7 @@
 }
 
 .shopreg__inputwrapper{
-    border: 2px solid black;
+    border: 2px solid #DEDEDE;
     border-radius: 10px;
 }
 
@@ -36,7 +36,7 @@
 
 .shopreg__button_check{
     border:none;
-    border-left: 2px solid grey;
+    border-left: 2px solid #DEDEDE;
     background-color: white;
     color: black;
     padding: 5px;

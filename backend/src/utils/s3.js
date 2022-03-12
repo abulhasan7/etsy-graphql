@@ -11,8 +11,8 @@ AWS.config.update({
 const myBucket = process.env.bucketName;
 
 const signedUrlExpireSeconds = 60 * 10;
-const generateSignedUrl = () => {
-  return s3.getSignedUrl("putObject", {
+function generateSignedUrl(){
+  return s3.getSignedUrlPromise("putObject", {
     Bucket: myBucket,
     Key: 'profile-pics/'+uuidv4(),
     Expires: signedUrlExpireSeconds,

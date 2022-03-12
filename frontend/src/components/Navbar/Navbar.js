@@ -47,7 +47,7 @@ class Navbar extends Component {
               <FavoriteBorderOutlinedIcon />
             </div>
           </Link>
-          <Link className="header__link" to="/shop">
+          <Link className="header__link" to="/shop/home">
             <div className="header__shop">
               <StoreOutlinedIcon />
             </div>

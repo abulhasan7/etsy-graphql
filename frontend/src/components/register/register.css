@@ -14,7 +14,7 @@
 }
 .registerform{
     grid-area: form;
-    border: 2px solid black;
+    border: 2px solid #DEDEDE;
     border-radius: 10px;
 
 }
@@ -44,6 +44,8 @@
     height: 30px;
     width: 90%;
     box-sizing: border-box;
+    border: 2px solid #DEDEDE;
+
 
 }
 

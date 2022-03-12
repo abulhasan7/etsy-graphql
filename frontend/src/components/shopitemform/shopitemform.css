@@ -5,7 +5,7 @@
 body{
 
 }
-.profileform__parent{
+.shopitemform__parent{
     /* background-color: rgb(234, 237, 237); */
     display: grid;
     /* grid-template-columns: 1fr 1fr 1fr; */
@@ -14,8 +14,8 @@ body{
     
 }
 
-.profileform{
-    border: 2px solid #DEDEDE;
+.shopitemform{
+    /* border: 2px solid #DEDEDE; */
     border-radius: 10px;
     justify-self: center;
     padding: 10px;
@@ -23,21 +23,23 @@ body{
     /* grid-template-rows: repeat(auto-fit, minmax(50px, 160px)); */
     /* grid-auto-rows: 50px; */
 }
-.profileform__formmessage{
+.shopitemform__formmessage{
     /* grid-column: 2/3; */
 
 }
-.profileform__formimagegrid{
+.shopitemform__formimagegrid{
     background-color: inherit;
 
 }
-.profileform__formimage{
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
+.shopitemform__formimage{
+    width: 250px;
+    height: 250px;
+    /* object-fit: contain;  */
+    border: 2px solid #DEDEDE;
+    border-radius: 5px;
 
 }
- .profileform__formgroup{
+ .shopitemform__formgroup{
      grid-column: 2/3;
      display: grid;
      grid-template-columns: 1fr 1fr;
@@ -50,21 +52,21 @@ body{
 label{
     background-color: inherit;
 }
-.profileform__formcontrol{
+.shopitemform__formcontrol{
     border: none;
     border: 2px solid #DEDEDE;
     border-radius: 5px;
     background-color: inherit;
-
+    min-height: 30px;
 }
-.profileform__formbuttoncontrol{
+.shopitemform__formbuttoncontrol{
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: inherit;
 
 }
-.profileform__formbutton{
+.shopitemform__formbutton{
 
     border: none;
     border: 2px solid black;
@@ -73,13 +75,10 @@ label{
     color: whitesmoke;
     padding: 5px;
 }
-.profileform__heading{
+.shopitemform__heading{
     font-weight: bold;
     font-size: larger;
     display: flex;
     justify-content: center;
     background-color: inherit;
-}
-.profileform__pic{
-    color: rgba(255, 255, 255, 0);
 }

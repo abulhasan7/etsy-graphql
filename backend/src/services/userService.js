@@ -1,4 +1,4 @@
-const { User } = require("../models/index");
+const { User, Country } = require("../models/index");
 const bcrypt = require("bcrypt");
 const jwtUtil = require("../utils/jwtUtil");
 const { generateSignedUrl } = require("../utils/s3");
@@ -36,18 +36,24 @@ async function get(user_id) {
       },
       where: { user_id: user_id },
     });
-    const upload_s3_url = generateSignedUrl();
     if (!dbUser) {
       throw new Error("User not found");
     } else {
-      console.log("signed url is ", upload_s3_url);
+      const [upload_s3_url, countries] = await Promise.all([
+        generateSignedUrl(),
+        Country.findAll()
+      ]);
       dbUser.dataValues.upload_s3_url = upload_s3_url;
+      dbUser.dataValues.countries = countries;
+      return dbUser;
+      // console.log("signed url is ", upload_s3_url);
+      // console.log(countries);
+
       // const shop = await dbUser.getShops();
       // if (shop) {
       //   dbUser.setDataValue("shop", shop);
       // }
-      console.log("dbuser is ", dbUser);
-      return dbUser;
+      // console.log("dbuser is ", dbUser);
     }
   } catch (error) {
     console.error("Error occured:", error);
@@ -84,8 +90,7 @@ function register(userDetails) {
 
 function updateProfile(userDetails) {
   return new Promise((resolve, reject) => {
-    // const userDetails = JSON.parse(user);
-    console.log(userDetails);
+    // console.log(userDetails);
     const dob = userDetails.dob.split("-");
     let datatoUpdate = {
       fullname: userDetails.fullname,
@@ -97,12 +102,12 @@ function updateProfile(userDetails) {
       address_2: userDetails.address_2,
       city: userDetails.city,
       country: userDetails.country,
-      profile_pic_url:userDetails.profile_pic_url
+      profile_pic_url: userDetails.profile_pic_url,
     };
     User.update(datatoUpdate, {
       where: { user_id: userDetails.user_id },
     })
-  .then((created) => {
+      .then((created) => {
         if (created[0] > 0) {
           resolve("User Profile updated successfully");
         } else {

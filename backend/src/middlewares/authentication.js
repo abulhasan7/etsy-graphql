@@ -15,6 +15,9 @@ function checkAuthenticationHeader(req, res, next) {
         isError = false;
         console.log("decoded", decoded);
         req.user_id = decoded.user_id;
+        if(decoded.shop_id){
+          req.shop_id = decoded.shop_id;
+        }
       } catch (error) {
         console.log(error);
       }

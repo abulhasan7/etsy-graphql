@@ -3,28 +3,23 @@
     font-family: 'Graphik Webfont Helvetica';
 }
 .parent{
-    
     display: grid;
-    grid-template-columns: 3fr 1fr 3fr;
-    grid-template-rows: repeat(auto-fill,350px);
-    grid-template-areas: ". form .";
-    /* justify-items: center; */
-    align-items: center;
-    min-height: 50vh;
+    grid-template-columns: 1fr 1fr 1fr;
 }
 .loginform{
-    grid-area: form;
-    border: 2px solid black;
+    grid-column: 2/3;
+    border: 2px solid #DEDEDE;
     border-radius: 10px;
-
+    width: 350px;
 }
 
 .loginform__heading{
     font-weight: bold;
-    font-size: larger;
+    font-size: large;
     margin-top: 10px;
     margin-bottom: 20px;
-    margin-left: 30%;
+    display: flex;
+    justify-content: center;
 }
 .loginfor__label{
 
@@ -42,20 +37,25 @@
     margin-top: 5px;
     border-radius: 10px;
     height: 30px;
-    width: 90%;
+    width: 100%;
     box-sizing: border-box;
+    border: 2px solid #DEDEDE;
 
 }
 
 .loginform__submit{
     margin-bottom: 20px;
-    margin-left: 30%;
-    border: none;
-    background-color: black;
-    color: whitesmoke;
+    background-color: cadetblue;
+    color: black;
     border-radius: 5px;
     padding: 10px 20px;
+    border: 2px solid #DEDEDE;
 
+
+}
+.loginform__formgroupbtn{
+    display: flex;
+    justify-content: center;
 }
 
 .loginform__submit:hover{

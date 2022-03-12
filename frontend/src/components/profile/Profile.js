@@ -21,7 +21,7 @@ class Profile extends Component {
       country: "Africa",
       upload_s3_url: "",
       message: "",
-      listcountries: ["India", "Africa"],
+      countries: ["India", "Africa"],
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -50,7 +50,6 @@ class Profile extends Component {
         if (json.error) {
           return Promise.reject(json);
         } else {
-          json = json.message;
           let currentState = {
             profile_pic_url: json.profile_pic_url,
             fullname: json.fullname,
@@ -63,6 +62,7 @@ class Profile extends Component {
             phone: json.phone,
             country: json.country,
             upload_s3_url: json.upload_s3_url,
+            countries: json.countries.map(c=>c.name)
           };
           this.setState(currentState);
         }
@@ -188,8 +188,6 @@ class Profile extends Component {
         }
       })
       .then((s3url) => {
-        // console.log("url resonse is ", picresponse);
-        // console.log("url resonse is ", picresponse.status);
         let url = "http://localhost:3001/users/update";
         const body = {
           fullname: this.state.fullname,
@@ -269,7 +267,7 @@ class Profile extends Component {
           <div className="profileform__formmessage">{this.state.message}</div>
           <div className="profileform__formimagegrid">
             <img
-              src={this.state.profile_pic_url}
+              src={this.state.profile_pic_url || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png"}
               className="profileform__formimage"
             ></img>
           </div>
@@ -396,7 +394,7 @@ class Profile extends Component {
               value={this.state.country}
               onChange={this.handleChange}
             >
-              {this.state.listcountries.map((country) => {
+              {this.state.countries.map((country) => {
                 return <option>{country}</option>;
               })}
             </select>

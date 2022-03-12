@@ -1,31 +1,56 @@
-
-
 .shopform{
-    margin-top: 2%;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-areas: "shopimage shopdetails ownerdetails";
-    border-bottom: 2px solid black;
+    grid-template-columns: 1fr 6fr 1fr;
+    grid-template-areas: "shopdetails items ownerdetails";
+    /* border: 2px solid #DEDEDE; */
     padding: 10px;
+    column-gap: 10px;
 }
 
 .shopform__child1{
-    grid-area: shopimage;
-    border: 2px solid grey;
-    border-right: 2px solid black;
-
-}
-.shopform__child2{
     grid-area: shopdetails;
-    border: 2px solid grey;
-
+    border-right: 2px solid #DEDEDE;
+    border: 2px solid #DEDEDE;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: stretch;
+    flex-wrap: wrap;
+    padding: 10px;
+    width: 220px;
 }
 
+.shopform__child2{
+    grid-area: items;
+    border: 2px solid #DEDEDE;
+    border-radius: 5px;
+
+}
+.shopform__btn_ctn{
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+}
+
+.shopform__itemcontainer{
+    display: flex;
+    border-top: 2px solid #DEDEDE;
+}
 .shopform__child3{
     grid-area: ownerdetails;
-    border: 2px solid grey;
-
+    justify-self: end;
+    border: 2px solid #DEDEDE;
+    border-radius: 5px;
+    margin-left: 20px;
+    padding: 10px;
+    width: 220px;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: stretch;
+    flex-wrap: wrap;
 }
+
 .shopform__title{
     font-size: larger;
     font-weight: bolder;
@@ -34,12 +59,8 @@
     width: 200px;
     height: 200px;
 }
-
 .shopform__button{
-    border: none;
-    outline: none;
-    background-color: black;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
+    color: rgba(255, 255, 255, 0);
+    
+     /* overflow: hidden; */
 }

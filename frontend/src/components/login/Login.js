@@ -127,6 +127,7 @@ class Login extends Component {
               onChange={this.handleChange}
             />
           </div>
+          <div className="loginform__formgroupbtn">
           <input
             type="submit"
             className="loginform__submit"
@@ -134,6 +135,7 @@ class Login extends Component {
             value={"Sign In"}
             disabled={this.state.error}
           />
+          </div>
         </form>
       </div>
     );
