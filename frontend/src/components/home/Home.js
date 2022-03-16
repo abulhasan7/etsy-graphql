@@ -2,14 +2,23 @@ import React, { useEffect, useState } from "react";
 import { getToken } from "../../redux/selectors";
 import { connect } from "react-redux";
 import ItemCard from "../itemcard/ItemCard";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./home.css";
 
 function Home(props) {
+  
+  //States
   const [items, setItems] = useState([]);
   const [favourites, setFavourites] = useState({});
+  const [filterRange,setFilterRange] = useState("");
+  const [sortBy,setSortBy] = useState("");
+  const [includeOutOfStock,setIncludeOutOfStock] = useState("");
 
   const navigate = useNavigate();
+
+  const location = useLocation();
+
+  const searchKeyword = location.state ? location.state["searchKeyword"] : "";
 
   const getAllItems = () => {
     fetch("http://localhost:3001/items/get-all", {
@@ -39,16 +48,29 @@ function Home(props) {
 
   return (
     <div className="home-container">
-      {items.map((item) => (
-        <ItemCard
-          // key={favourites[item.item_id] || item.item_id}
-          item={item}
-          favourite={
-         {favouriteId:favourites[item.item_id],
-         updateFavourites:setFavourites}
+      {items.map((item) => {
+        if (searchKeyword) {
+          if (searchKeyword === item.name) {
+            return <ItemCard
+              // key={favourites[item.item_id] || item.item_id}
+              item={item}
+              favourite={{
+                favouriteId: favourites[item.item_id],
+                updateFavourites: setFavourites,
+              }}
+            />;
+          }
+        } else {
+         return <ItemCard
+            // key={favourites[item.item_id] || item.item_id}
+            item={item}
+            favourite={{
+              favouriteId: favourites[item.item_id],
+              updateFavourites: setFavourites,
+            }}
+          />;
         }
-        />
-      ))}
+      })}
     </div>
   );
 }

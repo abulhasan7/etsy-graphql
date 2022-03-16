@@ -119,7 +119,7 @@ function ItemCard(props) {
       </div>
       <div className="itemcard__contentwrapper">
         {/* <div className="itemcard__textwrapper"> */}
-        <div className="itemcard__name">{props.item.name}{props.favouriteId}{props.favourite.favouriteId}</div>
+        <div className="itemcard__name">{props.item.name}</div>
         <div className="itemcard__price">
           <small>$</small>
           {props.item.price}

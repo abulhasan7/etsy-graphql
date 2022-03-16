@@ -3,4 +3,7 @@
     background-color: #DEDEDE;
     height: 100vh;
     padding: 20px;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: flex-start;
 }
