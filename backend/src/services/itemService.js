@@ -39,7 +39,14 @@ async function getAllExceptShop(shop_id,user_id) {
       },
     });
     const [items,favourites] =await Promise.all([itemsPromise,favouritesPromse])
-    return {items:items,favourites:favourites};
+    console.log(favourites)
+    let favouriteObj = {}; 
+    if(favourites){
+      console.log(favouriteObj)
+      favourites.forEach(fav=>{favouriteObj[fav.item_id] = fav.favourite_id});  
+      console.log(favouriteObj)
+    }
+    return {items:items,favourites:favouriteObj};
   } catch (error) {
     console.log("Error occured while getting all the Items", error);
     throw new Error(error.message);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { getToken } from "../../redux/selectors";
@@ -7,22 +7,20 @@ import { useNavigate } from "react-router-dom";
 import "./itemcard.css";
 
 function ItemCard(props) {
-
-  const [favouriteId, setFavouriteId] = useState(
-    props.favourite ? props.favourite["favourite_id"] : undefined
-  );
-
+  console.log("props are",props)
+  
   const navigate = useNavigate();
 
   const handleFavouriteClick = () => {
     console.log("handle favourite")
-    if (favouriteId) {
+    if (props.favourite.favouriteId) {
       removeFavourite();
     } else {
       addFavourite();
     }
   };
 
+  
   const addFavourite = () => {
     fetch("http://localhost:3001/favourites/add", {
       method: "POST",
@@ -39,7 +37,14 @@ function ItemCard(props) {
       .then((jsonresponse) => {
         console.log(jsonresponse);
         console.log(jsonresponse.message);
-        setFavouriteId(jsonresponse.message);
+        props.favourite.updateFavourites(
+          prevState=>{ 
+            console.log("prev state is ",prevState)
+            return {
+              ...prevState,
+              [(props.item).item_id]:jsonresponse.message
+            }
+          })
         console.log("success");
       })
       .catch((error) => console.log(error));
@@ -54,15 +59,24 @@ function ItemCard(props) {
         "Content-type": "application/json",
       },
       body: JSON.stringify({
-        favourite_id: favouriteId,
+        favourite_id: props.favourite.favouriteId,
       }),
     })
       .then((res) => res.json())
       .then((jsonresponse) => {
         console.log(jsonresponse);
-        console.log(jsonresponse.message);
-        setFavouriteId();
-        console.log("success");
+        if(jsonresponse.message){
+          props.favourite.updateFavourites(
+            prevState=> {
+              return {
+                ...prevState,
+                [(props.item).item_id]:null
+              }
+            
+            })
+          console.log("success");
+        }
+
       })
       .catch((error) => console.log(error));
   };
@@ -71,7 +85,7 @@ function ItemCard(props) {
     if (props.handleModelOpen) {
       props.handleModelOpen({ ...props.item });
     } else {
-      navigate("/items/"+((props.item).name), { state: { item: props.item,favouriteId:favouriteId } });
+      navigate("/items/"+((props.item).name), { state: { item: props.item,favouriteId:props.favourite.favouriteId } });
     }
   };
 
@@ -88,7 +102,7 @@ function ItemCard(props) {
         />
         {!props.handleModelOpen && (
           <div className="item-overview-fav-icon">
-            {favouriteId ? (
+            {props.favourite.favouriteId ? (
               <FavoriteIcon
                 // style={{ fontSize: 30, color: "#F1641E" }}
                 style={{ fontSize: 30, color: "#D9230F" }}
@@ -105,7 +119,7 @@ function ItemCard(props) {
       </div>
       <div className="itemcard__contentwrapper">
         {/* <div className="itemcard__textwrapper"> */}
-        <div className="itemcard__name">{props.item.name}</div>
+        <div className="itemcard__name">{props.item.name}{props.favouriteId}{props.favourite.favouriteId}</div>
         <div className="itemcard__price">
           <small>$</small>
           {props.item.price}

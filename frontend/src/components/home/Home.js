@@ -7,7 +7,7 @@ import "./home.css";
 
 function Home(props) {
   const [items, setItems] = useState([]);
-  const [favourites, setFavourites] = useState([]);
+  const [favourites, setFavourites] = useState({});
 
   const navigate = useNavigate();
 
@@ -41,12 +41,11 @@ function Home(props) {
     <div className="home-container">
       {items.map((item) => (
         <ItemCard
-          key={item.item_id}
+          // key={favourites[item.item_id] || item.item_id}
           item={item}
-          favourite={favourites.find(
-            (element) => element.item_id == item.item_id
-          )
-         
+          favourite={
+         {favouriteId:favourites[item.item_id],
+         updateFavourites:setFavourites}
         }
         />
       ))}
