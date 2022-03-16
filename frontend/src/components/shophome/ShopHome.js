@@ -6,10 +6,12 @@ import { addToken } from "../../redux/tokenSlice";
 import "./shophome.css";
 import { Alert } from "@mui/material";
 import ShopItemForm from "../shopitemform/ShopItemForm";
+import ItemCard from "../itemcard/ItemCard";
 
 class ShopHome extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       shop_pic_url: "",
       shop_pic_file: "",
@@ -20,9 +22,15 @@ class ShopHome extends Component {
         fullname: "",
         phone: "",
       },
-      redirectVar: "",
+      redirectVar: this.props.token ? (
+        ""
+      ) : (
+        <Navigate replace to="/login"></Navigate>
+      ),
       upload_s3_url: "",
       message: "",
+      items: [],
+      modelItem: {},
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -30,15 +38,25 @@ class ShopHome extends Component {
 
     this.handleModelClose = this.handleModelClose.bind(this);
     this.handleModelOpen = this.handleModelOpen.bind(this);
-}
+    this.getShopDetails = this.getShopDetails.bind(this);
+  }
 
-handleModelOpen(){
-    this.setState({isModelOpen:true})
+  handleModelOpen(item) {
+    if (!item.item_id) {
+      item = {};
+    }
+    this.setState({ isModelOpen: true, modelItem: item });
   }
-  handleModelClose(){
-    this.setState({isModelOpen:false})
+  handleModelClose(didItemChange) {
+    this.setState((prevState, props) => {
+      return {
+        isModelOpen: false,
+        modelItem: { ...prevState.modelItem, itemChanged: didItemChange },
+      };
+    });
   }
-  componentDidMount() {
+
+  getShopDetails() {
     let url = "http://localhost:3001/shops/get";
     fetch(url, {
       credentials: "include",
@@ -59,10 +77,23 @@ handleModelOpen(){
             shop_pic_url: jsonresponse.shop_pic_url,
             user: jsonresponse.user,
             upload_s3_url: jsonresponse.upload_s3_url,
+            items: jsonresponse.items,
           });
         }
       })
       .catch((error) => console.log(error));
+  }
+
+  componentDidMount() {
+    if (this.props.token) {
+      this.getShopDetails();
+    }
+  }
+  componentDidUpdate() {
+    if (this.state.modelItem.itemChanged) {
+      this.getShopDetails();
+      this.setState({ modelItem: {} });
+    }
   }
 
   handleChange(event) {
@@ -175,58 +206,77 @@ handleModelOpen(){
   }
 
   render() {
+    if (this.state.redirectVar) {
+      return this.state.redirectVar;
+    }
     return (
       <>
-      {this.state.redirectVar}
-      { this.state.isModelOpen && <ShopItemForm handleModelClose = {this.handleModelClose} />}
-      <form className="shopform" onSubmit={this.handleSubmit} >
-        <div className="shopform__child1">
-          <span className="shopform__title">{this.state.shop_name}</span>
-          <img
-            src={this.state.shop_pic_url || "https://smacksportswear.com/wp-content/uploads/2019/07/storefront-icon.jpg"}
-            className="shopform__image"
-            alt="Shop Pic"
+        {this.state.isModelOpen && (
+          <ShopItemForm
+            handleModelClose={this.handleModelClose}
+            item={this.state.modelItem}
           />
-
-          <div>
-            <input
-              type="file"
-              name="file"
-              className="shopform__button"
-              onChange={this.handleChange}
+        )}
+        <form className="shopform" onSubmit={this.handleSubmit}>
+          <div className="shopform__child1">
+            <span className="shopform__title">{this.state.shop_name}</span>
+            <img
+              src={
+                this.state.shop_pic_url ||
+                "https://smacksportswear.com/wp-content/uploads/2019/07/storefront-icon.jpg"
+              }
+              className="shopform__image"
+              alt="Shop Pic"
             />
-          </div>
-          <div>
-            <input type='submit' value='Save'/>
-          </div>
-        </div>
-        <div className="shopform__child2">
-          <div className="shopform__btn_ctn">
-            <input
-              type="button"
-              value="Add Item"
-              onClick={this.handleModelOpen}
-              className="shopform__btn"
-            />
-          </div>
-          <div className="shopform__itemcontainer">
 
+            <div>
+              <input
+                type="file"
+                name="file"
+                className="shopform__button"
+                onChange={this.handleChange}
+              />
+            </div>
+            <div>
+              <input type="submit" value="Save" />
+            </div>
           </div>
-        </div>
-        <div className="shopform__child3">
-          <div>Owner Details</div>
-          <img
-            src={this.state.user.profile_pic_url || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png"}
-            className="shopform__image"
-            alt="Shop Owner Pic"
-          />
-          <div>Owner: {this.state.user.fullname}</div>
-          <div>Contact: {this.state.user.phone}</div>
-        </div>
-      </form>
-    
+          <div className="shopform__child2">
+            <div className="shopform__btn_ctn">
+              <input
+                type="button"
+                value="Add Item"
+                onClick={this.handleModelOpen}
+                className="shopform__btn"
+              />
+            </div>
+
+            <div className="shopform__itemcontainer">
+              {this.state.items.map((item) => (
+                <ItemCard
+                  key={item.item_id}
+                  item={item}
+                  handleModelOpen={this.handleModelOpen}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="shopform__child3">
+            <div>Owner Details</div>
+            <img
+              src={
+                this.state.user.profile_pic_url ||
+                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png"
+              }
+              className="shopform__image"
+              alt="Shop Owner Pic"
+            />
+            <div>Owner: {this.state.user.fullname}</div>
+            <div>Contact: {this.state.user.phone}</div>
+          </div>
+        </form>
       </>
     );
   }
 }
-export default connect(getToken, {addToken})(ShopHome);
+export default connect(getToken, { addToken })(ShopHome);

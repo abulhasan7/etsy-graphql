@@ -1,25 +1,44 @@
-const { Item, Item_Category, Shop } = require("../models/index");
+const { Op } = require("sequelize");
+const { Item, Item_Category, Shop, sequelize, Favourite } = require("../models/index");
 const { generateSignedUrl } = require("../utils/s3");
 
-async function getAll(shop_id) {
+async function getAllForShop(shop_id) {
   try {
     let allItems;
-    if (shop_id) {
-      allItems = await Item.findAll({
-        include: [Shop],
-        where: {
-          shop_id: shop_id,
-        },
-      });
-    } else {
-      allItems = await Item.findAll({
-        include: [Shop],
-      });
-    }
-
-    console.log(JSON.stringify(allItems));
+    allItems = await Item.findAll({
+      where: {
+        shop_id: shop_id,
+      },
+    });
 
     return allItems;
+  } catch (error) {
+    console.log("Error occured while getting all the Items", error);
+    throw new Error(error.message);
+  }
+}
+
+
+
+async function getAllExceptShop(shop_id,user_id) {
+  console.log("shop id is " + shop_id);
+  try {
+    let itemsPromise = Item.findAll({
+      include: [{ model: Shop, attributes: ["shop_id","shop_name"] }],
+      where: {
+        shop_id: {
+          [Op.ne]: shop_id || "",
+        },
+      },
+    });
+    let favouritesPromse = Favourite.findAll({
+      attributes: ["favourite_id","item_id"],
+      where: {
+        user_id:user_id
+      },
+    });
+    const [items,favourites] =await Promise.all([itemsPromise,favouritesPromse])
+    return {items:items,favourites:favourites};
   } catch (error) {
     console.log("Error occured while getting all the Items", error);
     throw new Error(error.message);
@@ -42,21 +61,20 @@ async function addItem(item) {
       stock: item.stock,
       sold_count: item.sold_count || 0,
       shop_id: item.shop_id,
+      item_pic_url: item.item_pic_url,
     });
     return `Item ${item.name} created successfully`;
   } catch (error) {
     console.log("Error occured while adding item", error);
     if (error.name && error.name === "SequelizeUniqueConstraintError") {
-      if(passedCategory){
+      if (passedCategory) {
         throw new Error(
           `Item ${item.name} under the category ${item.category} for the shop already exist`
         );
-      }else{
-        throw new Error(
-          `Category already ${item.category} exists`
-        );
+      } else {
+        throw new Error(`Category already ${item.category} exists`);
       }
-      }
+    }
 
     throw new Error(error.message);
   }
@@ -75,6 +93,7 @@ async function updateItem(item) {
         description: item.description,
         price: item.price,
         stock: item.stock,
+        item_pic_url: item.item_pic_url,
         // sold_count: item.sold_count,
         // shop_id: item.shop_id,
       },
@@ -118,4 +137,10 @@ async function additemsgetparams() {
     throw new Error(error.message);
   }
 }
-module.exports = { getAll, addItem, updateItem, additemsgetparams };
+module.exports = {
+  getAllForShop,
+  getAllExceptShop,
+  addItem,
+  updateItem,
+  additemsgetparams,
+};

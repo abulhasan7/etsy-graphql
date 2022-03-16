@@ -13,6 +13,7 @@ class ShopReg extends Component {
       isAvailable: false,
       message: "",
       isRegistered: false,
+      redirectVar: this.props.token?"" : <Navigate replace to="/login"></Navigate>,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleShopNameSubmit = this.handleShopNameSubmit.bind(this);
@@ -143,7 +144,9 @@ class ShopReg extends Component {
   }
   render() {
     return (
+      
       <div className="shopreg__parent">
+                {this.state.redirectVar}
         {this.state.isRegistered}
         <form className="shopreg__form">
           <div className="shopreg__title">Name your shop</div>

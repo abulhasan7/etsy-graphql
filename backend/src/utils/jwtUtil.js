@@ -8,6 +8,7 @@ function generateToken(user_id,shop_id){
     if(shop_id){
         payload.shop_id = shop_id
     }
+    console.log("payload is ",payload)
     return jwt.sign(payload,process.env.ACCESS_TOKEN_SECRET);
 }
 

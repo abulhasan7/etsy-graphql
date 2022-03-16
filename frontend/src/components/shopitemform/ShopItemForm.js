@@ -6,21 +6,25 @@ import { Alert } from "@mui/material";
 import "./shopitemform.css";
 
 class ShopItemForm extends Component {
+
   constructor(props) {
     super(props);
+    this.item = this.props.item || {};
     this.state = {
-      item_pic_url: "",
-      item_pic_file: "",
-      category: "Select",
-      description: "",
-      price: 0.0,
-      stock: 0,
-      itemname: "",
+      item_pic_url: this.item.item_pic_url || "",
+      item_pic_file: this.item.item_pic_file || "",
+      category: this.item.category || "Select",
+      description: this.item.description || "",
+      price: this.item.price || 0.0,
+      stock: this.item.stock || 0,
+      itemname: this.item.name || "",
       categories: [],
       s3_upload_url: "",
       alert: "",
       errmessage: "",
       manualcategory: "",
+      item_id:this.item.item_id,
+      itemChanged:false
     };
     Modal.setAppElement("#root");
     this.customStyles = {
@@ -37,10 +41,11 @@ class ShopItemForm extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleInputValidation = this.handleInputValidation.bind(this);
     this.handleInputSubmit = this.handleInputSubmit.bind(this);
+
   }
 
   handleModelClose() {
-    this.props.handleModelClose();
+    this.props.handleModelClose(this.state.itemChanged);
     // this.setState({isModelOpen:false})
   }
   handleInputChange(event) {
@@ -135,7 +140,8 @@ class ShopItemForm extends Component {
           item_url,
           parseFloat(this.state.price).toFixed(2)
         );
-        return fetch("http://localhost:3001/items/add", {
+        let url = this.props.item.item_id ? "http://localhost:3001/items/update":"http://localhost:3001/items/add"
+        return fetch(url, {
           method: "POST",
           body: JSON.stringify({
             item_pic_url: item_url,
@@ -144,6 +150,7 @@ class ShopItemForm extends Component {
             price: parseFloat(this.state.price).toFixed(2),
             stock: this.state.stock,
             name: this.state.itemname,
+              item_id:this.state.item_id
           }),
           headers: {
             Authorization: this.props.token,
@@ -160,7 +167,7 @@ class ShopItemForm extends Component {
               {response.message || "Success"}
             </Alert>
           );
-          this.setState({ alert: elem });
+          this.setState({ alert: elem,itemChanged:true });
         } else {
           return Promise.reject(response.error);
         }

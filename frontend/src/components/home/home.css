@@ -1,0 +1,6 @@
+.home-container{
+    display: flex;
+    background-color: #DEDEDE;
+    height: 100vh;
+    padding: 20px;
+}

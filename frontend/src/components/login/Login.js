@@ -95,7 +95,7 @@ class Login extends Component {
   render() {
     return (
       <div className="parent">
-        {this.state.loggedIn && <Navigate replace to="/profile"></Navigate>}
+        {this.state.loggedIn && <Navigate replace to="/home"></Navigate>}
         <form className="loginform" onSubmit={this.handleSubmit}>
           <div className="loginform__heading">Sign In Here</div>
           {this.state.error && (

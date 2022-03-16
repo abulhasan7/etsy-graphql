@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import "./profile.css";
 import { Alert } from "@mui/material";
 import { connect } from "react-redux";
 import { getToken } from "../../redux/selectors";
+import { Navigate } from "react-router-dom";
+import "./profile.css";
 
 class Profile extends Component {
   constructor(props) {
@@ -18,10 +19,15 @@ class Profile extends Component {
       dob: "",
       about: "",
       phone: "",
-      country: "Africa",
+      country: "Select",
       upload_s3_url: "",
       message: "",
       countries: ["India", "Africa"],
+      redirectVar: this.props.token ? (
+        ""
+      ) : (
+        <Navigate replace to="/login"></Navigate>
+      ),
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -62,7 +68,7 @@ class Profile extends Component {
             phone: json.phone,
             country: json.country,
             upload_s3_url: json.upload_s3_url,
-            countries: json.countries.map(c=>c.name)
+            countries: json.countries.map((c) => c.name),
           };
           this.setState(currentState);
         }
@@ -148,7 +154,7 @@ class Profile extends Component {
         message = "Phone can't be empty";
       } else if (this.state.phone.length !== 10) {
         message = "Phone has to be 10 numbers exact";
-      } else if (this.state.country === "") {
+      } else if (this.state.country === "" || this.state.country === "Select") {
         message = "Country can't be empty";
       }
 
@@ -171,20 +177,22 @@ class Profile extends Component {
     this.handleValidation()
       .then(() => {
         if (this.state.profile_pic_file) {
-         return fetch(this.state.upload_s3_url, {
+          return fetch(this.state.upload_s3_url, {
             method: "PUT",
             body: this.state.profile_pic_file,
-          })
+          });
         }
       })
-      .then(s3response => {
-        console.log("s3resoibse",s3response)
-        if(s3response && s3response.status !== 200){
-          return Promise.reject({message:"Error occurred during uploading file"});
-        }else  if(s3response && s3response.status === 200){
-          return Promise.resolve(this.state.upload_s3_url.split("?")[0])
-        }else{
-          return Promise.resolve(this.state.profile_pic_url)
+      .then((s3response) => {
+        console.log("s3resoibse", s3response);
+        if (s3response && s3response.status !== 200) {
+          return Promise.reject({
+            message: "Error occurred during uploading file",
+          });
+        } else if (s3response && s3response.status === 200) {
+          return Promise.resolve(this.state.upload_s3_url.split("?")[0]);
+        } else {
+          return Promise.resolve(this.state.profile_pic_url);
         }
       })
       .then((s3url) => {
@@ -199,7 +207,7 @@ class Profile extends Component {
           about: this.state.about,
           phone: this.state.phone,
           country: this.state.country,
-          profile_pic_url:s3url
+          profile_pic_url: s3url,
         };
         fetch(url, {
           method: "PUT",
@@ -207,7 +215,7 @@ class Profile extends Component {
           body: JSON.stringify(body),
           headers: {
             Authorization: this.props.token,
-            'Content-type':'application/json'
+            "Content-type": "application/json",
           },
           //no header, as we want fetch to set the header itself, if we set then we hve to define boundary
         })
@@ -259,15 +267,18 @@ class Profile extends Component {
   }
 
   render() {
-    console.log("file", this.state.pic);
     return (
       <div className="profileform__parent">
+        {this.state.redirectVar}
         <form className="profileform" onSubmit={this.handleSubmit}>
           <div className="profileform__heading">Your Public Profile</div>
           <div className="profileform__formmessage">{this.state.message}</div>
           <div className="profileform__formimagegrid">
             <img
-              src={this.state.profile_pic_url || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png"}
+              src={
+                this.state.profile_pic_url ||
+                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png"
+              }
               className="profileform__formimage"
             ></img>
           </div>
@@ -294,7 +305,9 @@ class Profile extends Component {
           <div className="profileform__formgroup">
             <label>Gender:</label>
             <span>
-              <label htmlFor="male">Male:</label>
+              <label htmlFor="male" className="radiolabel">
+                Male:
+              </label>
               <input
                 type="radio"
                 name="gender"
@@ -303,7 +316,9 @@ class Profile extends Component {
                 checked={this.state.gender === "M"}
                 onChange={this.handleChange}
               />
-              <label htmlFor="female">FeMale:</label>
+              <label htmlFor="female" className="radiolabel">
+                FeMale:
+              </label>
               <input
                 type="radio"
                 name="gender"
@@ -394,6 +409,7 @@ class Profile extends Component {
               value={this.state.country}
               onChange={this.handleChange}
             >
+              <option>Select</option>
               {this.state.countries.map((country) => {
                 return <option>{country}</option>;
               })}

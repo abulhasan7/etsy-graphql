@@ -1,0 +1,116 @@
+.item-overview-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 50px;
+  /* justify-items: center;
+    align-items: center; */
+  margin: 30px 100px;
+}
+.item-overview-fav-icon{
+  position:absolute;
+  right: 10px;
+  top: 10px;;
+  /* background-color: white; */
+  border: none;
+  border-radius: 25%;
+}
+.item-overview-image-container {
+  /* width: 100%;
+    height: 100%; */
+    width: 700px;
+    height: 500px;
+    position: relative;
+
+}
+
+.item-overview-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.item-overview-shop-name {
+  font-size: 16px;
+}
+
+.item-overview-sales-count {
+  font-size: 13px;
+  color: #222222;
+  line-height: 18px;
+}
+
+.item-overview-item-name {
+  font-size: 26px;
+  line-height: 32px;
+  vertical-align: baseline;
+  letter-spacing: 0.35px;
+}
+
+.item-overview-price {
+  line-height: 36px;
+  font-size: 36px;
+  font-weight: 700;
+  display: inline;
+}
+
+.item-overview-quantity-select{
+  display: block;
+}
+
+.item-overview-add-fav-btn{
+  border: none;
+  border-radius: 10px;
+  background-color: #222222;
+  color: white;
+  width: 250px;
+  height: 35px;  margin-top: 20px;
+  display: block;
+}
+
+.item-overview-stock{
+  display: inline;
+  position: absolute;
+  right: 0;
+
+}
+
+.item-overview-quantity-container{
+  margin: 25px 0px;
+}
+
+.item-overview-quantity-label{
+  margin-bottom: 10px;
+}
+
+.item-overview-quantity-select{
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  border: 1px solid #DEDEDE;
+  color: black;
+  background-color: white;
+  width: 250px;
+  height: 35px;}
+
+.item-overview-add-cart-btn{
+  border: none;
+  border-radius: 10px;
+  background-color: #222222;
+  color: white;
+  width: 250px;
+  height: 35px;
+  /* padding: 10px 50px; */
+  margin-top: 20px;
+  display: block;
+}
+
+.item-overview-description-container{
+  margin-top: 20px;
+}
+.item-overview-description-label{
+
+}
+
+.item-overview-description-text{
+  line-height: 1.5em;
+}

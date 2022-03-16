@@ -1,10 +1,10 @@
 const { Favourite, Item } = require("../models/index");
 
-async function get(user) {
+async function get(user_id) {
   try {
     const favourites = await Favourite.findAll({
       where: {
-        user_id: user.user_id,
+        user_id: user_id,
       },
       include: [Item],
     });
@@ -18,14 +18,33 @@ async function get(user) {
   }
 }
 
+async function isFavourite(user_id,item_id) {
+  try {
+    const favourites = await Favourite.findOne({
+      where: {
+        user_id: user_id,
+        item_id:item_id
+      }
+    });
+    if (favourites.length === 0) {
+        return false;
+    }
+    return true;
+  } catch (error) {
+    console.log("Error occurred while getting favourites", error);
+    throw new Error(error.message);
+  }
+}
+
 async function add(user) {
   try {
-    const success = await Favourite.create({
+    console.log("user is ",user);
+    const favourite = await Favourite.create({
       user_id: user.user_id,
       item_id: user.item_id,
     });
-    if (success) {
-      return "Favourite added successfully";
+    if (favourite) {
+      return favourite.favourite_id;
     }
     throw new Error("Some error occurred while adding favourite");
   } catch (error) {

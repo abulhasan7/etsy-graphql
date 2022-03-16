@@ -2,23 +2,26 @@ const express = require('express')
 const router = express.Router()
 const itemService = require("../services/itemService");
 
+//Get all the items except the user's shop's item
 router.get('/get-all',async (req,res) =>{
   try{
-    const success = await itemService.getAll();
+    const items = await itemService.getAllExceptShop(req.shop_id,req.user_id);
+    res.json({ message: items });
+  }catch(error){
+    res.status(400).json({ error: error.message });  
+  }
+})
+
+//Get all the items for a shop, owner api
+router.get('/get-all-for-shop',async (req,res) =>{
+  try{
+    const success = await itemService.getAllForShop(req.shop_id);
     res.json({ message: success });
   }catch(error){
     res.status(400).json({ error: error.message });  
   }
 })
 
-router.get('/get-all-by-shop',async (req,res) =>{
-  try{
-    const success = await itemService.getAll(req.shop_id);
-    res.json({ message: success });
-  }catch(error){
-    res.status(400).json({ error: error.message });  
-  }
-})
 
 router.post("/add", async (req, res) => {
     try {
@@ -37,7 +40,7 @@ router.post("/update", async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
-
+//This is for when the Item Add/Edit Popup opens up for the shop owner
 router.get("/additem-getparams", async (req, res) => {
   try {
     const data = await itemService.additemsgetparams();

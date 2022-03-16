@@ -5,12 +5,12 @@
     /* border: 2px solid #DEDEDE; */
     padding: 10px;
     column-gap: 10px;
+    background-color:rgb(234, 237, 237) ;
+    height: 100vh;
 }
 
 .shopform__child1{
     grid-area: shopdetails;
-    border-right: 2px solid #DEDEDE;
-    border: 2px solid #DEDEDE;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
@@ -19,13 +19,16 @@
     flex-wrap: wrap;
     padding: 10px;
     width: 220px;
+    max-height: 350px;
+    background-color: white;
+
 }
 
 .shopform__child2{
     grid-area: items;
-    border: 2px solid #DEDEDE;
+    border: 2px solid white;
     border-radius: 5px;
-
+    
 }
 .shopform__btn_ctn{
     display: flex;
@@ -35,12 +38,14 @@
 
 .shopform__itemcontainer{
     display: flex;
-    border-top: 2px solid #DEDEDE;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    padding-top: 15px;
+    /* border-top: 2px solid white; */
 }
 .shopform__child3{
     grid-area: ownerdetails;
     justify-self: end;
-    border: 2px solid #DEDEDE;
     border-radius: 5px;
     margin-left: 20px;
     padding: 10px;
@@ -49,6 +54,9 @@
     justify-content: space-around;
     align-items: stretch;
     flex-wrap: wrap;
+    max-height: 350px;
+    background-color: white;
+
 }
 
 .shopform__title{

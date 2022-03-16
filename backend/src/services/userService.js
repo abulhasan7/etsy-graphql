@@ -1,4 +1,4 @@
-const { User, Country } = require("../models/index");
+const { User, Country, Shop } = require("../models/index");
 const bcrypt = require("bcrypt");
 const jwtUtil = require("../utils/jwtUtil");
 const { generateSignedUrl } = require("../utils/s3");
@@ -8,10 +8,12 @@ async function login(userDetails) {
     const dbUser = await User.findOne({
       attributes: ["user_id", "email", "password"],
       where: { email: userDetails.email },
+      include: [{ model: Shop, attributes: ["shop_id","shop_name"] }],
     });
     if (!dbUser) {
       throw new Error("User not found");
     } else {
+      console.log("dbuser", dbUser);
       const result = await bcrypt.compare(
         userDetails.password,
         dbUser.password
@@ -19,7 +21,8 @@ async function login(userDetails) {
       if (!result) {
         throw new Error("Invalid Password");
       } else {
-        return jwtUtil.generateToken(dbUser.user_id);
+        let shop_id = dbUser.Shop?dbUser.Shop.shop_id : null;
+        return jwtUtil.generateToken(dbUser.user_id,shop_id);
       }
     }
   } catch (error) {
@@ -41,19 +44,11 @@ async function get(user_id) {
     } else {
       const [upload_s3_url, countries] = await Promise.all([
         generateSignedUrl(),
-        Country.findAll()
+        Country.findAll(),
       ]);
       dbUser.dataValues.upload_s3_url = upload_s3_url;
       dbUser.dataValues.countries = countries;
       return dbUser;
-      // console.log("signed url is ", upload_s3_url);
-      // console.log(countries);
-
-      // const shop = await dbUser.getShops();
-      // if (shop) {
-      //   dbUser.setDataValue("shop", shop);
-      // }
-      // console.log("dbuser is ", dbUser);
     }
   } catch (error) {
     console.error("Error occured:", error);

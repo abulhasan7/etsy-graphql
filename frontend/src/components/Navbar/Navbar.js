@@ -19,15 +19,9 @@ class Navbar extends Component {
   render() {
 
     return (
-      /*
-        Logo - image
-        Searcbox
-        Log IN/Log out
-        Cart Icon with number
-        */
       <div>
         <nav className="header">
-          <Link className="header__link" to="/">
+          <Link className="header__link" to="/home">
             <img className="header__logo" src={etsylogo} alt="Etsy-title" />
           </Link>
           {this.props.token && <div className="header__search">

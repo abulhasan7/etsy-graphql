@@ -7,6 +7,9 @@ import Register from './components/register/Register';
 import ShopReg from './components/shopreg/ShopReg';
 import ShopHome from './components/shophome/ShopHome';
 import Home from './components/home/Home'
+import ItemOverview from './components/itemoverview/ItemOverview';
+import Favourites from './components/favourites/Favourites';
+import Checkout from './components/checkout/Checkout';
 function App() {
   return (
     <BrowserRouter>
@@ -16,6 +19,9 @@ function App() {
       <Route path='register' element = {<Register/>}/>
       <Route path='profile' element = {<Profile/>}/>
       <Route path='home' element = {<Home/>}/>
+      <Route path='item' element = {<ItemOverview/>}/>
+      <Route path='favourites' element={<Favourites/>}/>
+      <Route path='checkout' element={<Checkout/>}/>
       <Route path='shop'>
       <Route path='register' element = {<ShopReg/>}/>
       <Route path='home' element = {<ShopHome/>}/>

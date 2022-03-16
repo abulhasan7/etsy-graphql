@@ -99,6 +99,7 @@ const Order_Detail = sequelize.define("Order_Detail", order_detail(DataTypes), {
 User.belongsTo(Country, { foreignKey: "country" });
 User.hasMany(Order,{foreignKey:'user_id'})
 User.hasMany(Favourite,{foreignKey:'user_id'})
+User.hasOne(Shop,{ foreignKey: "user_id" })
 Shop.belongsTo(User, { foreignKey: "user_id" });
 Shop.hasMany(Item,{foreignKey:'shop_id'});
 Item.belongsTo(Item_Category, { foreignKey: "category" ,onUpdate: 'CASCADE'});
@@ -121,4 +122,5 @@ module.exports = {
   Item,
   Order,
   Order_Detail,
+  sequelize
 };
