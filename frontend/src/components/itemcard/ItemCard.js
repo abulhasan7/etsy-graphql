@@ -1,19 +1,21 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { getToken } from "../../redux/selectors";
 import { connect } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import "./itemcard.css";
 
 function ItemCard(props) {
-  console.log(props.favourite);
+
   const [favouriteId, setFavouriteId] = useState(
-    props.favourite ? (props.favourite).favourite_id : undefined
+    props.favourite ? props.favourite["favourite_id"] : undefined
   );
-  console.log("laa", favouriteId, props.favourite);
+
+  const navigate = useNavigate();
 
   const handleFavouriteClick = () => {
+    console.log("handle favourite")
     if (favouriteId) {
       removeFavourite();
     } else {
@@ -69,35 +71,37 @@ function ItemCard(props) {
     if (props.handleModelOpen) {
       props.handleModelOpen({ ...props.item });
     } else {
-      console.log("todod user navigation");
+      navigate("/items/"+((props.item).name), { state: { item: props.item,favouriteId:favouriteId } });
     }
   };
+
   return (
     //TODO enable link
-    // <Link className="header__link" to="/">
-    <div className="itemcard" onClick={handleCardClick}>
+    <div className="itemcard" >
       <div className="itemcard__picwrapper">
         <img
           src={
             props.item.item_pic_url ||
             "https://i.etsystatic.com/28277314/r/il/bbe7f1/2979414179/il_794xN.2979414179_ff0j.jpg"
           }
-          className="itemcard__pic"
+          className="itemcard__pic" onClick={handleCardClick}
         />
-        <div className="item-overview-fav-icon">
-          {favouriteId ? (
-            <FavoriteIcon
-            // style={{ fontSize: 30, color: "#F1641E" }} 
-              style={{ fontSize: 30, color: "#D9230F" }} 
-              onClick={handleFavouriteClick}
-            />
-          ) : (
-            <FavoriteBorderIcon
-              style={{ fontSize: 30, color: "#D9230F" }}
-              onClick={handleFavouriteClick}
-            />
-          )}
-        </div>
+        {!props.handleModelOpen && (
+          <div className="item-overview-fav-icon">
+            {favouriteId ? (
+              <FavoriteIcon
+                // style={{ fontSize: 30, color: "#F1641E" }}
+                style={{ fontSize: 30, color: "#D9230F" }}
+                onClick={handleFavouriteClick}
+              />
+            ) : (
+              <FavoriteBorderIcon
+                style={{ fontSize: 30, color: "#D9230F" }}
+                onClick={handleFavouriteClick}
+              />
+            )}
+          </div>
+        )}
       </div>
       <div className="itemcard__contentwrapper">
         {/* <div className="itemcard__textwrapper"> */}
@@ -108,7 +112,6 @@ function ItemCard(props) {
         </div>
       </div>
     </div>
-    // </Link>
   );
 }
 

@@ -45,7 +45,9 @@ function Home(props) {
           item={item}
           favourite={favourites.find(
             (element) => element.item_id == item.item_id
-          )}
+          )
+         
+        }
         />
       ))}
     </div>

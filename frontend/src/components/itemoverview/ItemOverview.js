@@ -3,13 +3,69 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { connect } from "react-redux";
 import { getToken } from "../../redux/selectors";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./itemoverview.css";
 
 function ItemOverview(props) {
-  const [isFavourite, setIsFavourite] = useState(true);
+  const { item, favouriteId:favourite_id } = useLocation().state;
+
+  const [favouriteId, setFavouriteId] = useState(favourite_id);
+
+  console.log("item", item.item);
 
   const navigate = useNavigate();
+
+  const handleFavouriteClick = () => {
+    if (favouriteId) {
+      removeFavourite();
+    } else {
+      addFavourite();
+    }
+  };
+
+  const addFavourite = () => {
+    fetch("http://localhost:3001/favourites/add", {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        Authorization: props.token,
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        item_id: item["item_id"],
+      }),
+    })
+      .then((res) => res.json())
+      .then((jsonresponse) => {
+        console.log(jsonresponse);
+        console.log(jsonresponse.message);
+        setFavouriteId(jsonresponse.message);
+        console.log("success");
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const removeFavourite = () => {
+    fetch("http://localhost:3001/favourites/remove", {
+      method: "DELETE",
+      mode: "cors",
+      headers: {
+        Authorization: props.token,
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        favourite_id: favouriteId,
+      }),
+    })
+      .then((res) => res.json())
+      .then((jsonresponse) => {
+        console.log(jsonresponse);
+        console.log(jsonresponse.message);
+        setFavouriteId();
+        console.log("success");
+      })
+      .catch((error) => console.log(error));
+  };
 
   useEffect(() => {
     if (!props.token) {
@@ -17,28 +73,26 @@ function ItemOverview(props) {
     }
   }, []);
 
-  const handleFavouriteClick = () => {
-    setIsFavourite((prevValue) => !prevValue);
-  };
   return (
     <div className="item-overview-container">
       <div className="item-overview-image-container">
         <img
           src={
+            item.item_pic_url ||
             "https://i.etsystatic.com/28277314/r/il/bbe7f1/2979414179/il_794xN.2979414179_ff0j.jpg"
           }
           alt={"Item overview Image"}
           className="item-overview-image"
         />
         <div className="item-overview-fav-icon">
-          {isFavourite ? (
+          {favouriteId ? (
             <FavoriteIcon
-              style={{ fontSize: 50 }}
+              style={{ fontSize: 30, color: "#D9230F" }}
               onClick={handleFavouriteClick}
             />
           ) : (
             <FavoriteBorderIcon
-              style={{ fontSize: 50 }}
+              style={{ fontSize: 30, color: "#D9230F" }}
               onClick={handleFavouriteClick}
             />
           )}
@@ -46,11 +100,13 @@ function ItemOverview(props) {
       </div>
 
       <div className="item-overview-details-container">
-        <div className="item-overview-shop-name">Reliance Mart</div>
-        <div className="item-overview-sales-count">1000 sales</div>
-        <div className="item-overview-item-name">Poster Lalalal</div>
-        <div className="item-overview-price">$100</div>
-        <span className="item-overview-stock">In Stock</span>
+        <div className="item-overview-shop-name">{item.Shop["shop_name"]}</div>
+        <div className="item-overview-sales-count">{item.sold_count}</div>
+        <div className="item-overview-item-name">{item.name}</div>
+        <div className="item-overview-price">${item.price}</div>
+        <span className="item-overview-stock">
+          {item.stock > 0 ? "In Stock" : "Sold Out"}
+        </span>
         <div className="item-overview-quantity-container">
           <label
             className="item-overview-quantity-label"
@@ -59,6 +115,7 @@ function ItemOverview(props) {
             Quantity Required
           </label>
           <select
+            disabled={item.stock < 1}
             className="item-overview-quantity-select"
             id="quantity-select"
           >
@@ -70,6 +127,8 @@ function ItemOverview(props) {
         <input
           type={"button"}
           value="Add to Cart"
+          disabled={item.stock < 1}
+          onClick={() => console.log("on click called")}
           className="item-overview-add-cart-btn"
         />
         <div className="item-overview-description-container">

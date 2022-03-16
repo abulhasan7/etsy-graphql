@@ -10,6 +10,7 @@ import Home from './components/home/Home'
 import ItemOverview from './components/itemoverview/ItemOverview';
 import Favourites from './components/favourites/Favourites';
 import Checkout from './components/checkout/Checkout';
+
 function App() {
   return (
     <BrowserRouter>
@@ -19,9 +20,10 @@ function App() {
       <Route path='register' element = {<Register/>}/>
       <Route path='profile' element = {<Profile/>}/>
       <Route path='home' element = {<Home/>}/>
-      <Route path='item' element = {<ItemOverview/>}/>
+      <Route path='items/:item' element = {<ItemOverview/>}/>
       <Route path='favourites' element={<Favourites/>}/>
       <Route path='checkout' element={<Checkout/>}/>
+      {/* Seller Related routes, all comes under the route shop route */}
       <Route path='shop'>
       <Route path='register' element = {<ShopReg/>}/>
       <Route path='home' element = {<ShopHome/>}/>
@@ -31,22 +33,6 @@ function App() {
       <Route path = '*' element = {<div>Hey this is error page</div>}></Route>
     </Routes>
     </BrowserRouter>
-        /* 
-            COMMON
-            /login/
-            /logout/
-            /checkout/
-            /orders/
-            /home/
-            /search?keyword=
-            /profile/
-            /favourites/
-            /shop/:item - view whole data regarding specific item //api to be added in BE
-
-            /seller/shop/home/ - can edit shop name
-            /seller/shop/edit-items/ - can edit items here
-            
-        */
   );
 }
 

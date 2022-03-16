@@ -24,7 +24,8 @@ async function getAllExceptShop(shop_id,user_id) {
   console.log("shop id is " + shop_id);
   try {
     let itemsPromise = Item.findAll({
-      include: [{ model: Shop, attributes: ["shop_id","shop_name"] }],
+      //item already has a shopid, so only getting shop name
+      include: [{ model: Shop, attributes: ["shop_name"] }],
       where: {
         shop_id: {
           [Op.ne]: shop_id || "",
