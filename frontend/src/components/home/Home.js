@@ -11,7 +11,7 @@ function Home(props) {
   const [favourites, setFavourites] = useState({});
   const [filterRange, setFilterRange] = useState("");
   const [sortBy, setSortBy] = useState("");
-  const [includeOutOfStock, setIncludeOutOfStock] = useState(true);
+  const [excludeOutOfStock, setExcludeOutOfStock] = useState(false);
 
   const navigate = useNavigate();
 
@@ -49,13 +49,54 @@ function Home(props) {
     const value = event.target.value;
     if (value !== "Select") {
       const [lowRange, highRange] = event.target.value.split("-");
-      setFilterRange({ lowRange: parseInt(lowRange), highRange: parseInt(highRange) });
+      setFilterRange({
+        lowRange: parseInt(lowRange),
+        highRange: parseInt(highRange),
+      });
     }
     // setFilterRange(value);
   };
+
+  const handleOutOfStockChange = () => {
+    setExcludeOutOfStock((prevValue) => !prevValue);
+  };
+
+  const sortItems = (value)=>{
+    if(value==='Price'){
+      console.log("sorting price")
+      items.sort((item1,item2)=>item1.price-item2.price);
+    }else if(value==='Quantity'){
+      console.log("sorting quantity")
+      items.sort((item1,item2)=>item1.stock-item2.stock);
+    }else if(value==='Sales Count'){
+      console.log("sorting sales")
+      items.sort((item1,item2)=>item1.sold_count-item2.sold_count);
+    }
+  }
+  const handleSort = (event)=>{
+    let value = event.target.value;
+    console.log(":vale is",value)
+    setSortBy(value);
+    sortItems(value);
+  }
+  const getItem = (item) => (
+    <ItemCard
+      // key={favourites[item.item_id] || item.item_id}
+      item={item}
+      favourite={{
+        favouriteId: favourites[item.item_id],
+        updateFavourites: setFavourites,
+      }}
+    />
+  );
+  if(true){
+
+  }
   return (
     <div className="home-container">
       <div className="home-options-container">
+        <div className="home-options-price">
+      <label htmlFor="priceFilter">Filter by Price:</label>
         <select
           name="filter"
           id="priceFilter"
@@ -70,80 +111,93 @@ function Home(props) {
           <option>1001-10000</option>
           <option>10001-1000000</option>
         </select>
+        </div>
+        <div className="home-options-sortby">
+        <label htmlFor="sortyBy">Sort By:</label>
+        <select
+          name="sort"
+          id="sortBy"
+          className="home-options-price-select"
+          // value={filterRange}
+          onChange={handleSort}
+        >
+          <option>Select</option>
+          <option>Price</option>
+          <option>Quantity</option>
+          <option>Sales Count</option>
+        </select>
+        </div>
+        <div className="home-options-checkbox">
+          <label htmlFor="checkbox">Exclude Out of Stock:</label>
+          <input
+            type="checkbox"
+            id="checkbox"
+            value={excludeOutOfStock}
+            onClick={handleOutOfStockChange}
+          ></input>
+        </div>
       </div>
       <div className="home-items-container">
         {
-          // filter = "";
+
           items.map((item) => {
             if (searchKeyword) {
               if (searchKeyword === item.name) {
+                if (excludeOutOfStock) {
+                  if (item.stock > 0) {
+                    if (filterRange.highRange) {
+                      let price = parseFloat(item.price).toFixed(2);
+                      if (
+                        filterRange.lowRange <= price &&
+                        filterRange.highRange >= price
+                      ) {
+                        return getItem(item);
+                      }
+                    } else {
+                      return getItem(item);
+                    }
+                  }
+                } else {
+                  if (filterRange.highRange) {
+                    let price = parseFloat(item.price).toFixed(2);
+                    if (
+                      filterRange.lowRange <= price &&
+                      filterRange.highRange >= price
+                    ) {
+                      return getItem(item);
+                    }
+                  } else {
+                    return getItem(item);
+                  }
+                }
+              }
+            } else {
+              if (excludeOutOfStock) {
+                if (item.stock > 0) {
+                  if (filterRange.highRange) {
+                    let price = parseFloat(item.price).toFixed(2);
+                    if (
+                      filterRange.lowRange <= price &&
+                      filterRange.highRange >= price
+                    ) {
+                      return getItem(item);
+                    }
+                  } else {
+                    return getItem(item);
+                  }
+                }
+              } else {
                 if (filterRange.highRange) {
                   let price = parseFloat(item.price).toFixed(2);
-                  console.log("price is ",price);
-                  console.log("range is ",filterRange.lowRange +" "+filterRange.highRange)
-                  console.log("comparison", filterRange.lowRange <= price &&
-                  filterRange.highRange >=price)
                   if (
                     filterRange.lowRange <= price &&
                     filterRange.highRange >= price
                   ) {
-                    return (
-                      <ItemCard
-                        // key={favourites[item.item_id] || item.item_id}
-                        item={item}
-                        favourite={{
-                          favouriteId: favourites[item.item_id],
-                          updateFavourites: setFavourites,
-                        }}
-                      />
-                    );
+                    return getItem(item);
                   }
                 } else {
-                  return (
-                    <ItemCard
-                      // key={favourites[item.item_id] || item.item_id}
-                      item={item}
-                      favourite={{
-                        favouriteId: favourites[item.item_id],
-                        updateFavourites: setFavourites,
-                      }}
-                    />
-                  );
+                  return getItem(item);
                 }
-              }
-            } else {
-              if (filterRange.highRange) {
-                let price = parseFloat(item.price).toFixed(2);
-                console.log("price is ",price);
-                console.log("range is ",filterRange.lowRange +" "+filterRange.highRange)
-                console.log("comparison", filterRange.lowRange <= price &&
-                filterRange.highRange >=price)
-                if (
-                  filterRange.lowRange <= price &&
-                  filterRange.highRange >=price
-                ) {
-                  return (
-                    <ItemCard
-                      // key={favourites[item.item_id] || item.item_id}
-                      item={item}
-                      favourite={{
-                        favouriteId: favourites[item.item_id],
-                        updateFavourites: setFavourites,
-                      }}
-                    />
-                  );
-                }
-              } else {
-                return (
-                  <ItemCard
-                    // key={favourites[item.item_id] || item.item_id}
-                    item={item}
-                    favourite={{
-                      favouriteId: favourites[item.item_id],
-                      updateFavourites: setFavourites,
-                    }}
-                  />
-                );
               }
             }
           })

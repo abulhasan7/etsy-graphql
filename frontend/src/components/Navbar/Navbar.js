@@ -33,7 +33,7 @@ function Navbar(props) {
           <img className="header__logo" src={etsylogo} alt="Etsy-title" />
         </Link>
         {props.token && (
-          <div className="header__search">
+          <>          <div className="header__search">
             <input
               type="text"
               className="header__inputsearchbox"
@@ -44,13 +44,6 @@ function Navbar(props) {
               onClick={handleSearchClick}
             ></SearchIcon>
           </div>
-        )}
-        {/* {!this.props.token && <Link className="header__link" to="/login">
-            <div className="header__login">Login</div>
-          </Link>
-  } */}
-        {props.token && (
-          <>
             <Link className="header__link" to="/favourites">
               <div className="header__favourite">
                 <FavoriteBorderOutlinedIcon />
@@ -76,7 +69,7 @@ function Navbar(props) {
             >
               Log out
             </Link>
-          </>
+            </>
         )}
       </nav>
       <Outlet />
