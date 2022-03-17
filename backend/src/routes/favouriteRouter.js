@@ -4,7 +4,7 @@ const favouriteService = require("../services/favouriteService");
 
 router.get("/get-all",async (req, res) => {
   try {
-    const success = await favouriteService.get(req.user_id);
+    const success = await favouriteService.getAllWithUserProfile(req.user_id);
     res.json({ message: success });
   } catch (error) {
     res.status(400).json({ error: error.message });

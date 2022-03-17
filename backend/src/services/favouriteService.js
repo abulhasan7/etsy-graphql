@@ -1,35 +1,25 @@
-const { Favourite, Item } = require("../models/index");
+const { Favourite, Item,User,Shop } = require("../models/index");
 
-async function get(user_id) {
+async function getAllWithUserProfile(user_id) {
   try {
-    const favourites = await Favourite.findAll({
+    const favouritePromise = Favourite.findAll({
+      attributes: {
+        exclude: ["user_id"],
+      },
       where: {
         user_id: user_id,
       },
-      include: [Item],
+      include: [{model:Item,include:[Shop]}],
     });
-    if (favourites.length === 0) {
-      throw new Error("No Favourites found for the user");
-    }
-    return favourites;
-  } catch (error) {
-    console.log("Error occurred while getting favourites", error);
-    throw new Error(error.message);
-  }
-}
-
-async function isFavourite(user_id,item_id) {
-  try {
-    const favourites = await Favourite.findOne({
-      where: {
-        user_id: user_id,
-        item_id:item_id
-      }
+    const profilePromise = User.findOne({
+      attributes: {
+        exclude: ["user_id"],
+      },
+      where: { user_id: user_id },
     });
-    if (favourites.length === 0) {
-        return false;
-    }
-    return true;
+    const [profile,favourites] = await Promise.all([profilePromise,favouritePromise])
+ 
+    return {profile:profile,favourites:favourites || []};
   } catch (error) {
     console.log("Error occurred while getting favourites", error);
     throw new Error(error.message);
@@ -73,4 +63,4 @@ async function remove(favourite_id) {
   }
 }
 
-module.exports = { get, add, remove };
+module.exports = { getAllWithUserProfile, add, remove };
