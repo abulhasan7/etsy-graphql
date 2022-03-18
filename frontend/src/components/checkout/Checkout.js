@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from "react";
-import { getTokenAndCart } from "../../redux/selectors";
+import React, {useEffect } from "react";
+import {getTokenCurrencyAndCart } from "../../redux/selectors";
 import { addCart,removeAllCart } from "../../redux/cartSlice";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +8,6 @@ import "./checkout.css";
 
 function Checkout(props) {
 
-  const totalPrice = useState(0);
   let total_price = 0;
   let totalItems = 0;
   let total_quantity = 0;
@@ -42,9 +41,9 @@ function Checkout(props) {
     })
       .then((res) => res.json())
       .then((jsonresponse) => {
-        console.log(jsonresponse);
-        console.log(jsonresponse.message);
-        console.log("success");
+        // console.log(jsonresponse);
+        // console.log(jsonresponse.message);
+        // console.log("success");
         // TODO navigate to orders
         props.removeAllCart();
         navigate("../orders");
@@ -60,8 +59,6 @@ function Checkout(props) {
     +=(parseFloat(item.price).toFixed(2))*item.quantity;
         totalItems++;
         total_quantity+=item.quantity
-        console.log("temprice",total_price
-    );
         return <CartItem
           // key={favourites[item.item_id] || item.item_id}
           item={item}
@@ -72,7 +69,7 @@ function Checkout(props) {
       <div className="checkout__header2"> Subtotal</div>
       <div className="checkout__totalitems"><span>No of Items:</span><span>{totalItems}</span></div> 
       <div className="checkout__totalitems"><span>Total Quantity:</span><span>{total_quantity}</span></div> 
-       <div className="checkout__totalprice"><span>Total Price:</span> <span>${total_price
+       <div className="checkout__totalprice"><span>Total Price:</span> <span>{props.currency}{total_price
     }</span></div>
         <input type="button" value='Purchase Items' className="checkout__btn" onClick={purchaseItems}/>
       </div>
@@ -80,4 +77,4 @@ function Checkout(props) {
   );
 }
 
-export default connect(getTokenAndCart, { addCart,removeAllCart })(Checkout);
+export default connect(getTokenCurrencyAndCart, { addCart,removeAllCart })(Checkout);

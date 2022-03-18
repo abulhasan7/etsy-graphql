@@ -209,6 +209,7 @@ class ShopHome extends Component {
     if (this.state.redirectVar) {
       return this.state.redirectVar;
     }
+
     return (
       <>
         {this.state.isModelOpen && (
@@ -219,7 +220,7 @@ class ShopHome extends Component {
         )}
         <form className="shopform" onSubmit={this.handleSubmit}>
           <div className="shopform__child1">
-            <span className="shopform__title">{this.state.shop_name}</span>
+            <div className="shopform__child1_shopdetails">
             <img
               src={
                 this.state.shop_pic_url ||
@@ -229,28 +230,44 @@ class ShopHome extends Component {
               alt="Shop Pic"
             />
 
-            <div>
+             <div className="shopform__child1_text"> 
               <input
                 type="file"
                 name="file"
                 className="shopform__button"
                 onChange={this.handleChange}
               />
+       
+              <input type="submit" value="Save Image" className="btn" />
             </div>
-            <div>
-              <input type="submit" value="Save" />
             </div>
-          </div>
-          <div className="shopform__child2">
-            <div className="shopform__btn_ctn">
+            <div className="shopform__middle">
+            <span className="shopform__title">{this.state.shop_name}</span>
+            <span className="shopform__title">1000 Sales</span>
               <input
                 type="button"
                 value="Add Item"
                 onClick={this.handleModelOpen}
-                className="shopform__btn"
+                className="shopform__btn btn"
               />
             </div>
-
+            <div className="ownerdetails">
+            <img
+              src={
+                this.state.user.profile_pic_url ||
+                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png"
+              }
+              className="shopform__image"
+              alt="Shop Owner Pic"
+            />
+            <div className="owner_text">
+            <div className="shopform__title">Owner Details</div>
+            <div className="owner_det">Owner: {this.state.user.fullname}</div>
+            <div className="owner_det">Contact: {this.state.user.phone}</div>
+            </div>
+            </div>
+          </div>
+          <div className="shopform__child2">
             <div className="shopform__itemcontainer">
               {this.state.items.map((item) => (
                 <ItemCard
@@ -260,19 +277,6 @@ class ShopHome extends Component {
                 />
               ))}
             </div>
-          </div>
-          <div className="shopform__child3">
-            <div>Owner Details</div>
-            <img
-              src={
-                this.state.user.profile_pic_url ||
-                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png"
-              }
-              className="shopform__image"
-              alt="Shop Owner Pic"
-            />
-            <div>Owner: {this.state.user.fullname}</div>
-            <div>Contact: {this.state.user.phone}</div>
           </div>
         </form>
       </>

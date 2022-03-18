@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getToken } from "../../redux/selectors";
+import {getTokenAndCurrency } from "../../redux/selectors";
 import { connect } from "react-redux";
 import ItemCard from "../itemcard/ItemCard";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -79,8 +79,7 @@ function Home(props) {
       }}
     />
   );
-  if (true) {
-  }
+
   return (
     <div className="home-container">
       <div className="home-options-container">
@@ -93,11 +92,11 @@ function Home(props) {
             onChange={handleFilterChange}
           >
             <option>Select</option>
-            <option>0-100</option>
-            <option>101-500</option>
-            <option>501-1000</option>
-            <option>1001-10000</option>
-            <option>10001-1000000</option>
+            <option>{props.currency}0-100</option>
+            <option>{props.currency}101-500</option>
+            <option>{props.currency}501-1000</option>
+            <option>{props.currency}1001-10000</option>
+            <option>{props.currency}10001-1000000</option>
           </select>
         </div>
         <div className="home-options-sortby">
@@ -109,7 +108,7 @@ function Home(props) {
             onChange={handleSort}
           >
             <option>Select</option>
-            <option>Price</option>
+            <option>Price:{props.currency}</option>
             <option>Quantity</option>
             <option>Sales Count</option>
           </select>
@@ -191,4 +190,4 @@ function Home(props) {
   );
 }
 
-export default connect(getToken, null)(Home);
+export default connect(getTokenAndCurrency, null)(Home);

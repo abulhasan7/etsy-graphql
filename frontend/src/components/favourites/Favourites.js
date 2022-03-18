@@ -23,11 +23,11 @@ function Favourites(props) {
     })
       .then((res) => res.json())
       .then((jsonresponse) => {
-        console.log(jsonresponse);
-        console.log(jsonresponse.message);
+        // console.log(jsonresponse);
+        // console.log(jsonresponse.message);
         setFavourites(jsonresponse.message.favourites);
         setProfile(jsonresponse.message.profile);
-        console.log("success");
+        // console.log("success");
       })
       .catch((error) => console.log(error));
   };

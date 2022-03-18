@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { getToken } from "../../redux/selectors";
+import {getTokenAndCurrency } from "../../redux/selectors";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "./itemcard.css";
@@ -35,11 +35,11 @@ function ItemCard(props) {
     })
       .then((res) => res.json())
       .then((jsonresponse) => {
-        console.log(jsonresponse);
-        console.log(jsonresponse.message);
+        // console.log(jsonresponse);
+        // console.log(jsonresponse.message);
         props.favourite.updateFavourites(
           prevState=>{ 
-            console.log("prev state is ",prevState)
+            // console.log("prev state is ",prevState)
             return {
               ...prevState,
               [(props.item).item_id]:jsonresponse.message
@@ -64,7 +64,7 @@ function ItemCard(props) {
     })
       .then((res) => res.json())
       .then((jsonresponse) => {
-        console.log(jsonresponse);
+        // console.log(jsonresponse);
         if(jsonresponse.message){
           props.favourite.updateFavourites(
             prevState=> {
@@ -74,7 +74,7 @@ function ItemCard(props) {
               }
             
             })
-          console.log("success");
+          // console.log("success");
         }
 
       })
@@ -121,7 +121,7 @@ function ItemCard(props) {
         {/* <div className="itemcard__textwrapper"> */}
         <div className="itemcard__name">{props.item.name}</div>
         <div className="itemcard__price">
-          <small>$</small>
+          <small>{props.currency}</small>
           {props.item.price}
         </div>
       </div>
@@ -129,4 +129,4 @@ function ItemCard(props) {
   );
 }
 
-export default connect(getToken, null)(ItemCard);
+export default connect(getTokenAndCurrency, null)(ItemCard);

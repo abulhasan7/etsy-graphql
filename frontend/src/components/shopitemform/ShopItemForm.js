@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Modal from "react-modal";
 import { connect } from "react-redux";
-import { getToken } from "../../redux/selectors";
+import { getToken, getTokenAndCurrency } from "../../redux/selectors";
 import { Alert } from "@mui/material";
 import "./shopitemform.css";
 
@@ -32,7 +32,7 @@ class ShopItemForm extends Component {
         top: "10%",
         left: "20%",
         right: "20%",
-        bottom: "30%",
+        bottom: "25%",
         // marginRight: '-50%',
         // transform: 'translate(-50%, -50%)',
       },
@@ -251,7 +251,7 @@ class ShopItemForm extends Component {
             />
           </div>
           <div className="shopitemform__formgroup">
-            <label htmlFor="price">Price:</label>
+            <label htmlFor="price">Price({this.props.currency}):</label>
 
             <input
               type="number"
@@ -303,12 +303,12 @@ class ShopItemForm extends Component {
             </div>
           )}
           <div className="shopitemform__formbuttoncontrol">
-            <button onClick={this.handleModelClose}>Close</button>
-            <input type="submit" value="Save" />
+            <button onClick={this.handleModelClose} className="btn">Close</button>
+            <input type="submit" value="Save" className="btn"/>
           </div>
         </form>
       </Modal>
     );
   }
 }
-export default connect(getToken, null)(ShopItemForm);
+export default connect(getTokenAndCurrency, null)(ShopItemForm);

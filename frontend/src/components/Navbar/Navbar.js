@@ -8,14 +8,40 @@ import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlin
 import { getToken } from "../../redux/selectors";
 import { connect } from "react-redux";
 import { addToken } from "../../redux/tokenSlice";
-import {changeCurrency} from "../../redux/currencySlice";
+import { changeCurrency } from "../../redux/currencySlice";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Avatar from "@mui/material/Avatar";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
+
 import "./navbar.css";
 
 function Navbar(props) {
+  //states
   const [searchKeyword, setSearchKeyword] = useState("");
-
+  //hooks
   const navigate = useNavigate();
   const currentPath = useLocation().pathname;
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  useEffect(() => {
+    if (currentPath === "/") {
+      navigate("./home");
+    }
+  }, []);
+
+  //other constants
   const currencies = [
     "$ (USD)",
     "₹ (INR)",
@@ -24,12 +50,6 @@ function Navbar(props) {
     "¥ (YUAN)",
   ];
 
-  useEffect(() => {
-    if (currentPath === "/") {
-      navigate("./home");
-    }
-  }, []);
-
   const handleSearchInput = (event) => {
     setSearchKeyword(event.target.value);
   };
@@ -37,14 +57,13 @@ function Navbar(props) {
   const handleSearchClick = () => {
     navigate("./home", { state: { searchKeyword: searchKeyword } });
   };
-  console.log("current path", currentPath);
 
-  const handleCurrency = (event) =>{
-    let symbol = event.target.value.substring(0,1);
-    localStorage.setItem('currency',symbol);
-    props.changeCurrency(symbol)
-  }
-  
+  const handleCurrency = (event) => {
+    let symbol = event.target.value.substring(0, 1);
+    localStorage.setItem("currency", symbol);
+    props.changeCurrency(symbol);
+  };
+
   return (
     <div>
       <nav className="header">
@@ -79,16 +98,74 @@ function Navbar(props) {
                 <ShoppingCartOutlinedIcon />
               </div>
             </Link>
-            <Link
-              to="/login"
-              className="header__login"
-              onClick={() => {
-                props.addToken(null);
-                localStorage.clear();
-              }}
-            >
-              Log out
-            </Link>
+            <>
+              <Tooltip title="Account settings">
+                <IconButton
+                  onClick={handleClick}
+                  size="small"
+                  sx={{ ml: 2 }}
+                  aria-controls={open ? "account-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                >
+                  <Avatar sx={{ width: 32, height: 32 }}></Avatar>
+                </IconButton>
+              </Tooltip>
+              <Menu
+                anchorEl={anchorEl}
+                id="account-menu"
+                open={open}
+                onClose={handleClose}
+                onClick={handleClose}
+                PaperProps={{
+                  elevation: 0,
+                  sx: {
+                    overflow: "visible",
+                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                    mt: 1.5,
+                    "& .MuiAvatar-root": {
+                      width: 32,
+                      height: 32,
+                      ml: -0.5,
+                      mr: 1,
+                    },
+                    "&:before": {
+                      content: '""',
+                      display: "block",
+                      position: "absolute",
+                      top: 0,
+                      right: 14,
+                      width: 10,
+                      height: 10,
+                      bgcolor: "background.paper",
+                      transform: "translateY(-50%) rotate(45deg)",
+                      zIndex: 0,
+                    },
+                  },
+                }}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+              >
+                <MenuItem
+                  onClick={() => {
+                    navigate("../profile");
+                  }}
+                >
+                  <Avatar /> Profile
+                </MenuItem>
+                <Divider />
+                <MenuItem
+                  onClick={() => {
+                    console.log("hey");
+                    props.addToken(null);
+                    localStorage.clear();
+                    navigate("../login");
+                  }}
+                >
+                  <Avatar /> Log Out
+                </MenuItem>
+              </Menu>
+            </>
           </>
         )}
       </nav>
@@ -119,4 +196,4 @@ function Navbar(props) {
   );
 }
 
-export default connect(getToken, { addToken,changeCurrency })(Navbar);
+export default connect(getToken, { addToken, changeCurrency })(Navbar);

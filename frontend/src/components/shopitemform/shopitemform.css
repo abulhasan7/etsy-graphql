@@ -1,10 +1,3 @@
-*{
-    font-size: medium;
-    box-sizing: border-box;
-}
-body{
-
-}
 .shopitemform__parent{
     /* background-color: rgb(234, 237, 237); */
     display: grid;
@@ -81,4 +74,14 @@ label{
     display: flex;
     justify-content: center;
     background-color: inherit;
+}
+.btn{
+    border: none;
+    outline: none;
+    padding: 10px;
+    background-color: #dedede;
+    border-radius: 10px;
+    margin: 25px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
