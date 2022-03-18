@@ -12,10 +12,10 @@ function CartItem(props) {
         </div>
         <div className='cartitem__content_container'>
             <div className='cartitem__name'>{props.item.name}</div>
-            <div className='cartitem__sellername'>Sold By: {props.item.Shop.shop_name}</div>
-            <div className='cartitem__quantity'>Quantity: {props.item.quantity}</div>
-            <div className='cartitem__price'>Price: {props.item.price}</div>
-            <div className='cartitem__totalprice'>Total Price: {props.item.price*props.item.quantity}</div>
+            <div className='cartitem__sellername'>Sold By: {props.item.Shop? props.item.Shop.shop_name:props.item.shop_name}</div>
+            <div className='cartitem__quantity'>Quantity: {props.item.quantity || props.item.item_quantity}</div>
+            <div className='cartitem__price'>Price: {props.item.price || props.item.unit_price}</div>
+            <div className='cartitem__totalprice'>Total Price: {props.item.price? (props.item.price*props.item.quantity) : props.item.unit_price*props.item.item_quantity}</div>
         </div>
     </div>
   )

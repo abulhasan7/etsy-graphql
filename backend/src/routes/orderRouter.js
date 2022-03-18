@@ -5,7 +5,7 @@ const orderService = require("../services/orderService");
 
 router.post('/create',async (req,res)=>{
     try {
-        const success = await orderService.create(req.body);
+        const success = await orderService.create({...req.body,user_id:req.user_id});
         res.json({ message: success });
       } catch (error) {
         res.status(400).json({ error: error.message });
@@ -14,7 +14,7 @@ router.post('/create',async (req,res)=>{
 
 router.get('/get',async (req,res)=>{
     try {
-        const success = await orderService.get(req.query.user_id);
+        const success = await orderService.get(req.user_id);
         res.json({ message: success });
       } catch (error) {
         res.status(400).json({ error: error.message });

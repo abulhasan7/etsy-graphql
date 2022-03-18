@@ -20,10 +20,10 @@ async function get(user_id) {
 
 async function create(order) {
   try {
-    const datearr = order.order_date.split("-");
+    // const datearr = order.order_date.split("-");
     const createdOrder = await Order.create({
       user_id: order.user_id,
-      order_date: new Date(datearr[0], datearr[1] - 1, datearr[2]),
+      order_date: Date.now(),
       total_price: order.total_price,
       total_quantity: order.total_quantity,
     });
@@ -31,13 +31,14 @@ async function create(order) {
       const orderdet_all = order.orderDetails.map((order_det) => {
         return {
           order_id: createdOrder.order_id,
-          item_quantity: order_det.item_quantity,
-          unit_price: order_det.unit_price,
+          item_quantity: order_det.quantity,
+          unit_price: order_det.price,
           shop_id: order_det.shop_id,
-          item_name: order_det.item_name,
-          item_pic: order_det.item_pic,
+          item_name: order_det.name,
+          item_pic: order_det.item_pic_url,
           category: order_det.category,
           description: order_det.description,
+          shop_name:order_det.Shop.shop_name
         };
       });
 
@@ -47,8 +48,8 @@ async function create(order) {
           order.orderDetails.map((order_det) =>
             Item.increment(
               {
-                stock: -order_det.item_quantity,
-                sold_count: order_det.item_quantity,
+                stock: -order_det.quantity,
+                sold_count: order_det.quantity,
               },
               {
                 where: {

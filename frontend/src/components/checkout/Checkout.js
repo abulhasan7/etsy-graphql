@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from "react";
 import { getTokenAndCart } from "../../redux/selectors";
-import { addCart } from "../../redux/cartSlice";
+import { addCart,removeAllCart } from "../../redux/cartSlice";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import CartItem from "../cartitem/CartItem";
@@ -9,9 +9,9 @@ import "./checkout.css";
 function Checkout(props) {
 
   const totalPrice = useState(0);
-  let tempPrice = 0;
+  let total_price = 0;
   let totalItems = 0;
-  let totalQuantity = 0;
+  let total_quantity = 0;
   const navigate = useNavigate();
   console.log(props);
 
@@ -22,17 +22,46 @@ function Checkout(props) {
   }, []);
 
   const purchaseItems = () =>{
-    
+    // console.log("items",JSON.stringify({
+    //   total_price:total_price,
+    //   total_quantity:total_quantity,
+    //   orderDetails:Object.values(props.cart)
+    // }))
+    fetch("http://localhost:3001/orders/create", {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        Authorization: props.token,
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        total_price:total_price,
+        total_quantity:total_quantity,
+        orderDetails:Object.values(props.cart)
+      }),
+    })
+      .then((res) => res.json())
+      .then((jsonresponse) => {
+        console.log(jsonresponse);
+        console.log(jsonresponse.message);
+        console.log("success");
+        // TODO navigate to orders
+        props.removeAllCart();
+        navigate("../orders");
+      })
+      .catch((error) => console.log(error));
   }
   return (
     <div className="checkout__container">
       <div className="checkout__itemcontainer">
         <div className="checkout__header">Shopping Cart</div>
       {Object.values(props.cart).map((item) => {
-        tempPrice+=item.price*item.quantity;
+        total_price
+    +=(parseFloat(item.price).toFixed(2))*item.quantity;
         totalItems++;
-        totalQuantity+=item.quantity
-        console.log("temprice",tempPrice);
+        total_quantity+=item.quantity
+        console.log("temprice",total_price
+    );
         return <CartItem
           // key={favourites[item.item_id] || item.item_id}
           item={item}
@@ -42,12 +71,13 @@ function Checkout(props) {
       <div className="checkout__order">
       <div className="checkout__header2"> Subtotal</div>
       <div className="checkout__totalitems"><span>No of Items:</span><span>{totalItems}</span></div> 
-      <div className="checkout__totalitems"><span>Total Quantity:</span><span>{totalQuantity}</span></div> 
-       <div className="checkout__totalprice"><span>Total Price:</span> <span>${tempPrice}</span></div>
-        <input type="button" value='Purchase Items' className="checkout__btn"/>
+      <div className="checkout__totalitems"><span>Total Quantity:</span><span>{total_quantity}</span></div> 
+       <div className="checkout__totalprice"><span>Total Price:</span> <span>${total_price
+    }</span></div>
+        <input type="button" value='Purchase Items' className="checkout__btn" onClick={purchaseItems}/>
       </div>
     </div>
   );
 }
 
-export default connect(getTokenAndCart, { addCart })(Checkout);
+export default connect(getTokenAndCart, { addCart,removeAllCart })(Checkout);

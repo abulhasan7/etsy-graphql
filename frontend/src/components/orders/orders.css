@@ -1,0 +1,22 @@
+.orders_container{
+    margin: 20px 50px;
+}
+.orders_header{
+    font-size: 35px;
+    font-weight: bolder;
+}
+.order_container{
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #dedede;
+    margin-top: 20px;
+    padding: 20px;
+}
+.order_header_container{
+    display: flex;
+    justify-content: space-between;
+}
+.orderdet{
+    font-size: 20px;
+    font-weight: bold;
+}

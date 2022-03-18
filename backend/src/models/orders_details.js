@@ -40,6 +40,10 @@ module.exports = (DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      shop_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     };
   };
   

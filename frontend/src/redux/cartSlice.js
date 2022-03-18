@@ -15,10 +15,13 @@ export const cartSlice = createSlice({
         },
         removeCart: (state,action) =>{
             state.cart = Object.keys(state.cart).filter(key=>key!=action.payload)
+        },
+        removeAllCart: (state,action) =>{
+            state.cart = {}
         }
     }
 })
 
-export const {addCart,removeCart} = cartSlice.actions
+export const {addCart,removeCart,removeAllCart} = cartSlice.actions
 
 export default cartSlice.reducer

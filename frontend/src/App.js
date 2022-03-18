@@ -10,6 +10,7 @@ import Home from './components/home/Home'
 import ItemOverview from './components/itemoverview/ItemOverview';
 import Favourites from './components/favourites/Favourites';
 import Checkout from './components/checkout/Checkout';
+import Orders from './components/orders/Orders'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
       <Route path='items/:item' element = {<ItemOverview/>}/>
       <Route path='favourites' element={<Favourites/>}/>
       <Route path='checkout' element={<Checkout/>}/>
+      <Route path='orders' element={<Orders/>}/>
       {/* Seller Related routes, all comes under the route shop route */}
       <Route path='shop'>
       <Route path='register' element = {<ShopReg/>}/>
