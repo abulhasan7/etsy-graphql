@@ -6,7 +6,7 @@ const { generateSignedUrl } = require("../utils/s3");
 async function login(userDetails) {
   try {
     const dbUser = await User.findOne({
-      attributes: ["user_id", "email", "password"],
+      attributes: ["user_id", "email", "password","fullname"],
       where: { email: userDetails.email },
       include: [{ model: Shop, attributes: ["shop_id","shop_name"] }],
     });
@@ -22,7 +22,7 @@ async function login(userDetails) {
         throw new Error("Invalid Password");
       } else {
         let shop_id = dbUser.Shop?dbUser.Shop.shop_id : null;
-        return jwtUtil.generateToken(dbUser.user_id,shop_id);
+        return jwtUtil.generateToken(dbUser.user_id,shop_id,dbUser.fullname);
       }
     }
   } catch (error) {

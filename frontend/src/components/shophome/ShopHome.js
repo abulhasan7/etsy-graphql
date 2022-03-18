@@ -9,14 +9,15 @@ import ShopItemForm from "../shopitemform/ShopItemForm";
 import ItemCard from "../itemcard/ItemCard";
 
 class ShopHome extends Component {
+  total_sales = 0;
   constructor(props) {
     super(props);
-
     this.state = {
       shop_pic_url: "",
       shop_pic_file: "",
       shop_name: "",
-      total_sales: "",
+      total_sales: 0,
+      total_sales_updated:false,
       user: {
         profile_pic_url: "",
         fullname: "",
@@ -205,6 +206,15 @@ class ShopHome extends Component {
       });
   }
 
+  updateSalesCount = (count, index) => {
+    console.log(this.total_sales, count, index, this.state.items.length);
+    if (this.state.total_sales_updated==false && index == this.state.items.length - 1 && this.total_sales != 0) {
+      this.setState({ total_sales: this.total_sales,total_sales_updated:true });
+      this.total_sales = 0;
+    } else {
+      this.total_sales += count;
+    }
+  };
   render() {
     if (this.state.redirectVar) {
       return this.state.redirectVar;
@@ -221,29 +231,31 @@ class ShopHome extends Component {
         <form className="shopform" onSubmit={this.handleSubmit}>
           <div className="shopform__child1">
             <div className="shopform__child1_shopdetails">
-            <img
-              src={
-                this.state.shop_pic_url ||
-                "https://smacksportswear.com/wp-content/uploads/2019/07/storefront-icon.jpg"
-              }
-              className="shopform__image"
-              alt="Shop Pic"
-            />
-
-             <div className="shopform__child1_text"> 
-              <input
-                type="file"
-                name="file"
-                className="shopform__button"
-                onChange={this.handleChange}
+              <img
+                src={
+                  this.state.shop_pic_url ||
+                  "https://smacksportswear.com/wp-content/uploads/2019/07/storefront-icon.jpg"
+                }
+                className="shopform__image"
+                alt="Shop Pic"
               />
-       
-              <input type="submit" value="Save Image" className="btn" />
-            </div>
+
+              <div className="shopform__child1_text">
+                <input
+                  type="file"
+                  name="file"
+                  className="shopform__button"
+                  onChange={this.handleChange}
+                />
+
+                <input type="submit" value="Save Image" className="btn" />
+              </div>
             </div>
             <div className="shopform__middle">
-            <span className="shopform__title">{this.state.shop_name}</span>
-            <span className="shopform__title">1000 Sales</span>
+              <span className="shopform__title">{this.state.shop_name}</span>
+              <span className="shopform__title">
+                {this.state.total_sales} Sales
+              </span>
               <input
                 type="button"
                 value="Add Item"
@@ -252,30 +264,37 @@ class ShopHome extends Component {
               />
             </div>
             <div className="ownerdetails">
-            <img
-              src={
-                this.state.user.profile_pic_url ||
-                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png"
-              }
-              className="shopform__image"
-              alt="Shop Owner Pic"
-            />
-            <div className="owner_text">
-            <div className="shopform__title">Owner Details</div>
-            <div className="owner_det">Owner: {this.state.user.fullname}</div>
-            <div className="owner_det">Contact: {this.state.user.phone}</div>
-            </div>
+              <img
+                src={
+                  this.state.user.profile_pic_url ||
+                  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png"
+                }
+                className="shopform__image"
+                alt="Shop Owner Pic"
+              />
+              <div className="owner_text">
+                <div className="shopform__title">Owner Details</div>
+                <div className="owner_det">
+                  Owner: {this.state.user.fullname}
+                </div>
+                <div className="owner_det">
+                  Contact: {this.state.user.phone}
+                </div>
+              </div>
             </div>
           </div>
           <div className="shopform__child2">
             <div className="shopform__itemcontainer">
-              {this.state.items.map((item) => (
-                <ItemCard
-                  key={item.item_id}
-                  item={item}
-                  handleModelOpen={this.handleModelOpen}
-                />
-              ))}
+              {this.state.items.map((item, index) => {
+                this.updateSalesCount(item.sold_count, index);
+                return (
+                  <ItemCard
+                    key={item.item_id}
+                    item={item}
+                    handleModelOpen={this.handleModelOpen}
+                  />
+                );
+              })}
             </div>
           </div>
         </form>

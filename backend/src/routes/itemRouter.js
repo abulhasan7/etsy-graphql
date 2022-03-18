@@ -2,12 +2,12 @@ const express = require('express')
 const router = express.Router()
 const itemService = require("../services/itemService");
 
-//Get all the items except the user's shop's item
+//Get all the items except the user's shop's item, basically home api
 router.get('/get-all',async (req,res) =>{
   try{
     const items = await itemService.getAllExceptShop(req.shop_id,req.user_id);
     console.log("returning items",JSON.stringify(items));
-    res.json({ message: items });
+    res.json({ message: {...items,fullname:req.fullname} });
   }catch(error){
     res.status(400).json({ error: error.message });  
   }

@@ -1,4 +1,45 @@
+.favourites-container{
+}
 .favourites-header{
     font-size: larger;
     font-weight: bolder;
+    
+}
+.favourites-header-container{
+    font-size: 30px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #FDEBD2;
+    min-height: 150px;
+}
+.favourites-profile{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.favourites-fullname{
+    font-size: 24px;
+}
+.fav-search{
+    border: 2px solid #DEDEDE;
+    height: 35px;
+    border-radius: 10px;
+    width: 250px;
+}
+.favourites-data-container{
+
+}
+.favourites-items-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.favourite-search{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
 }

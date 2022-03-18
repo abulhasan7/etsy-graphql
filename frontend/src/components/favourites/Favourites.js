@@ -50,13 +50,16 @@ function Favourites(props) {
   return (
     <div className="favourites-container">
       <div className='favourites-header-container'>
-    <div className='favourites-header'>{profile.fullname}</div>
-    <input type='button' value='Edit Profile' onClick={()=>navigate("../profile")}/>
+    <div className='favourites-header'>Your Favourites!</div>
+    <div className='favourites-profile'>
+      <div className='favourites-fullname'>{profile.fullname}</div>
+    <input type='button' value='Edit Profile' className='btn' onClick={()=>navigate("../profile")}/>
+    </div>
     </div>
     <div className='favourites-data-container'>
-      <div className=''>
-        <input placeholder='Search Here' onChange={handleSearchInput}/>
-        <input type='button' value='Search' onClick={handleSearch}/>
+      <div className='favourite-search'>
+        <input placeholder='Search Here' onChange={handleSearchInput} className="fav-search"/>
+        <input type='button' value='Search' className='btn' onClick={handleSearch}/>
       </div>
     <div className='favourites-items-container'>
       {Object.values(favourites).map(favourite =>{

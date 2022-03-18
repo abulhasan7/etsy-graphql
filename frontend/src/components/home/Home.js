@@ -11,7 +11,7 @@ function Home(props) {
   const [favourites, setFavourites] = useState({});
   const [filterRange, setFilterRange] = useState("");
   const [excludeOutOfStock, setExcludeOutOfStock] = useState(false);
-
+  const [fullname,setFullname] = useState("");
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -29,6 +29,7 @@ function Home(props) {
       .then((jsonresponse) => {
         setItems(jsonresponse.message.items);
         setFavourites(jsonresponse.message.favourites);
+        setFullname(jsonresponse.message.fullname)
       })
       .catch((error) => console.log(error));
   };
@@ -46,8 +47,13 @@ function Home(props) {
     if (value !== "Select") {
       const [lowRange, highRange] = event.target.value.split("-");
       setFilterRange({
-        lowRange: parseInt(lowRange),
+        lowRange: parseInt(lowRange.substring(1)),
         highRange: parseInt(highRange),
+      });
+    }else{
+      setFilterRange({
+        lowRange: undefined,
+        highRange: undefined,
       });
     }
   };
@@ -57,18 +63,23 @@ function Home(props) {
   };
 
   const sortItems = (value) => {
-    if (value === "Price") {
-      items.sort((item1, item2) => item1.price - item2.price);
+    let tempItems = [...items];
+    if (value === "Price: ($)") {
+      tempItems.sort((item1, item2) =>{console.log(item1.price);return (parseFloat(item1.price).toFixed(2)) - (parseFloat(item2.price).toFixed(2))});
+      console.log("items now",items);
     } else if (value === "Quantity") {
-      items.sort((item1, item2) => item1.stock - item2.stock);
+      tempItems.sort((item1, item2) => item1.stock - item2.stock);
     } else if (value === "Sales Count") {
-      items.sort((item1, item2) => item1.sold_count - item2.sold_count);
+      tempItems.sort((item1, item2) => item1.sold_count - item2.sold_count);
     }
+    setItems(tempItems);
   };
+
   const handleSort = (event) => {
     let value = event.target.value;
     sortItems(value);
   };
+
   const getItem = (item) => (
     <ItemCard
       // key={favourites[item.item_id] || item.item_id}
@@ -82,9 +93,10 @@ function Home(props) {
 
   return (
     <div className="home-container">
+      <div className="home-welcome">Welcome Back, {fullname}!</div>
       <div className="home-options-container">
         <div className="home-options-price">
-          <label htmlFor="priceFilter">Filter by Price:</label>
+          <label htmlFor="priceFilter">Filter by Price: </label>
           <select
             name="filter"
             id="priceFilter"
@@ -100,7 +112,7 @@ function Home(props) {
           </select>
         </div>
         <div className="home-options-sortby">
-          <label htmlFor="sortyBy">Sort By:</label>
+          <label htmlFor="sortyBy">Sort By: </label>
           <select
             name="sort"
             id="sortBy"
@@ -108,13 +120,13 @@ function Home(props) {
             onChange={handleSort}
           >
             <option>Select</option>
-            <option>Price:{props.currency}</option>
+            <option>Price: ({props.currency})</option>
             <option>Quantity</option>
             <option>Sales Count</option>
           </select>
         </div>
         <div className="home-options-checkbox">
-          <label htmlFor="checkbox">Exclude Out of Stock:</label>
+          <label htmlFor="checkbox">Exclude Out of Stock: </label>
           <input
             type="checkbox"
             id="checkbox"
