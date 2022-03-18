@@ -12,14 +12,15 @@ async function getAllWithUserProfile(user_id) {
       include: [{model:Item,include:[Shop]}],
     });
     const profilePromise = User.findOne({
-      attributes: {
-        exclude: ["user_id"],
-      },
+      attributes:["fullname"],
       where: { user_id: user_id },
     });
-    const [profile,favourites] = await Promise.all([profilePromise,favouritePromise])
- 
-    return {profile:profile,favourites:favourites || []};
+    const [profile,favouritesArr] = await Promise.all([profilePromise,favouritePromise])
+    let favourites ={};
+    if(favouritesArr){
+      favouritesArr.forEach(favourite=> favourites[favourite.item_id]=favourite);
+    }
+    return {profile:profile,favourites:favourites};
   } catch (error) {
     console.log("Error occurred while getting favourites", error);
     throw new Error(error.message);

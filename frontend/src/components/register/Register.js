@@ -59,7 +59,6 @@ class Register extends Component {
     }
 
     if (message !== "") {
-      // console.log(json);
       let elem = (
         <Alert severity="error" onClose={this.handleChange}>
           {message}
@@ -121,7 +120,7 @@ class Register extends Component {
     return (
       <div className="parent">
         <form className="registerform" onSubmit={this.handleSubmit}>
-          <div className="registerform__heading">Register Here</div>
+          <div className="registerform__heading">Etsy!</div>
           {this.state.message}
           <div className="registerform__formgroup">
             <label htmlFor="email" className="loginfor__label">
@@ -171,13 +170,23 @@ class Register extends Component {
               onChange={this.handleChange}
             />
           </div>
+          <div className="registerform__formgroupbtn">
           <input
             type="submit"
             className="registerform__submit"
             name="register"
-            value={"Register"}
+            value={"Register Now"}
             disabled={this.state.message}
           />
+             <input
+            type="button"
+            className="registerform__login"
+            name="login"
+            value={"Login Instead"}
+            disabled={this.state.message}
+            onClick= {()=> this.setState({message:<Navigate to="/login"/>})}
+          />
+          </div>
         </form>
       </div>
     );

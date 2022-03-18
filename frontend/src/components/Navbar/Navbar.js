@@ -1,5 +1,5 @@
-import React,{useState} from "react";
-import { Outlet, Link, useNavigate } from "react-router-dom";
+import React, { useState,useEffect } from "react";
+import { Outlet, Link, useNavigate,useLocation } from "react-router-dom";
 import etsylogo from "../../images/Etsy_logo.svg.png";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
@@ -12,18 +12,26 @@ import "./navbar.css";
 
 function Navbar(props) {
 
-  const [searchKeyword,setSearchKeyword] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   const navigate = useNavigate();
+  const currentPath = useLocation().pathname;
 
+  useEffect(() => {
+    if(currentPath==="/"){
+      navigate("./home");
+    }  
+   
+  }, []);
+  
   const handleSearchInput = (event) => {
     setSearchKeyword(event.target.value);
   };
 
   const handleSearchClick = () => {
-    console.log("the current search is", searchKeyword);
-    navigate("./home",{state:{searchKeyword:searchKeyword}})
+    navigate("./home", { state: { searchKeyword: searchKeyword } });
   };
+  console.log("current path",currentPath);
 
 
   return (
@@ -33,17 +41,18 @@ function Navbar(props) {
           <img className="header__logo" src={etsylogo} alt="Etsy-title" />
         </Link>
         {props.token && (
-          <>          <div className="header__search">
-            <input
-              type="text"
-              className="header__inputsearchbox"
-              onChange={handleSearchInput}
-            />
-            <SearchIcon
-              className="header__inputsearchicon"
-              onClick={handleSearchClick}
-            ></SearchIcon>
-          </div>
+          <>
+            <div className="header__search">
+              <input
+                type="text"
+                className="header__inputsearchbox"
+                onChange={handleSearchInput}
+              />
+              <SearchIcon
+                className="header__inputsearchicon"
+                onClick={handleSearchClick}
+              ></SearchIcon>
+            </div>
             <Link className="header__link" to="/favourites">
               <div className="header__favourite">
                 <FavoriteBorderOutlinedIcon />
@@ -69,7 +78,7 @@ function Navbar(props) {
             >
               Log out
             </Link>
-            </>
+          </>
         )}
       </nav>
       <Outlet />

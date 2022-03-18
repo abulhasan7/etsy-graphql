@@ -2,17 +2,17 @@ import React, { useEffect, useState } from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { connect } from "react-redux";
-import { getToken } from "../../redux/selectors";
+import { getTokenAndCart } from "../../redux/selectors";
 import { useLocation, useNavigate } from "react-router-dom";
+import { addCart } from "../../redux/cartSlice";
 import "./itemoverview.css";
 
 function ItemOverview(props) {
-  
-  const { item, favouriteId:favourite_id } = useLocation().state;
+  const { item, favouriteId: favourite_id } = useLocation().state;
 
   const [favouriteId, setFavouriteId] = useState(favourite_id);
 
-  console.log("item", item.item);
+  const [itemQuantity,setItemQuantity] = useState();
 
   const navigate = useNavigate();
 
@@ -23,6 +23,7 @@ function ItemOverview(props) {
       addFavourite();
     }
   };
+
 
   const addFavourite = () => {
     fetch("http://localhost:3001/favourites/add", {
@@ -74,6 +75,21 @@ function ItemOverview(props) {
     }
   }, []);
 
+  const handleQuantitySelect = (event) =>{
+    setItemQuantity(event.target.value)  
+  }
+
+  const handleAddtoCart = () => {
+    //TODO store items using ITEMID?
+    let addItem = {...item,quantity:parseInt(itemQuantity)};
+    console.log("additem",addItem)
+    props.addCart(addItem);
+    let itemsTR = localStorage.getItem("cart") || "{}";
+    let items = JSON.parse(itemsTR);
+    items[item.item_id] = addItem;
+    localStorage.setItem("cart", JSON.stringify(items));
+  };
+
   return (
     <div className="item-overview-container">
       <div className="item-overview-image-container">
@@ -102,7 +118,7 @@ function ItemOverview(props) {
 
       <div className="item-overview-details-container">
         <div className="item-overview-shop-name">{item.Shop["shop_name"]}</div>
-        <div className="item-overview-sales-count">{item.sold_count}</div>
+        <div className="item-overview-sales-count">{item.sold_count} Sales</div>
         <div className="item-overview-item-name">{item.name}</div>
         <div className="item-overview-price">${item.price}</div>
         <span className="item-overview-stock">
@@ -119,17 +135,21 @@ function ItemOverview(props) {
             disabled={item.stock < 1}
             className="item-overview-quantity-select"
             id="quantity-select"
+            onChange={handleQuantitySelect}
           >
             <option>Select an option</option>
-            <option>1</option>
-            <option>1</option>
+            {Array(item.stock)
+              .fill()
+              .map((v, i) => (
+                <option>{i + 1}</option>
+              ))}
           </select>
         </div>
         <input
           type={"button"}
           value="Add to Cart"
           disabled={item.stock < 1}
-          onClick={() => console.log("on click called")}
+          onClick={handleAddtoCart}
           className="item-overview-add-cart-btn"
         />
         <div className="item-overview-description-container">
@@ -151,4 +171,4 @@ function ItemOverview(props) {
   );
 }
 
-export default connect(getToken, null)(ItemOverview);
+export default connect(getTokenAndCart, { addCart })(ItemOverview);

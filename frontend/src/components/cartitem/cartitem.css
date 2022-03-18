@@ -1,0 +1,31 @@
+.cartitem__container{
+    width: 90%;
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    margin-top: 25px;
+    margin-left: 25px;
+    border: 2px solid #dedede;
+    border-radius: 10px;
+    padding: 10px;
+    
+}
+.cartitem__image_container{
+    grid-column: 1/2;
+    width: 200px;
+    height: 200px;
+    justify-self: center;
+}
+.cartitem__image{
+    width: 100%;
+    height: 100%; 
+    border-radius: 10px;
+}
+.cartitem__content_container{
+    grid-column: 2/3;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-left: 25px;
+    
+}

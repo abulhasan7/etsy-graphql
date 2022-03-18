@@ -8,10 +8,10 @@ import './favourites.css'
 function Favourites(props) {
 
    //States
-   const [favourites, setFavourites] = useState([]);
+   const [favourites, setFavourites] = useState({});
    const [profile,setProfile] = useState({});
    const [searchKeyword, setsearchKeyword] = useState("");
-   
+   let keyInput = "";
   const navigate = useNavigate();
 
   const getFavouritesAndProfile = () => {
@@ -40,21 +40,38 @@ function Favourites(props) {
     }
   },[])
 
+  const handleSearch = () =>{
+      setsearchKeyword(keyInput);
+  }
+  const handleSearchInput = (event) =>{
+    console.log(event.target.value )
+    keyInput = event.target.value;
+}
   return (
-    <div className="favourites-container">Favourites
-
-    <div className='favourites-header'></div>
+    <div className="favourites-container">
+      <div className='favourites-header-container'>
+    <div className='favourites-header'>{profile.fullname}</div>
+    <input type='button' value='Edit Profile' onClick={()=>navigate("../profile")}/>
+    </div>
+    <div className='favourites-data-container'>
+      <div className=''>
+        <input placeholder='Search Here' onChange={handleSearchInput}/>
+        <input type='button' value='Search' onClick={handleSearch}/>
+      </div>
     <div className='favourites-items-container'>
-      {favourites.map(favourite =>{
-          return <ItemCard
+      {Object.values(favourites).map(favourite =>{
+        if(favourite ==null || (searchKeyword!="" && searchKeyword!=favourite.Item.name))
+          return;
+          return (<ItemCard
             // key={favourites[item.item_id] || item.item_id}
             item={favourite.Item}
             favourite={{
               favouriteId: favourite.favourite_id,
               updateFavourites: setFavourites,
             }}
-          />
+          />)
       })}
+    </div>
     </div>
     </div>
   )
