@@ -78,3 +78,25 @@ body{
     text-decoration: none;
     color: inherit;
 }
+
+.footer{
+    background-color: #232347;
+    display: flex;
+    color: white;
+    justify-content: space-evenly;
+    height: 50px;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+.footer_left,.footer_right{
+    display: flex;
+}
+.pipe{
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.currency{
+    bottom: 50px;
+}
