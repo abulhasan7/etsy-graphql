@@ -119,7 +119,7 @@ function ItemOverview(props) {
       </div>
 
       <div className="item-overview-details-container">
-        <div className="item-overview-shop-name" onClick={()=>navigate("../../shop/home",{state:{shop_id:item.Shop.shop_id}})}>{item.Shop["shop_name"]}</div>
+        <div className="item-overview-shop-name" onClick={()=>navigate("../../shop/home",{state:{shop_id:item.Shop.shop_id,shop_name:item.Shop.shop_name}})}>{item.Shop["shop_name"]}</div>
         <div className="item-overview-sales-count">{item.sold_count} Sales</div>
         <div className="item-overview-item-name">{item.name}</div>
         <div className="item-overview-price">{props.currency}{item.price}</div>

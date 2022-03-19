@@ -85,6 +85,7 @@ function ItemCard(props) {
     if (props.handleModelOpen) {
       props.handleModelOpen({ ...props.item });
     } else {
+      console.log("item is",props.item);
       navigate("/items/"+((props.item).name), { state: { item: props.item,favouriteId:props.favourite.favouriteId } });
     }
   };
