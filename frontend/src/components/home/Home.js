@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {getTokenAndCurrency } from "../../redux/selectors";
+import {getTokenFullNameAndCurrency } from "../../redux/selectors";
 import { connect } from "react-redux";
 import ItemCard from "../itemcard/ItemCard";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -11,7 +11,6 @@ function Home(props) {
   const [favourites, setFavourites] = useState({});
   const [filterRange, setFilterRange] = useState("");
   const [excludeOutOfStock, setExcludeOutOfStock] = useState(false);
-  const [fullname,setFullname] = useState("");
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -29,7 +28,6 @@ function Home(props) {
       .then((jsonresponse) => {
         setItems(jsonresponse.message.items);
         setFavourites(jsonresponse.message.favourites);
-        setFullname(jsonresponse.message.fullname)
       })
       .catch((error) => console.log(error));
   };
@@ -93,7 +91,7 @@ function Home(props) {
 
   return (
     <div className="home-container">
-      <div className="home-welcome">Welcome Back, {fullname}!</div>
+      <div className="home-welcome">Welcome Back, {props.fullname}!</div>
       <div className="home-options-container">
         <div className="home-options-price">
           <label htmlFor="priceFilter">Filter by Price: </label>
@@ -202,4 +200,4 @@ function Home(props) {
   );
 }
 
-export default connect(getTokenAndCurrency, null)(Home);
+export default connect(getTokenFullNameAndCurrency, null)(Home);

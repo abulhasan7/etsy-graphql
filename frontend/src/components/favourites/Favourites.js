@@ -1,5 +1,5 @@
 import React,{ useEffect,useState }  from 'react'
-import { getToken } from "../../redux/selectors";
+import { getTokenAndFullName } from "../../redux/selectors";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ItemCard from "../itemcard/ItemCard";
@@ -9,7 +9,6 @@ function Favourites(props) {
 
    //States
    const [favourites, setFavourites] = useState({});
-   const [profile,setProfile] = useState({});
    const [searchKeyword, setsearchKeyword] = useState("");
    let keyInput = "";
   const navigate = useNavigate();
@@ -26,7 +25,6 @@ function Favourites(props) {
         // console.log(jsonresponse);
         // console.log(jsonresponse.message);
         setFavourites(jsonresponse.message.favourites);
-        setProfile(jsonresponse.message.profile);
         // console.log("success");
       })
       .catch((error) => console.log(error));
@@ -44,7 +42,6 @@ function Favourites(props) {
       setsearchKeyword(keyInput);
   }
   const handleSearchInput = (event) =>{
-    console.log(event.target.value )
     keyInput = event.target.value;
 }
   return (
@@ -52,7 +49,7 @@ function Favourites(props) {
       <div className='favourites-header-container'>
     <div className='favourites-header'>Your Favourites!</div>
     <div className='favourites-profile'>
-      <div className='favourites-fullname'>{profile.fullname}</div>
+      <div className='favourites-fullname'>{props.fullname}</div>
     <input type='button' value='Edit Profile' className='btn' onClick={()=>navigate("../profile")}/>
     </div>
     </div>
@@ -80,4 +77,4 @@ function Favourites(props) {
   )
 }
 
-	export default connect(getToken,null)(Favourites);
+	export default connect(getTokenAndFullName,null)(Favourites);

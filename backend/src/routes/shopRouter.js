@@ -18,6 +18,15 @@ router.get("/get", async (req, res, next) => {
     });
 });
 
+router.get("/get-user", async (req, res, next) => {
+  const response = await shopService
+    .getDetailsForUser(req.params.shop_id)
+    .then((response) => res.status(200).json(response))
+    .catch((error) => {
+      res.status(400).json({ error: error });
+    });
+});
+
 router.post("/register", async (req, res) => {
   try {
     const success = await shopService.register({...req.body,user_id:req.user_id});

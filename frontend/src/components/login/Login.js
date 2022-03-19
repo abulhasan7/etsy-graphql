@@ -1,16 +1,15 @@
 import React, {useState,useEffect } from "react";
-import "./login.css";
 import { Alert } from "@mui/material";
 import { useNavigate } from "react-router";
 import { connect } from "react-redux";
 import { addToken } from "../../redux/tokenSlice";
+import { addProfile } from "../../redux/profileSlice";
 import { getToken } from "../../redux/selectors";
-
+import "./login.css";
 
 function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loggedIn, setLoggedIn] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -80,7 +79,9 @@ function Login(props) {
         .then((json) => {
           if (json.token) {
             props.addToken(json.token);
-            localStorage.setItem("token", json.token);
+            props.addProfile(json.profile);
+            // localStorage.setItem("token", json.token);
+            // localStorage.setItem("profile",JSON.stringify(json.profile));
             navigate("../home");
           } else {
             return Promise.reject(json.error);
@@ -144,4 +145,4 @@ function Login(props) {
   );
 }
 
-export default connect(getToken, { addToken })(Login);
+export default connect(getToken, { addToken,addProfile })(Login);

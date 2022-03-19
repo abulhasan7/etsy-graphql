@@ -76,7 +76,9 @@ function ItemOverview(props) {
   }, []);
 
   const handleQuantitySelect = (event) =>{
-    setItemQuantity(event.target.value)  
+    if(event.target.value!=='Select'){
+      setItemQuantity(event.target.value)  
+    }
   }
 
   const handleAddtoCart = () => {
@@ -84,10 +86,10 @@ function ItemOverview(props) {
     let addItem = {...item,quantity:parseInt(itemQuantity)};
     // console.log("additem",addItem)
     props.addCart(addItem);
-    let itemsTR = localStorage.getItem("cart") || "{}";
-    let items = JSON.parse(itemsTR);
-    items[item.item_id] = addItem;
-    localStorage.setItem("cart", JSON.stringify(items));
+    // let itemsTR = localStorage.getItem("cart") || "{}";
+    // let items = JSON.parse(itemsTR);
+    // items[item.item_id] = addItem;
+    // localStorage.setItem("cart", JSON.stringify(items));
   };
 
   return (
@@ -117,7 +119,7 @@ function ItemOverview(props) {
       </div>
 
       <div className="item-overview-details-container">
-        <div className="item-overview-shop-name">{item.Shop["shop_name"]}</div>
+        <div className="item-overview-shop-name" onClick={()=>navigate("../../shop/home",{state:{shop_id:item.Shop.shop_id}})}>{item.Shop["shop_name"]}</div>
         <div className="item-overview-sales-count">{item.sold_count} Sales</div>
         <div className="item-overview-item-name">{item.name}</div>
         <div className="item-overview-price">{props.currency}{item.price}</div>

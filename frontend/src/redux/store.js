@@ -1,8 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit'
-import cartSlice from './cartSlice'
-import tokenSlice from './tokenSlice'
-import currencySlice from './currencySlice'
+import { configureStore } from "@reduxjs/toolkit";
+import cartSlice from "./cartSlice";
+import tokenSlice from "./tokenSlice";
+import currencySlice from "./currencySlice";
+import profileSlice from "./profileSlice";
 
 export default configureStore({
-    reducer: {tokenSlice,cartSlice,currencySlice}
-})
+  reducer: { tokenSlice, cartSlice, currencySlice, profileSlice },
+});

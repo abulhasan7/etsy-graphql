@@ -1,5 +1,10 @@
 const { Op } = require("sequelize");
-const { Item, Item_Category, Shop, sequelize, Favourite } = require("../models/index");
+const {
+  Item,
+  Item_Category,
+  Shop,
+  Favourite,
+} = require("../models/index");
 const { generateSignedUrl } = require("../utils/s3");
 
 async function getAllForShop(shop_id) {
@@ -18,9 +23,7 @@ async function getAllForShop(shop_id) {
   }
 }
 
-
-
-async function getAllExceptShop(shop_id,user_id) {
+async function getAllExceptShop(shop_id, user_id) {
   console.log("shop id is " + shop_id);
   try {
     let itemsPromise = Item.findAll({
@@ -33,20 +36,23 @@ async function getAllExceptShop(shop_id,user_id) {
       },
     });
     let favouritesPromse = Favourite.findAll({
-      attributes: ["favourite_id","item_id"],
+      attributes: ["favourite_id", "item_id"],
       where: {
-        user_id:user_id
+        user_id: user_id,
       },
     });
-    const [items,favourites] =await Promise.all([itemsPromise,favouritesPromse])
-    console.log(favourites)
-    let favouriteObj = {}; 
-    if(favourites){
-      console.log(favouriteObj)
-      favourites.forEach(fav=>{favouriteObj[fav.item_id] = fav.favourite_id});  
-      console.log(favouriteObj)
+
+    const [items, favourites, profile] = await Promise.all([
+      itemsPromise,
+      favouritesPromse
+    ]);
+    let favouriteObj = {};
+    if (favourites) {
+      favourites.forEach((fav) => {
+        favouriteObj[fav.item_id] = fav.favourite_id;
+      });
     }
-    return {items:items,favourites:favouriteObj};
+    return { items: items, favourites: favouriteObj };
   } catch (error) {
     console.log("Error occured while getting all the Items", error);
     throw new Error(error.message);

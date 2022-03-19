@@ -7,7 +7,7 @@ import StoreOutlinedIcon from "@mui/icons-material/StoreOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import { getToken } from "../../redux/selectors";
 import { connect } from "react-redux";
-import { addToken } from "../../redux/tokenSlice";
+import { addToken,removeToken } from "../../redux/tokenSlice";
 import { changeCurrency } from "../../redux/currencySlice";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -153,12 +153,20 @@ function Navbar(props) {
                 >
                   <Avatar /> Profile
                 </MenuItem>
+
                 <Divider />
                 <MenuItem
                   onClick={() => {
-                    console.log("hey");
-                    props.addToken(null);
-                    localStorage.clear();
+                    navigate("../orders");
+                  }}
+                >
+                  <Avatar /> Orders
+                </MenuItem>
+                <Divider />
+                <MenuItem
+                  onClick={() => {
+                    console.log("called onclick");
+                    props.removeToken(null);
                     navigate("../login");
                   }}
                 >
@@ -196,4 +204,4 @@ function Navbar(props) {
   );
 }
 
-export default connect(getToken, { addToken, changeCurrency })(Navbar);
+export default connect(getToken, { addToken,removeToken ,changeCurrency })(Navbar);

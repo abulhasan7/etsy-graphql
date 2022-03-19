@@ -2,7 +2,7 @@ const { Favourite, Item,User,Shop } = require("../models/index");
 
 async function getAllWithUserProfile(user_id) {
   try {
-    const favouritePromise = Favourite.findAll({
+    const favouritesArr = await Favourite.findAll({
       attributes: {
         exclude: ["user_id"],
       },
@@ -11,16 +11,11 @@ async function getAllWithUserProfile(user_id) {
       },
       include: [{model:Item,include:[Shop]}],
     });
-    const profilePromise = User.findOne({
-      attributes:["fullname"],
-      where: { user_id: user_id },
-    });
-    const [profile,favouritesArr] = await Promise.all([profilePromise,favouritePromise])
     let favourites ={};
     if(favouritesArr){
       favouritesArr.forEach(favourite=> favourites[favourite.item_id]=favourite);
     }
-    return {profile:profile,favourites:favourites};
+    return {favourites:favourites};
   } catch (error) {
     console.log("Error occurred while getting favourites", error);
     throw new Error(error.message);

@@ -1,16 +1,25 @@
-.orders_container{
-    margin: 20px 50px;
-}
+
 .orders_header{
     font-size: 35px;
     font-weight: bolder;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: #FDEBD2;
+    min-height: 50px;
+    padding-left: 25px;
+}
+.orders_container{
+
 }
 .order_container{
     display: flex;
     flex-direction: column;
     border: 2px solid #dedede;
-    margin-top: 20px;
-    padding: 20px;
+    margin: 20px;
+    margin-top: 25px;
+    padding: 25px;
 }
 .order_header_container{
     display: flex;

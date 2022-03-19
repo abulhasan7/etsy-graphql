@@ -1,7 +1,7 @@
 import { Navigate } from "react-router";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { getToken } from "../../redux/selectors";
+import { getToken, getTokenAndUserId } from "../../redux/selectors";
 import { addToken } from "../../redux/tokenSlice";
 import "./shophome.css";
 import { Alert } from "@mui/material";
@@ -15,9 +15,10 @@ class ShopHome extends Component {
     this.state = {
       shop_pic_url: "",
       shop_pic_file: "",
-      shop_name: "",
+      shop_name: props.shop_name,
       total_sales: 0,
-      total_sales_updated:false,
+      total_sales_updated: false,
+      shop_id: props.shop_id,
       user: {
         profile_pic_url: "",
         fullname: "",
@@ -32,6 +33,7 @@ class ShopHome extends Component {
       message: "",
       items: [],
       modelItem: {},
+      isOwner: false,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -58,7 +60,10 @@ class ShopHome extends Component {
   }
 
   getShopDetails() {
-    let url = "http://localhost:3001/shops/get";
+    // let url = this.state.isOwner
+    //   ? 
+      let url = "http://localhost:3001/shops/get";
+      // : "http://localhost:3001/shops/get-user?shop_id=" + this.state.shop_id;
     fetch(url, {
       credentials: "include",
       mode: "cors",
@@ -68,13 +73,14 @@ class ShopHome extends Component {
       .then((jsonresponse) => {
         console.log("jsonresponse", jsonresponse);
         if (jsonresponse.error) {
-          let redirectVar = <Navigate replace to="/shop/register"></Navigate>;
-          this.setState({ redirectVar: redirectVar });
+          if(jsonresponse.error === "Shop doesn't exist"){
+            let redirectVar = <Navigate replace to="/shop/register"></Navigate>;
+            this.setState({ redirectVar: redirectVar });
+          }
         } else {
           console.log(jsonresponse);
-          this.props.addToken(jsonresponse.token);
+          // this.props.addToken(jsonresponse.token);
           this.setState({
-            shop_name: jsonresponse.shop_name,
             shop_pic_url: jsonresponse.shop_pic_url,
             user: jsonresponse.user,
             upload_s3_url: jsonresponse.upload_s3_url,
@@ -208,14 +214,22 @@ class ShopHome extends Component {
 
   updateSalesCount = (count, index) => {
     console.log(this.total_sales, count, index, this.state.items.length);
-    if (this.state.total_sales_updated==false && index == this.state.items.length - 1 && this.total_sales != 0) {
-      this.setState({ total_sales: this.total_sales,total_sales_updated:true });
+    if (
+      this.state.total_sales_updated == false &&
+      index == this.state.items.length - 1 &&
+      this.total_sales != 0
+    ) {
+      this.setState({
+        total_sales: this.total_sales,
+        total_sales_updated: true,
+      });
       this.total_sales = 0;
     } else {
       this.total_sales += count;
     }
   };
   render() {
+    console.log(window.location);
     if (this.state.redirectVar) {
       return this.state.redirectVar;
     }
@@ -240,28 +254,34 @@ class ShopHome extends Component {
                 alt="Shop Pic"
               />
 
-              <div className="shopform__child1_text">
-                <input
-                  type="file"
-                  name="file"
-                  className="shopform__button"
-                  onChange={this.handleChange}
-                />
+              {this.state.isOwner && (
+                <div className="shopform__child1_text">
+                  <input
+                    type="file"
+                    name="file"
+                    className="shopform__button"
+                    onChange={this.handleChange}
+                  />
 
-                <input type="submit" value="Save Image" className="btn" />
-              </div>
+                  <input type="submit" value="Save Image" className="btn" />
+                </div>
+              )}
             </div>
             <div className="shopform__middle">
-              <span className="shopform__title">{this.state.shop_name}</span>
+              <span className="shopform__title_main">
+                {this.state.shop_name}
+              </span>
               <span className="shopform__title">
                 {this.state.total_sales} Sales
               </span>
-              <input
-                type="button"
-                value="Add Item"
-                onClick={this.handleModelOpen}
-                className="shopform__btn btn"
-              />
+              {this.state.isOwner && (
+                <input
+                  type="button"
+                  value="Add Item"
+                  onClick={this.handleModelOpen}
+                  className="shopform__btn btn"
+                />
+              )}
             </div>
             <div className="ownerdetails">
               <img
@@ -302,4 +322,4 @@ class ShopHome extends Component {
     );
   }
 }
-export default connect(getToken, { addToken })(ShopHome);
+export default connect(getTokenAndUserId, { addToken })(ShopHome);

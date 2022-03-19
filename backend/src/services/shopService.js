@@ -1,6 +1,7 @@
 const { Shop } = require("../models/index");
 const { generateSignedUrl } = require("../utils/s3");
-const {generateToken} = require("../utils/jwtUtil");
+// const {generateToken} = require("../utils/jwtUtil");
+
 async function getDetails(user_id) {
   try {
     const shop = await Shop.findOne({ where: { user_id: user_id } });
@@ -15,7 +16,26 @@ async function getDetails(user_id) {
     }
     shop.setDataValue("user", user);
     shop.setDataValue("upload_s3_url",upload_s3_url);
-    shop.setDataValue("token",generateToken(user_id,shop.getDataValue("shop_id")))
+    // shop.setDataValue("token",generateToken(user_id,shop.getDataValue("shop_id")))
+    // shop.setDataValue("shop_id",null);
+    // shop.setDataValue("user_id",null);
+    console.log("returning :{}",shop)
+    return shop;
+  } catch (error) {
+    console.log("error occurred", error);
+    throw error.message;
+  }
+}
+
+async function getDetailsForUser(user_id) {
+  try {
+    const shop = await Shop.findOne({ where: { user_id: user_id } });
+
+    const [items,user] = await Promise.all([shop.getItems(),shop.getUser({attributes: ["phone", "fullname", "profile_pic_url"]})])
+    //TODO should i send shop id?
+    // shop.setDataValue("user_id",null);
+
+    shop.setDataValue("user", user);
     shop.setDataValue("shop_id",null);
     shop.setDataValue("user_id",null);
     console.log("returning :{}",shop)
@@ -84,4 +104,4 @@ function update(shop){
 }
 
 
-module.exports = { getDetails, checkAvailability, register,update };
+module.exports = { getDetails,getDetailsForUser, checkAvailability, register,update };

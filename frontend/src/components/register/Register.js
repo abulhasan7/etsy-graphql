@@ -5,6 +5,7 @@ import {Navigate} from 'react-router'
 import {getToken} from '../../redux/selectors'
 import {connect} from 'react-redux'
 import {addToken} from '../../redux/tokenSlice'
+import {addProfile} from '../../redux/profileSlice';
 
 class Register extends Component {
   constructor(props) {
@@ -98,8 +99,8 @@ class Register extends Component {
           if(json.error){
             return Promise.reject(json);
           }else{
-          localStorage.setItem('token',json.token)
           this.props.addToken(json.token);
+          this.props.addProfile({fullname:this.state.fullname,email:this.state.email});
           let elem = <Navigate to="/home"></Navigate>;
           this.setState({ message: elem });
           }
@@ -192,4 +193,4 @@ class Register extends Component {
     );
   }
 }
-export default connect(getToken,{addToken})(Register)
+export default connect(getToken,{addToken,addProfile})(Register)

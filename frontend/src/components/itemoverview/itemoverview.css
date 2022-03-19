@@ -30,9 +30,13 @@
 }
 
 .item-overview-shop-name {
-  font-size: 16px;
+  font-size: 24px;
+  text-decoration: underline;
 }
 
+.item-overview-shop-name:hover {
+  cursor: pointer;  
+}
 .item-overview-sales-count {
   font-size: 13px;
   color: #222222;

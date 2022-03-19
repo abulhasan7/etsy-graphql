@@ -1,18 +1,24 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit";
 
 export const tokenSlice = createSlice({
-    name:'token',
-    initialState:{
-        //this is the actual key that will be stored in the redux store
-        token:localStorage.getItem('token'),
+  name: "token",
+  initialState: {
+    //this is the actual key that will be stored in the redux store
+    token: localStorage.getItem("token") || "",
+  },
+  reducers: {
+    addToken: (state, action) => {
+      state.token = action.payload;
+      localStorage.setItem("token", action.payload);
     },
-    reducers:{
-        addToken: (state,action) =>{
-            state.token= action.payload
-        }
-    }
-})
+    removeToken: (state, action) => {
+      console.log("remove token");
+      state.token = "";
+      localStorage.clear();
+    },
+  },
+});
 
-export const {addToken} = tokenSlice.actions
+export const { addToken, removeToken } = tokenSlice.actions;
 
-export default tokenSlice.reducer
+export default tokenSlice.reducer;

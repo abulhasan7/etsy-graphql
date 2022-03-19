@@ -17,8 +17,8 @@ router.post("/register", function (req, res) {
 /* LOGIN USER */
 router.post("/login", async function (req, res) {
   try {
-    let token = await userService.login(req.body);
-    res.status(200).json({ token: token });
+    let loginResponse = await userService.login(req.body);
+    res.status(200).json(loginResponse);
   } catch (error) {
     res
       .status(401)
@@ -29,7 +29,7 @@ router.post("/login", async function (req, res) {
 /* GET USER DETAILS */
 router.get("/get", async function (req, res) {
   try {
-    let userDetails = await userService.get(req.user_id);
+    let userDetails = await userService.get();
     res.status(200).json(userDetails);
   } catch (error) {
     res

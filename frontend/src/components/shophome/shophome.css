@@ -1,21 +1,27 @@
 .shopform{
     display: flex;
     flex-direction: column;
-    margin: 25px;
     align-items: center;
 }
 
 .shopform__child1{
     border-radius: 10px;
-    border: 2px solid #dedede;
+    /* border: 2px solid #dedede; */
     display: flex;
     justify-content: flex-start;
     padding: 10px;
-    width: 65%;
+    /* width: 65%; */
+    grid-column: 1/3;
+    font-size: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 25px;
+    align-items: center;
+    background-color: #FDEBD2;
 }
 .shopform__child1_shopdetails{
     display: flex;
-    border-right: 2px solid #dedede;
 }
 .shopform__child1_text{
     display: flex;
@@ -28,8 +34,9 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    border-right: 2px solid #dedede;
-    width: 30%;
+}
+.shopform__title_main{
+    font-size: 50px;
 }
 .ownerdetails{
     display: flex;
@@ -63,7 +70,7 @@
 .shopform__image{
     width: 200px;
     height: 200px;
-    border-radius: 50%;
+    /* border-radius: 50%; */
     margin-right: 25px;
 }
 .shopform__button{

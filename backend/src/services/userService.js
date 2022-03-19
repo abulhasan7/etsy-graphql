@@ -5,24 +5,31 @@ const { generateSignedUrl } = require("../utils/s3");
 
 async function login(userDetails) {
   try {
-    const dbUser = await User.findOne({
-      attributes: ["user_id", "email", "password","fullname"],
+    const dbData = await User.findOne({
       where: { email: userDetails.email },
-      include: [{ model: Shop, attributes: ["shop_id","shop_name"] }],
+      include: [{ model: Shop, attributes: ["shop_id", "shop_name"] }],
     });
-    if (!dbUser) {
+    if (!dbData) {
       throw new Error("User not found");
     } else {
-      console.log("dbuser", dbUser);
       const result = await bcrypt.compare(
         userDetails.password,
-        dbUser.password
+        dbData.password
       );
       if (!result) {
         throw new Error("Invalid Password");
       } else {
-        let shop_id = dbUser.Shop?dbUser.Shop.shop_id : null;
-        return jwtUtil.generateToken(dbUser.user_id,shop_id,dbUser.fullname);
+        let shop_id = dbData.Shop ? dbData.Shop.shop_id : null;
+        dbData.setDataValue("password", null);
+        let obj = {
+          token: jwtUtil.generateToken(
+            dbData.user_id,
+            shop_id,
+            dbData.fullname
+          ),
+          profile: dbData,
+        };
+        return obj;
       }
     }
   } catch (error) {
@@ -31,25 +38,14 @@ async function login(userDetails) {
   }
 }
 
-async function get(user_id) {
+//removing profile for now, as it's being fetched during login
+async function get() {
   try {
-    const dbUser = await User.findOne({
-      attributes: {
-        exclude: ["user_id"],
-      },
-      where: { user_id: user_id },
-    });
-    if (!dbUser) {
-      throw new Error("User not found");
-    } else {
-      const [upload_s3_url, countries] = await Promise.all([
-        generateSignedUrl(),
-        Country.findAll(),
-      ]);
-      dbUser.dataValues.upload_s3_url = upload_s3_url;
-      dbUser.dataValues.countries = countries;
-      return dbUser;
-    }
+    const [upload_s3_url, countries] = await Promise.all([
+      generateSignedUrl(),
+      Country.findAll(),
+    ]);
+    return { upload_s3_url: upload_s3_url, countries: countries };
   } catch (error) {
     console.error("Error occured:", error);
     throw error;

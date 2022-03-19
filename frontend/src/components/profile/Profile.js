@@ -1,25 +1,26 @@
 import React, { Component } from "react";
 import { Alert } from "@mui/material";
 import { connect } from "react-redux";
-import { getToken } from "../../redux/selectors";
+import { getTokenAndProfile } from "../../redux/selectors";
 import { Navigate } from "react-router-dom";
+import {addProfile} from "../../redux/profileSlice";
 import "./profile.css";
 
 class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      profile_pic_url: "",
+      profile_pic_url: props.profile.profile_pic_url || "",
       profile_pic_file: "",
-      fullname: "",
-      gender: "",
-      address_1: "",
-      address_2: "",
-      city: "",
-      dob: "",
-      about: "",
-      phone: "",
-      country: "Select",
+      fullname: props.profile.fullname || "",
+      gender: props.profile.gender || "",
+      address_1: props.profile.address_1 || "",
+      address_2: props.profile.address_2 || "",
+      city: props.profile.city || "",
+      dob: props.profile.dob || "",
+      about: props.profile.about || "",
+      phone: props.profile.phone || "",
+      country: props.profile.country || "Select",
       upload_s3_url: "",
       message: "",
       countries: ["India", "Africa"],
@@ -57,16 +58,6 @@ class Profile extends Component {
           return Promise.reject(json);
         } else {
           let currentState = {
-            profile_pic_url: json.profile_pic_url,
-            fullname: json.fullname,
-            gender: json.gender,
-            address_1: json.address_1,
-            address_2: json.address_2,
-            city: json.city,
-            dob: json.dob,
-            about: json.about,
-            phone: json.phone,
-            country: json.country,
             upload_s3_url: json.upload_s3_url,
             countries: json.countries.map((c) => c.name),
           };
@@ -184,7 +175,7 @@ class Profile extends Component {
         }
       })
       .then((s3response) => {
-        console.log("s3resoibse", s3response);
+        // console.log("s3resoibse", s3response);
         if (s3response && s3response.status !== 200) {
           return Promise.reject({
             message: "Error occurred during uploading file",
@@ -240,6 +231,7 @@ class Profile extends Component {
                 <Alert onClose={this.handleChange}>{json.message}</Alert>
               );
               this.setState({ message: elem });
+              this.props.addProfile({...body,Shop:this.props.profile.Shop,email:this.props.profile.email,user_id:this.props.user_id});
             }
           })
           .catch((error) => {
@@ -250,6 +242,7 @@ class Profile extends Component {
               </Alert>
             );
             this.setState({ message: elem });
+
             console.error(error);
           });
       })
@@ -428,4 +421,4 @@ class Profile extends Component {
     );
   }
 }
-export default connect(getToken, null)(Profile);
+export default connect(getTokenAndProfile, {addProfile})(Profile);
