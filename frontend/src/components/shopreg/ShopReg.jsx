@@ -33,7 +33,7 @@ class ShopReg extends Component {
   handleValidation() {
     return new Promise((resolve, reject) => {
       let message = '';
-      if (this.state.shop_name == '') {
+      if (this.state.shop_name === '') {
         message = "Shop name can't be empty";
       } else if (this.state.shop_name.length < 4) {
         message = "Shop name can't be less than 4 characters";
@@ -90,7 +90,7 @@ class ShopReg extends Component {
     if (this.state.isAvailable) {
       const url = `${process.env.REACT_APP_BACKEND_URL}shops/register`;
       this.handleValidation()
-        .then((message) => fetch(url, {
+        .then(() => fetch(url, {
           mode: 'cors',
           method: 'POST',
           body: JSON.stringify({
@@ -109,11 +109,9 @@ class ShopReg extends Component {
               isRegistered: <Navigate replace to="/shop/home" />,
               isAvailable: true,
             });
-            console.log(jsonresp);
           } else {
             console.error('error in json request', jsonresp);
             return Promise.reject(jsonresp.error);
-            // throw new Error(jsonresp.error);
           }
         })
         .catch((error) => {

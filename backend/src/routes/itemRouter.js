@@ -1,40 +1,38 @@
-const express = require('express')
-const router = express.Router()
-const itemService = require("../services/itemService");
+const express = require('express');
 
-//Get all the items except the user's shop's item, basically home api
-router.get('/get-all',async (req,res) =>{
-  try{
-    const items = await itemService.getAllExceptShop(req.shop_id,req.user_id);
-    console.log("returning items",JSON.stringify(items));
-    res.json({ message: {...items,fullname:req.fullname} });
-  }catch(error){
-    res.status(400).json({ error: error.message });  
+const router = express.Router();
+const itemService = require('../services/itemService');
+
+// Get all the items except the user's shop's item, basically home api
+router.get('/get-all', async (req, res) => {
+  try {
+    const items = await itemService.getAllExceptShop(req.shop_id, req.user_id);
+    res.json({ message: { ...items, fullname: req.fullname } });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-})
-
-//Get all the items for a shop, owner api
-router.get('/get-all-for-shop',async (req,res) =>{
-  try{
-    const items = await itemService.getAllForShop(req.shop_id);
-    console.log("returning items",items);
-    res.json({ message: items });
-  }catch(error){
-    res.status(400).json({ error: error.message });  
-  }
-})
-
-
-router.post("/add", async (req, res) => {
-    try {
-      const response = await itemService.addItem({...req.body,shop_id:req.shop_id});
-      res.json({ message: response });
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
 });
-  
-router.post("/update", async (req, res) => {
+
+// Get all the items for a shop, owner api
+router.get('/get-all-for-shop', async (req, res) => {
+  try {
+    const items = await itemService.getAllForShop(req.shop_id);
+    res.json({ message: items });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.post('/add', async (req, res) => {
+  try {
+    const response = await itemService.addItem({ ...req.body, shop_id: req.shop_id });
+    res.json({ message: response });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.post('/update', async (req, res) => {
   try {
     const success = await itemService.updateItem(req.body);
     res.json({ message: success });
@@ -42,14 +40,14 @@ router.post("/update", async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
-//This is for when the Item Add/Edit Popup opens up for the shop owner
-router.get("/additem-getparams", async (req, res) => {
+// This is for when the Item Add/Edit Popup opens up for the shop owner
+router.get('/additem-getparams', async (req, res) => {
   try {
     const data = await itemService.additemsgetparams();
     res.json(data);
   } catch (error) {
-    res.status(400).json({ error: error });
+    res.status(400).json({ error });
   }
 });
 
-module.exports = router
+module.exports = router;

@@ -1,66 +1,68 @@
-import React, { Component } from "react";
-import "./register.css";
-import { Alert } from "@mui/material";
-import {Navigate} from 'react-router'
-import {getToken} from '../../redux/selectors'
-import {connect} from 'react-redux'
-import {addToken} from '../../redux/tokenSlice'
-import {addProfile} from '../../redux/profileSlice';
+/* eslint-disable prefer-promise-reject-errors */
+/* eslint-disable consistent-return */
+import React, { Component } from 'react';
+import './register.css';
+import { Alert } from '@mui/material';
+import { Navigate } from 'react-router';
+import { connect } from 'react-redux';
+import { getToken } from '../../redux/selectors';
+import { addToken } from '../../redux/tokenSlice';
+import { addProfile } from '../../redux/profileSlice';
 
 class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
-      fullname: "",
-      password: "",
-      confirmpassword: "",
-      message: "",
+      email: '',
+      fullname: '',
+      password: '',
+      confirmpassword: '',
+      message: '',
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleValidation = this.handleValidation.bind(this);
   }
+
   handleChange(event) {
-    let value = event.target.value;
-    console.log(event)
-    if (event.target.name === "email") {
+    const { value } = event.target;
+    if (event.target.name === 'email') {
       this.setState({ email: value });
-    } else if (event.target.name === "fullname") {
+    } else if (event.target.name === 'fullname') {
       this.setState({ fullname: value });
-    } else if (event.target.name === "password") {
+    } else if (event.target.name === 'password') {
       this.setState({ password: value });
-    } else if (event.target.name === "confirmpassword") {
+    } else if (event.target.name === 'confirmpassword') {
       this.setState({ confirmpassword: value });
     } else {
-      this.setState({ message: "" });
+      this.setState({ message: '' });
     }
   }
 
   handleValidation() {
-    let message = "";
-    if (this.state.email === "") {
-      message = "Email cant be emtpy";
+    let message = '';
+    if (this.state.email === '') {
+      message = 'Email cant be emtpy';
     } else if (
-      this.state.email.match("^[A-Za-z0-9.]+@[A-Za-z0-9.-]+$") === null
+      this.state.email.match('^[A-Za-z0-9.]+@[A-Za-z0-9.-]+$') === null
     ) {
-      message = "Email is not valid, enter valid email";
-    } else if (this.state.fullname === "") {
+      message = 'Email is not valid, enter valid email';
+    } else if (this.state.fullname === '') {
       message = "Full Name can't be empty";
     } else if (this.state.fullname.length < 8) {
       message = "Full Name can't be less than 8 characters";
-    } else if (this.state.password === "") {
+    } else if (this.state.password === '') {
       message = "Password can't be empty";
     } else if (this.state.password.length < 8) {
       message = "Password can't be less than 8 characters";
-    } else if (this.state.confirmpassword === "") {
+    } else if (this.state.confirmpassword === '') {
       message = "ConfirmPassword can't be empty";
     } else if (this.state.password !== this.state.confirmpassword) {
       message = "Password and Confirm Password don't match";
     }
 
-    if (message !== "") {
-      let elem = (
+    if (message !== '') {
+      const elem = (
         <Alert severity="error" onClose={this.handleChange}>
           {message}
         </Alert>
@@ -70,44 +72,43 @@ class Register extends Component {
     }
     return false;
   }
+
   handleSubmit(event) {
     event.preventDefault();
     if (!this.handleValidation()) {
-      let url = process.env.REACT_APP_BACKEND_URL+"users/register";
+      const url = `${process.env.REACT_APP_BACKEND_URL}users/register`;
       fetch(url, {
-        method: "POST",
-        mode: "cors",
+        method: 'POST',
+        mode: 'cors',
         body: JSON.stringify({
           email: this.state.email,
           fullname: this.state.fullname,
           password: this.state.password,
         }),
         headers: {
-          "Content-type": "application/json",
+          'Content-type': 'application/json',
         },
       })
         .then((response) => {
           if (response.status === 200 || response.status === 201 || response.status === 400) {
             return response.json();
-          }else{ 
-            return Promise.reject({
-              message: "Some error occured during registration",
-            });
           }
+          return Promise.reject({
+            message: 'Some error occured during registration',
+          });
         })
         .then((json) => {
-          if(json.error){
+          if (json.error) {
             return Promise.reject(json);
-          }else{
-          this.props.addToken(json.token);
-          this.props.addProfile({fullname:this.state.fullname,email:this.state.email});
-          let elem = <Navigate to="/home"></Navigate>;
-          this.setState({ message: elem });
           }
+          this.props.addToken(json.token);
+          this.props.addProfile({ fullname: this.state.fullname, email: this.state.email });
+          const elem = <Navigate to="/home" />;
+          this.setState({ message: elem });
         })
         .catch((error) => {
           console.log(error);
-          let elem = (
+          const elem = (
             <Alert severity="error" onClose={this.handleChange}>
               {error.error}
             </Alert>
@@ -117,6 +118,7 @@ class Register extends Component {
         });
     }
   }
+
   render() {
     return (
       <div className="parent">
@@ -172,25 +174,25 @@ class Register extends Component {
             />
           </div>
           <div className="registerform__formgroupbtn">
-          <input
-            type="submit"
-            className="registerform__btn"
-            name="register"
-            value={"Register Now"}
-            disabled={this.state.message}
-          />
-             <input
-            type="button"
-            className="registerform__btn"
-            name="login"
-            value={"Login Instead"}
-            disabled={this.state.message}
-            onClick= {()=> this.setState({message:<Navigate to="/login"/>})}
-          />
+            <input
+              type="submit"
+              className="registerform__btn"
+              name="register"
+              value="Register Now"
+              disabled={this.state.message}
+            />
+            <input
+              type="button"
+              className="registerform__btn"
+              name="login"
+              value="Login Instead"
+              disabled={this.state.message}
+              onClick={() => this.setState({ message: <Navigate to="/login" /> })}
+            />
           </div>
         </form>
       </div>
     );
   }
 }
-export default connect(getToken,{addToken,addProfile})(Register)
+export default connect(getToken, { addToken, addProfile })(Register);

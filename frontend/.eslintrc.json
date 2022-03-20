@@ -18,6 +18,12 @@
         "react"
     ],
     "rules": {
-        "react/destructuring-assignment": ["never"]
+        "root":[0,false],
+        "react/destructuring-assignment": [0,"never"],
+        "linebreak-style": ["error", "windows"],
+        "consistent-return": [0],
+        "react/jsx-no-bind": 0,
+        "jsx-a11y/label-has-associated-control": 0,
+        "react/prop-types": [0] 
     }
 }

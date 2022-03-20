@@ -1,28 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
-import etsylogo from "../../images/Etsy_logo.svg.png";
-import SearchIcon from "@mui/icons-material/Search";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import StoreOutlinedIcon from "@mui/icons-material/StoreOutlined";
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import { getToken } from "../../redux/selectors";
-import { connect } from "react-redux";
-import { addToken,removeToken } from "../../redux/tokenSlice";
-import { changeCurrency } from "../../redux/currencySlice";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Avatar from "@mui/material/Avatar";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Tooltip from "@mui/material/Tooltip";
+/* eslint-disable react/prop-types */
+import React, { useState, useEffect } from 'react';
+import {
+  Outlet, Link, useNavigate, useLocation,
+} from 'react-router-dom';
+import SearchIcon from '@mui/icons-material/Search';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import StoreOutlinedIcon from '@mui/icons-material/StoreOutlined';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import { connect } from 'react-redux';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Avatar from '@mui/material/Avatar';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import { Tooltip } from '@mui/material';
+import { changeCurrency } from '../../redux/currencySlice';
+import { addToken, removeToken } from '../../redux/tokenSlice';
+import { getToken } from '../../redux/selectors';
+import etsylogo from '../../images/Etsy_logo.svg.png';
 
-import "./navbar.css";
+import './navbar.css';
 
 function Navbar(props) {
-  //states
-  const [searchKeyword, setSearchKeyword] = useState("");
-  //hooks
+  // states
+  const [searchKeyword, setSearchKeyword] = useState('');
+  // hooks
   const navigate = useNavigate();
   const currentPath = useLocation().pathname;
 
@@ -36,18 +38,18 @@ function Navbar(props) {
   };
 
   useEffect(() => {
-    if (currentPath === "/") {
-      navigate("./home");
+    if (currentPath === '/') {
+      navigate('./home');
     }
   }, []);
 
-  //other constants
+  // other constants
   const currencies = [
-    "$ (USD)",
-    "₹ (INR)",
-    "£ (POUNDS)",
-    "€ (EURO)",
-    "¥ (YUAN)",
+    '$ (USD)',
+    '₹ (INR)',
+    '£ (POUNDS)',
+    '€ (EURO)',
+    '¥ (YUAN)',
   ];
 
   const handleSearchInput = (event) => {
@@ -55,12 +57,12 @@ function Navbar(props) {
   };
 
   const handleSearchClick = () => {
-    navigate("./home", { state: { searchKeyword: searchKeyword } });
+    navigate('./home', { state: { searchKeyword } });
   };
 
   const handleCurrency = (event) => {
-    let symbol = event.target.value.substring(0, 1);
-    localStorage.setItem("currency", symbol);
+    const symbol = event.target.value.substring(0, 1);
+    localStorage.setItem('currency', symbol);
     props.changeCurrency(symbol);
   };
 
@@ -81,7 +83,7 @@ function Navbar(props) {
               <SearchIcon
                 className="header__inputsearchicon"
                 onClick={handleSearchClick}
-              ></SearchIcon>
+              />
             </div>
             <Link className="header__link" to="/favourites">
               <div className="header__favourite">
@@ -104,11 +106,11 @@ function Navbar(props) {
                   onClick={handleClick}
                   size="small"
                   sx={{ ml: 2 }}
-                  aria-controls={open ? "account-menu" : undefined}
+                  aria-controls={open ? 'account-menu' : undefined}
                   aria-haspopup="true"
-                  aria-expanded={open ? "true" : undefined}
+                  aria-expanded={open ? 'true' : undefined}
                 >
-                  <Avatar sx={{ width: 32, height: 32 }}></Avatar>
+                  <Avatar sx={{ width: 32, height: 32 }} />
                 </IconButton>
               </Tooltip>
               <Menu
@@ -120,57 +122,62 @@ function Navbar(props) {
                 PaperProps={{
                   elevation: 0,
                   sx: {
-                    overflow: "visible",
-                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                    overflow: 'visible',
+                    filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                     mt: 1.5,
-                    "& .MuiAvatar-root": {
+                    '& .MuiAvatar-root': {
                       width: 32,
                       height: 32,
                       ml: -0.5,
                       mr: 1,
                     },
-                    "&:before": {
+                    '&:before': {
                       content: '""',
-                      display: "block",
-                      position: "absolute",
+                      display: 'block',
+                      position: 'absolute',
                       top: 0,
                       right: 14,
                       width: 10,
                       height: 10,
-                      bgcolor: "background.paper",
-                      transform: "translateY(-50%) rotate(45deg)",
+                      bgcolor: 'background.paper',
+                      transform: 'translateY(-50%) rotate(45deg)',
                       zIndex: 0,
                     },
                   },
                 }}
-                transformOrigin={{ horizontal: "right", vertical: "top" }}
-                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
               >
                 <MenuItem
                   onClick={() => {
-                    navigate("../profile");
+                    navigate('../profile');
                   }}
                 >
-                  <Avatar /> Profile
+                  <Avatar />
+                  {' '}
+                  Profile
                 </MenuItem>
 
                 <Divider />
                 <MenuItem
                   onClick={() => {
-                    navigate("../orders");
+                    navigate('../orders');
                   }}
                 >
-                  <Avatar /> Orders
+                  <Avatar />
+                  {' '}
+                  Orders
                 </MenuItem>
                 <Divider />
                 <MenuItem
                   onClick={() => {
-                    console.log("called onclick");
                     props.removeToken(null);
-                    navigate("../login");
+                    navigate('../login');
                   }}
                 >
-                  <Avatar /> Log Out
+                  <Avatar />
+                  {' '}
+                  Log Out
                 </MenuItem>
               </Menu>
             </>
@@ -197,11 +204,11 @@ function Navbar(props) {
           <div className="pipe">|</div>
           <div className="staticfont">Privacy</div>
           <div className="pipe">|</div>
-          <div className="staticfont link"><a className="link" href="https://github.com/itsabulhasan?tab=repositories">{"Developed by:  Abul Hasan Mohammed"}</a></div>
+          <div className="staticfont link"><a className="link" href="https://github.com/itsabulhasan?tab=repositories">Developed by:  Abul Hasan Mohammed</a></div>
         </div>
       </footer>
     </div>
   );
 }
 
-export default connect(getToken, { addToken,removeToken ,changeCurrency })(Navbar);
+export default connect(getToken, { addToken, removeToken, changeCurrency })(Navbar);

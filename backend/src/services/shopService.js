@@ -11,17 +11,16 @@ async function getDetails(shopId, isOwner, userId) {
     }
     const itemsPromise = Item.findAll({
       where: {
-        shopId,
+        shop_id: shopId,
       },
     });
     const shopPromise = Shop.findOne({
-      where: { shopId },
+      where: { shop_id: shopId },
       include: {
         model: User,
         attributes: ['fullname', 'phone', 'profile_pic_url'],
       },
     });
-    console.log('userpromise is', shopPromise);
     const allData = {};
     if (isOwner) {
       const [items, shop, uploadS3Url] = await Promise.all([
@@ -34,8 +33,8 @@ async function getDetails(shopId, isOwner, userId) {
       allData.upload_s3_url = uploadS3Url;
     } else {
       const favouritesPromise = Favourite.findAll({
-        attributes: { exclude: ['userId'] },
-        where: { userId },
+        attributes: { exclude: ['user_id'] },
+        where: { user_id: userId },
       });
       const [items, shop, favouritesArr] = await Promise.all([
         itemsPromise,
@@ -54,7 +53,7 @@ async function getDetails(shopId, isOwner, userId) {
     }
     return allData;
   } catch (error) {
-    console.log('error occurred', error);
+    console.error('error occurred', error);
     throw error.message;
   }
 }
@@ -69,7 +68,7 @@ function checkAvailability(shopName) {
         resolve('Shop Name Available');
       })
       .catch((err) => {
-        console.log('Error occurred during checkign availability', err);
+        console.error('Error occurred during checkign availability', err);
         reject(new Error('Some error occured during checking availabiliy'));
       });
   });
@@ -86,7 +85,7 @@ async function register(shop) {
     }
     throw Error('Some occured while registering shop');
   } catch (error) {
-    console.log('Error occured while registering shop', error);
+    console.error('Error occured while registering shop', error);
     if (error && error.errors[0].path === 'user_id_UNIQUE') {
       throw new Error('User already registered a shop');
     } else if (error.name && error.name === 'SequelizeUniqueConstraintError') {

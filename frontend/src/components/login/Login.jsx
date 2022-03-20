@@ -1,47 +1,52 @@
-import React, {useState,useEffect } from "react";
-import { Alert } from "@mui/material";
-import { useNavigate } from "react-router";
-import { connect } from "react-redux";
-import { addToken } from "../../redux/tokenSlice";
-import { addProfile } from "../../redux/profileSlice";
-import { getToken } from "../../redux/selectors";
-import "./login.css";
+/* eslint-disable prefer-promise-reject-errors */
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable consistent-return */
+/* eslint-disable react/prop-types */
+
+import React, { useState, useEffect } from 'react';
+import { Alert } from '@mui/material';
+import { useNavigate } from 'react-router';
+import { connect } from 'react-redux';
+import { addToken } from '../../redux/tokenSlice';
+import { addProfile } from '../../redux/profileSlice';
+import { getToken } from '../../redux/selectors';
+import './login.css';
 
 function Login(props) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     if (props.token) {
-      navigate("../home");
+      navigate('../home');
     }
   }, []);
 
   const handleChange = (event) => {
-    let value = event.target.value;
-    if (event.target.name === "email") {
+    const { value } = event.target;
+    if (event.target.name === 'email') {
       setEmail(value);
-    } else if (event.target.name === "password") {
+    } else if (event.target.name === 'password') {
       setPassword(value);
     } else {
-      setError("");
+      setError('');
     }
   };
 
   const handleValidation = () => {
-    let message = "";
-    if (email === "") {
-      message = "Email cant be emtpy";
-    } else if (email.match("^[A-Za-z0-9.]+@[A-Za-z0-9.-]+$") === null) {
-      message = "Email is not valid, enter valid email";
-    } else if (password === "") {
+    let message = '';
+    if (email === '') {
+      message = 'Email cant be emtpy';
+    } else if (email.match('^[A-Za-z0-9.]+@[A-Za-z0-9.-]+$') === null) {
+      message = 'Email is not valid, enter valid email';
+    } else if (password === '') {
       message = "Password can't be empty";
     } else if (password.length < 8) {
       message = "Password can't be less than 8 characters";
     }
-    if (message !== "") {
+    if (message !== '') {
       setError(message);
       return true;
     }
@@ -51,43 +56,40 @@ function Login(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!handleValidation()) {
-      let url = process.env.REACT_APP_BACKEND_URL+"users/login";
+      const url = `${process.env.REACT_APP_BACKEND_URL}users/login`;
       fetch(url, {
-        method: "POST",
-        mode: "cors",
+        method: 'POST',
+        mode: 'cors',
         body: JSON.stringify({
-          email: email,
-          password: password,
+          email,
+          password,
         }),
         headers: {
-          "Content-type": "application/json",
+          'Content-type': 'application/json',
         },
       })
         .then((response) => {
           if (
-            response.status === 200 ||
-            response.status === 400 ||
-            response.status === 401
+            response.status === 200
+            || response.status === 400
+            || response.status === 401
           ) {
             return response.json();
-          } else {
-            return Promise.reject({
-              error: "Some error occured during login",
-            });
           }
+          return Promise.reject({
+            error: 'Some error occured during login',
+          });
         })
         .then((json) => {
           if (json.token) {
             props.addToken(json.token);
             props.addProfile(json.profile);
-            // localStorage.setItem("token", json.token);
-            // localStorage.setItem("profile",JSON.stringify(json.profile));
-            navigate("../home");
+            navigate('../home');
           } else {
             return Promise.reject(json.error);
           }
         })
-        .catch((error) => setError(error));
+        .catch((promError) => setError(promError));
     }
   };
   return (
@@ -128,16 +130,16 @@ function Login(props) {
             type="submit"
             className="loginform__submit"
             name="signin"
-            value={"Sign In"}
+            value="Sign In"
             disabled={error}
           />
-            <input
+          <input
             type="button"
             className="loginform__register"
             name="register"
-            value={"Register"}
+            value="Register"
             disabled={error}
-            onClick= {()=>navigate("../register")}
+            onClick={() => navigate('../register')}
           />
         </div>
       </form>
@@ -145,4 +147,4 @@ function Login(props) {
   );
 }
 
-export default connect(getToken, { addToken,addProfile })(Login);
+export default connect(getToken, { addToken, addProfile })(Login);

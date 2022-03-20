@@ -1,33 +1,35 @@
-import React, { Component } from "react";
-import { Alert } from "@mui/material";
-import { connect } from "react-redux";
-import { getTokenAndProfile } from "../../redux/selectors";
-import { Navigate } from "react-router-dom";
-import {addProfile} from "../../redux/profileSlice";
-import "./profile.css";
+/* eslint-disable prefer-promise-reject-errors */
+/* eslint-disable consistent-return */
+import React, { Component } from 'react';
+import { Alert } from '@mui/material';
+import { connect } from 'react-redux';
+import { Navigate } from 'react-router-dom';
+import { getTokenAndProfile } from '../../redux/selectors';
+import { addProfile } from '../../redux/profileSlice';
+import './profile.css';
 
 class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      profile_pic_url: props.profile.profile_pic_url || "",
-      profile_pic_file: "",
-      fullname: props.profile.fullname || "",
-      gender: props.profile.gender || "",
-      address_1: props.profile.address_1 || "",
-      address_2: props.profile.address_2 || "",
-      city: props.profile.city || "",
-      dob: props.profile.dob || "",
-      about: props.profile.about || "",
-      phone: props.profile.phone || "",
-      country: props.profile.country || "Select",
-      upload_s3_url: "",
-      message: "",
-      countries: ["India", "Africa"],
+      profile_pic_url: props.profile.profile_pic_url || '',
+      profile_pic_file: '',
+      fullname: props.profile.fullname || '',
+      gender: props.profile.gender || '',
+      address_1: props.profile.address_1 || '',
+      address_2: props.profile.address_2 || '',
+      city: props.profile.city || '',
+      dob: props.profile.dob || '',
+      about: props.profile.about || '',
+      phone: props.profile.phone || '',
+      country: props.profile.country || 'Select',
+      upload_s3_url: '',
+      message: '',
+      countries: ['India', 'Africa'],
       redirectVar: this.props.token ? (
-        ""
+        ''
       ) : (
-        <Navigate replace to="/login"></Navigate>
+        <Navigate replace to="/login" />
       ),
     };
     this.handleChange = this.handleChange.bind(this);
@@ -36,33 +38,30 @@ class Profile extends Component {
   }
 
   componentDidMount() {
-    let url = process.env.REACT_APP_BACKEND_URL+"users/get";
+    const url = `${process.env.REACT_APP_BACKEND_URL}users/get`;
     fetch(url, {
-      mode: "cors",
+      mode: 'cors',
       headers: {
         Authorization: this.props.token,
       },
-      //no header, as we want fetch to set the header itself, if we set then we hve to define boundary
     })
       .then((response) => {
         if (response.status === 200 || response.status === 400) {
           return response.json();
-        } else {
-          return Promise.reject({
-            message: "Some error occured during getting user details",
-          });
         }
+        return Promise.reject({
+          message: 'Some error occured during getting user details',
+        });
       })
       .then((json) => {
         if (json.error) {
           return Promise.reject(json);
-        } else {
-          let currentState = {
-            upload_s3_url: json.upload_s3_url,
-            countries: json.countries.map((c) => c.name),
-          };
-          this.setState(currentState);
         }
+        const currentState = {
+          upload_s3_url: json.upload_s3_url,
+          countries: json.countries.map((c) => c.name),
+        };
+        this.setState(currentState);
       })
       .catch((error) => {
         console.log(error);
@@ -70,88 +69,86 @@ class Profile extends Component {
   }
 
   handleChange(event) {
-    if (event.target.name === "file") {
-      let fr = new FileReader();
+    if (event.target.name === 'file') {
+      const fr = new FileReader();
       fr.onload = () => {
-        console.log("fr is ", fr);
         this.setState({
           profile_pic_url: fr.result,
           profile_pic_file: event.target.files[0],
         });
       };
       fr.readAsDataURL(event.target.files[0]);
-    } else if (event.target.name === "fullname") {
+    } else if (event.target.name === 'fullname') {
       this.setState({ fullname: event.target.value });
-    } else if (event.target.id === "profileform__gender_male") {
-      this.setState({ gender: "M" });
-    } else if (event.target.id === "profileform__gender_female") {
-      this.setState({ gender: "F" });
-    } else if (event.target.name === "address_1") {
+    } else if (event.target.id === 'profileform__gender_male') {
+      this.setState({ gender: 'M' });
+    } else if (event.target.id === 'profileform__gender_female') {
+      this.setState({ gender: 'F' });
+    } else if (event.target.name === 'address_1') {
       this.setState({ address_1: event.target.value });
-    } else if (event.target.name === "address_2") {
+    } else if (event.target.name === 'address_2') {
       this.setState({ address_2: event.target.value });
-    } else if (event.target.name === "city") {
+    } else if (event.target.name === 'city') {
       this.setState({ city: event.target.value });
-    } else if (event.target.name === "dob") {
+    } else if (event.target.name === 'dob') {
       this.setState({ dob: event.target.value });
-    } else if (event.target.name === "about") {
+    } else if (event.target.name === 'about') {
       this.setState({ about: event.target.value });
-    } else if (event.target.name === "phone") {
+    } else if (event.target.name === 'phone') {
       this.setState({ phone: event.target.value });
-    } else if (event.target.name === "country") {
+    } else if (event.target.name === 'country') {
       this.setState({ country: event.target.value });
     } else {
-      this.setState({ message: "" });
+      this.setState({ message: '' });
     }
   }
 
   handleValidation() {
     return new Promise((resolve, reject) => {
-      let message = "";
+      let message = '';
       if (
-        this.state.profile_pic_url === "" &&
-        this.state.profile_pic_file == ""
+        this.state.profile_pic_url === ''
+        && this.state.profile_pic_file === ''
       ) {
         message = "Profile picture can't be empty";
       } else if (
-        this.state.profile_pic_file &&
-        !this.state.profile_pic_file.type.startsWith("image")
+        this.state.profile_pic_file
+        && !this.state.profile_pic_file.type.startsWith('image')
       ) {
-        console.log(this.state.profile_pic_file.type);
-        message = "Profile picture has to be an image file only";
-      } else if (this.state.fullname === "") {
+        message = 'Profile picture has to be an image file only';
+      } else if (this.state.fullname === '') {
         message = "Full Name can't be empty";
       } else if (this.state.fullname.length < 8) {
         message = "Full Name can't be less than 8 characters";
-      } else if (this.state.gender === "") {
+      } else if (this.state.gender === '') {
         message = "Gender can't be empty";
-      } else if (this.state.address_1 === "") {
+      } else if (this.state.address_1 === '') {
         message = "Street Address can't be empty";
-      } else if (this.state.address_1 === "") {
+      } else if (this.state.address_1.length < 8) {
         message = "Street Address can't be less than 8 characters";
-      } else if (this.state.address_2 === "") {
+      } else if (this.state.address_2 === '') {
         message = "Apartment No can't be empty";
-      } else if (this.state.city === "") {
+      } else if (this.state.city === '') {
         message = "City can't be empty";
       } else if (this.state.city.length < 3) {
         message = "City can't be less than 3 characters";
-      } else if (this.state.dob === "") {
+      } else if (this.state.dob === '') {
         message = "Date of Birth can't be empty";
-      } else if (this.state.about === "") {
+      } else if (this.state.about === '') {
         message = "About can't be empty";
       } else if (this.state.about.length < 10) {
         message = "About can't be less than 10 characters";
-      } else if (this.state.phone === "") {
+      } else if (this.state.phone === '') {
         message = "Phone can't be empty";
       } else if (this.state.phone.length !== 10) {
-        message = "Phone has to be 10 numbers exact";
-      } else if (this.state.country === "" || this.state.country === "Select") {
+        message = 'Phone has to be 10 numbers exact';
+      } else if (this.state.country === '' || this.state.country === 'Select') {
         message = "Country can't be empty";
       }
 
-      if (message !== "") {
+      if (message !== '') {
         console.log(message);
-        let elem = (
+        const elem = (
           <Alert severity="error" onClose={this.handleChange}>
             {message}
           </Alert>
@@ -169,7 +166,7 @@ class Profile extends Component {
       .then(() => {
         if (this.state.profile_pic_file) {
           return fetch(this.state.upload_s3_url, {
-            method: "PUT",
+            method: 'PUT',
             body: this.state.profile_pic_file,
           });
         }
@@ -178,16 +175,15 @@ class Profile extends Component {
         // console.log("s3resoibse", s3response);
         if (s3response && s3response.status !== 200) {
           return Promise.reject({
-            message: "Error occurred during uploading file",
+            message: 'Error occurred during uploading file',
           });
-        } else if (s3response && s3response.status === 200) {
-          return Promise.resolve(this.state.upload_s3_url.split("?")[0]);
-        } else {
-          return Promise.resolve(this.state.profile_pic_url);
+        } if (s3response && s3response.status === 200) {
+          return Promise.resolve(this.state.upload_s3_url.split('?')[0]);
         }
+        return Promise.resolve(this.state.profile_pic_url);
       })
       .then((s3url) => {
-        let url = process.env.REACT_APP_BACKEND_URL+"users/update";
+        const url = `${process.env.REACT_APP_BACKEND_URL}users/update`;
         const body = {
           fullname: this.state.fullname,
           gender: this.state.gender,
@@ -201,42 +197,44 @@ class Profile extends Component {
           profile_pic_url: s3url,
         };
         fetch(url, {
-          method: "PUT",
-          mode: "cors",
+          method: 'PUT',
+          mode: 'cors',
           body: JSON.stringify(body),
           headers: {
             Authorization: this.props.token,
-            "Content-type": "application/json",
+            'Content-type': 'application/json',
           },
-          //no header, as we want fetch to set the header itself, if we set then we hve to define boundary
         })
           .then((response) => {
             if (
-              response.status === 200 ||
-              response.status === 201 ||
-              response.status === 400
+              response.status === 200
+              || response.status === 201
+              || response.status === 400
             ) {
               return response.json();
-            } else {
-              return Promise.reject({
-                message: "Some error occured during update",
-              });
             }
+            return Promise.reject({
+              message: 'Some error occured during update',
+            });
           })
           .then((json) => {
             if (json.error) {
               return Promise.reject(json);
-            } else {
-              let elem = (
-                <Alert onClose={this.handleChange}>{json.message}</Alert>
-              );
-              this.setState({ message: elem });
-              this.props.addProfile({...body,Shop:this.props.profile.Shop,email:this.props.profile.email,user_id:this.props.user_id});
             }
+            const elem = (
+              <Alert onClose={this.handleChange}>{json.message}</Alert>
+            );
+            this.setState({ message: elem });
+            this.props.addProfile({
+              ...body,
+              Shop: this.props.profile.Shop,
+              email: this.props.profile.email,
+              user_id: this.props.user_id,
+            });
           })
           .catch((error) => {
             console.log(error);
-            let elem = (
+            const elem = (
               <Alert severity="error" onClose={this.handleChange}>
                 {error.error}
               </Alert>
@@ -247,11 +245,11 @@ class Profile extends Component {
           });
       })
       .catch((error) => {
-        console.log("error occured during update", error);
+        console.log('error occured during update', error);
         if (!this.state.message) {
-          let elem = (
+          const elem = (
             <Alert severity="error" onClose={this.handleChange}>
-              {error.message || "Some error occurred during update"}
+              {error.message || 'Some error occurred during update'}
             </Alert>
           );
           this.setState({ message: elem });
@@ -269,11 +267,12 @@ class Profile extends Component {
           <div className="profileform__formimagegrid">
             <img
               src={
-                this.state.profile_pic_url ||
-                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png"
+                this.state.profile_pic_url
+                || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png'
               }
+              alt="profile_pic"
               className="profileform__formimage"
-            ></img>
+            />
           </div>
           <div className="profileform__formgroup">
             <label htmlFor="file">Profile Picture</label>
@@ -282,7 +281,7 @@ class Profile extends Component {
               name="file"
               className="profileform__pic profileform__formcontrol"
               onChange={this.handleChange}
-            ></input>
+            />
           </div>
           <div className="profileform__formgroup">
             <label htmlFor="fullname">Full Name</label>
@@ -306,7 +305,7 @@ class Profile extends Component {
                 name="gender"
                 id="profileform__gender_male"
                 className="profileform__formcontrol"
-                checked={this.state.gender === "M"}
+                checked={this.state.gender === 'M'}
                 onChange={this.handleChange}
               />
               <label htmlFor="female" className="radiolabel">
@@ -317,7 +316,7 @@ class Profile extends Component {
                 name="gender"
                 id="profileform__gender_female"
                 className="profileform__formcontrol"
-                checked={this.state.gender === "F"}
+                checked={this.state.gender === 'F'}
                 onChange={this.handleChange}
               />
             </span>
@@ -403,9 +402,7 @@ class Profile extends Component {
               onChange={this.handleChange}
             >
               <option>Select</option>
-              {this.state.countries.map((country) => {
-                return <option>{country}</option>;
-              })}
+              {this.state.countries.map((country) => <option>{country}</option>)}
             </select>
           </div>
           <div className="profileform__formbuttoncontrol">
@@ -421,4 +418,4 @@ class Profile extends Component {
     );
   }
 }
-export default connect(getTokenAndProfile, {addProfile})(Profile);
+export default connect(getTokenAndProfile, { addProfile })(Profile);

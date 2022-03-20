@@ -1,31 +1,31 @@
-const { User, Country, Shop } = require("../models/index");
-const bcrypt = require("bcrypt");
-const jwtUtil = require("../utils/jwtUtil");
-const { generateSignedUrl } = require("../utils/s3");
+const bcrypt = require('bcrypt');
+const { User, Country, Shop } = require('../models/index');
+const jwtUtil = require('../utils/jwtUtil');
+const { generateSignedUrl } = require('../utils/s3');
 
 async function login(userDetails) {
   try {
     const dbData = await User.findOne({
       where: { email: userDetails.email },
-      include: [{ model: Shop, attributes: ["shop_id", "shop_name"] }],
+      include: [{ model: Shop, attributes: ['shop_id', 'shop_name'] }],
     });
     if (!dbData) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     } else {
       const result = await bcrypt.compare(
         userDetails.password,
-        dbData.password
+        dbData.password,
       );
       if (!result) {
-        throw new Error("Invalid Password");
+        throw new Error('Invalid Password');
       } else {
-        let shop_id = dbData.Shop ? dbData.Shop.shop_id : null;
-        dbData.setDataValue("password", null);
-        let obj = {
+        const shopId = dbData.Shop ? dbData.Shop.shop_id : null;
+        dbData.setDataValue('password', null);
+        const obj = {
           token: jwtUtil.generateToken(
             dbData.user_id,
-            shop_id,
-            dbData.fullname
+            shopId,
+            dbData.fullname,
           ),
           profile: dbData,
         };
@@ -33,21 +33,21 @@ async function login(userDetails) {
       }
     }
   } catch (error) {
-    console.error("Error occured:", error);
+    console.error('Error occured:', error);
     throw error;
   }
 }
 
-//removing profile for now, as it's being fetched during login
+// removing profile for now, as it's being fetched during login
 async function get() {
   try {
-    const [upload_s3_url, countries] = await Promise.all([
+    const [uploads3Url, countries] = await Promise.all([
       generateSignedUrl(),
       Country.findAll(),
     ]);
-    return { upload_s3_url: upload_s3_url, countries: countries };
+    return { upload_s3_url: uploads3Url, countries };
   } catch (error) {
-    console.error("Error occured:", error);
+    console.error('Error occured:', error);
     throw error;
   }
 }
@@ -56,24 +56,24 @@ function register(userDetails) {
   return new Promise((resolve, reject) => {
     bcrypt
       .hash(userDetails.password, 10)
-      .then((hashedValue) => {
-        return User.create({
+      .then((hashedValue) =>
+        User.create({
           fullname: userDetails.fullname,
           email: userDetails.email,
           password: hashedValue,
-        });
-      })
+        }))
       .then((createdUser) => {
         const token = jwtUtil.generateToken(createdUser.user_id);
         resolve(token);
       })
       .catch((error) => {
-        console.log("error occured", error);
+        console.log('error occured', error);
         switch (error.name) {
-          case "SequelizeUniqueConstraintError":
-            reject("User already registered");
+          case 'SequelizeUniqueConstraintError':
+            reject(new Error('User already registered'));
+            break;
           default:
-            reject(error.name);
+            reject(new Error(error.name));
         }
       });
   });
@@ -81,9 +81,8 @@ function register(userDetails) {
 
 function updateProfile(userDetails) {
   return new Promise((resolve, reject) => {
-    // console.log(userDetails);
-    const dob = userDetails.dob.split("-");
-    let datatoUpdate = {
+    const dob = userDetails.dob.split('-');
+    const datatoUpdate = {
       fullname: userDetails.fullname,
       phone: userDetails.phone,
       gender: userDetails.gender,
@@ -100,20 +99,23 @@ function updateProfile(userDetails) {
     })
       .then((created) => {
         if (created[0] > 0) {
-          resolve("User Profile updated successfully");
+          resolve('User Profile updated successfully');
         } else {
-          throw new Error("User not found or No Changes");
+          throw new Error('User not found or No Changes');
         }
       })
       .catch((error) => {
-        console.log("error occured", error);
+        console.log('error occured', error);
         switch (error.name) {
-          case "SequelizeUniqueConstraintError":
-            reject("User already registered");
+          case 'SequelizeUniqueConstraintError':
+            reject(new Error('User already registered'));
+            break;
           default:
-            reject(error.message);
+            reject(new Error(error.message));
         }
       });
   });
 }
-module.exports = { login, get, register, updateProfile };
+module.exports = {
+  login, get, register, updateProfile,
+};

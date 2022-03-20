@@ -17,6 +17,9 @@
 
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
+.itemcardpic_btn{
+    visibility: hidden;
+}
 .itemcard__picwrapper{
     width: inherit;
     height: 250px;
@@ -47,19 +50,12 @@
     margin: 5px;
 }
 .itemcard__name{
-    font-size: 15px;
-    font-weight: 100;
-    margin-bottom: 5px;
+
 }
 .itemcard__contentwrapper{
     display: flex;
-    justify-content: space-between;
-    margin: 10px 0px;
-
-}
-.itemcar__buttonwrapper{
-    margin: 10px;
-}
-.itemcar__buttonwrapper > input{
-    padding: 5px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
 }

@@ -1,32 +1,29 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 
 function checkAuthenticationHeader(req, res, next) {
   let isError = true;
   if (
-    !(req.originalUrl === "/users/register" ||
-    req.originalUrl === "/users/login")
+    !(req.originalUrl === '/users/register'
+    || req.originalUrl === '/users/login')
   ) {
     const token = req.headers.authorization;
-    console.log(req.headers), token;
     if (token != null) {
       try {
-        console.log("token is ", token);
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         isError = false;
-        console.log("decoded", decoded);
         req.user_id = decoded.user_id;
         req.fullname = decoded.fullname;
-        if(decoded.shop_id){
+        if (decoded.shop_id) {
           req.shop_id = decoded.shop_id;
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     } else {
-      console.error("no authorization header");
+      console.error('no authorization header');
     }
     if (isError) {
-        throw new Error("Invalid Token, Please login again")
+      throw new Error('Invalid Token, Please login again');
     //   res.status(401).json({ error: "Invalid Token, Please login again" });
     }
   }

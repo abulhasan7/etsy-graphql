@@ -6,8 +6,10 @@ const shopService = require('../services/shopService');
 router.get('/check-availability', (req, res) => {
   shopService
     .checkAvailability(req.query.shop_name)
-    .then((success) => res.json({ message: success }))
-    .catch((error) => res.status(400).json({ error }));
+    .then((success) =>
+      res.json({ message: success }))
+    .catch((error) =>
+      res.status(400).json({ error }));
 });
 
 router.get('/get', (req, res) => {
@@ -16,7 +18,8 @@ router.get('/get', (req, res) => {
   const userId = req.user_id;
   shopService
     .getDetails(shopId, isOwner, userId)
-    .then((response) => res.status(200).json(response))
+    .then((response) =>
+      res.status(200).json(response))
     .catch((error) => {
       res.status(400).json({ error });
     });
@@ -38,8 +41,10 @@ router.post('/register', async (req, res) => {
 router.post('/update', (req, res) => {
   shopService
     .update({ ...req.body, shop_id: req.shop_id })
-    .then((success) => res.json({ message: success }))
-    .catch((error) => res.status(400).json({ error }));
+    .then((success) =>
+      res.json({ message: success }))
+    .catch((error) =>
+      res.status(400).json({ error }));
 });
 
 module.exports = router;

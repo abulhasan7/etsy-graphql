@@ -1,25 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { getTokenFullNameAndCurrency } from "../../redux/selectors";
-import { connect } from "react-redux";
-import ItemCard from "../itemcard/ItemCard";
-import { useNavigate, useLocation } from "react-router-dom";
-import "./home.css";
+/* eslint-disable array-callback-return */
+/* eslint-disable consistent-return */
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { getTokenFullNameAndCurrency } from '../../redux/selectors';
+import ItemCard from '../itemcard/ItemCard';
+import './home.css';
 
 function Home(props) {
-  //States
+  // States
   const [items, setItems] = useState([]);
   const [favourites, setFavourites] = useState({});
-  const [filterRange, setFilterRange] = useState("");
+  const [filterRange, setFilterRange] = useState('');
   const [excludeOutOfStock, setExcludeOutOfStock] = useState(false);
   const navigate = useNavigate();
 
   const location = useLocation();
 
-  const searchKeyword = location.state ? location.state["searchKeyword"] : "";
+  const searchKeyword = location.state ? location.state.searchKeyword : '';
 
   const getAllItems = () => {
-    fetch(process.env.REACT_APP_BACKEND_URL + "items/get-all", {
-      mode: "cors",
+    fetch(`${process.env.REACT_APP_BACKEND_URL}items/get-all`, {
+      mode: 'cors',
       headers: {
         Authorization: props.token,
       },
@@ -34,19 +36,19 @@ function Home(props) {
 
   useEffect(() => {
     if (!props.token) {
-      navigate("../login", { replace: true });
+      navigate('../login', { replace: true });
     } else {
       getAllItems();
     }
   }, []);
 
   const handleFilterChange = (event) => {
-    const value = event.target.value;
-    if (value !== "Select") {
-      const [lowRange, highRange] = event.target.value.split("-");
+    const { value } = event.target;
+    if (value !== 'Select') {
+      const [lowRange, highRange] = event.target.value.split('-');
       setFilterRange({
-        lowRange: parseInt(lowRange.substring(1)),
-        highRange: parseInt(highRange),
+        lowRange: parseInt(lowRange.substring(1), 10),
+        highRange: parseInt(highRange, 10),
       });
     } else {
       setFilterRange({
@@ -61,25 +63,22 @@ function Home(props) {
   };
 
   const sortItems = (value) => {
-    let tempItems = [...items];
-    if (value.startsWith("Price")) {
-      tempItems.sort((item1, item2) => {
-        console.log(item1.price);
-        return (
-          parseFloat(item1.price).toFixed(2) -
-          parseFloat(item2.price).toFixed(2)
-        );
-      });
-    } else if (value === "Quantity") {
+    const tempItems = [...items];
+    if (value.startsWith('Price')) {
+      tempItems.sort((item1, item2) => (
+        parseFloat(item1.price).toFixed(2)
+          - parseFloat(item2.price).toFixed(2)
+      ));
+    } else if (value === 'Quantity') {
       tempItems.sort((item1, item2) => item1.stock - item2.stock);
-    } else if (value === "Sales Count") {
+    } else if (value === 'Sales Count') {
       tempItems.sort((item1, item2) => item1.sold_count - item2.sold_count);
     }
     setItems(tempItems);
   };
 
   const handleSort = (event) => {
-    let value = event.target.value;
+    const { value } = event.target;
     sortItems(value);
   };
 
@@ -96,7 +95,12 @@ function Home(props) {
 
   return (
     <div className="home-container">
-      <div className="home-welcome">Welcome Back, {props.fullname}!</div>
+      <div className="home-welcome">
+        Welcome Back,
+        {' '}
+        {props.fullname}
+        !
+      </div>
       {items.length > 0 && (
         <div className="home-options-container">
           <div className="home-options-price">
@@ -108,11 +112,26 @@ function Home(props) {
               onChange={handleFilterChange}
             >
               <option>Select</option>
-              <option>{props.currency}0-100</option>
-              <option>{props.currency}101-500</option>
-              <option>{props.currency}501-1000</option>
-              <option>{props.currency}1001-10000</option>
-              <option>{props.currency}10001-1000000</option>
+              <option>
+                {props.currency}
+                0-100
+              </option>
+              <option>
+                {props.currency}
+                101-500
+              </option>
+              <option>
+                {props.currency}
+                501-1000
+              </option>
+              <option>
+                {props.currency}
+                1001-10000
+              </option>
+              <option>
+                {props.currency}
+                10001-1000000
+              </option>
             </select>
           </div>
           <div className="home-options-sortby">
@@ -124,7 +143,11 @@ function Home(props) {
               onChange={handleSort}
             >
               <option>Select</option>
-              <option>Price: ({props.currency})</option>
+              <option>
+                Price: (
+                {props.currency}
+                )
+              </option>
               <option>Quantity</option>
               <option>Sales Count</option>
             </select>
@@ -136,7 +159,7 @@ function Home(props) {
               id="checkbox"
               value={excludeOutOfStock}
               onClick={handleOutOfStockChange}
-            ></input>
+            />
           </div>
         </div>
       )}
@@ -147,10 +170,10 @@ function Home(props) {
               if (excludeOutOfStock) {
                 if (item.stock > 0) {
                   if (filterRange.highRange) {
-                    let price = parseFloat(item.price).toFixed(2);
+                    const price = parseFloat(item.price).toFixed(2);
                     if (
-                      filterRange.lowRange <= price &&
-                      filterRange.highRange >= price
+                      filterRange.lowRange <= price
+                      && filterRange.highRange >= price
                     ) {
                       return getItem(item);
                     }
@@ -158,41 +181,11 @@ function Home(props) {
                     return getItem(item);
                   }
                 }
-              } else {
-                if (filterRange.highRange) {
-                  let price = parseFloat(item.price).toFixed(2);
-                  if (
-                    filterRange.lowRange <= price &&
-                    filterRange.highRange >= price
-                  ) {
-                    return getItem(item);
-                  }
-                } else {
-                  return getItem(item);
-                }
-              }
-            }
-          } else {
-            if (excludeOutOfStock) {
-              if (item.stock > 0) {
-                if (filterRange.highRange) {
-                  let price = parseFloat(item.price).toFixed(2);
-                  if (
-                    filterRange.lowRange <= price &&
-                    filterRange.highRange >= price
-                  ) {
-                    return getItem(item);
-                  }
-                } else {
-                  return getItem(item);
-                }
-              }
-            } else {
-              if (filterRange.highRange) {
-                let price = parseFloat(item.price).toFixed(2);
+              } else if (filterRange.highRange) {
+                const price = parseFloat(item.price).toFixed(2);
                 if (
-                  filterRange.lowRange <= price &&
-                  filterRange.highRange >= price
+                  filterRange.lowRange <= price
+                    && filterRange.highRange >= price
                 ) {
                   return getItem(item);
                 }
@@ -200,6 +193,30 @@ function Home(props) {
                 return getItem(item);
               }
             }
+          } else if (excludeOutOfStock) {
+            if (item.stock > 0) {
+              if (filterRange.highRange) {
+                const price = parseFloat(item.price).toFixed(2);
+                if (
+                  filterRange.lowRange <= price
+                    && filterRange.highRange >= price
+                ) {
+                  return getItem(item);
+                }
+              } else {
+                return getItem(item);
+              }
+            }
+          } else if (filterRange.highRange) {
+            const price = parseFloat(item.price).toFixed(2);
+            if (
+              filterRange.lowRange <= price
+                  && filterRange.highRange >= price
+            ) {
+              return getItem(item);
+            }
+          } else {
+            return getItem(item);
           }
         })}
         {items.length < 1 && <div className="home-no-items">Oops! No Items Found.</div>}

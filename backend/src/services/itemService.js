@@ -1,60 +1,58 @@
-const { Op } = require("sequelize");
+const { Op } = require('sequelize');
 const {
   Item,
-  Item_Category,
+  ItemCategory,
   Shop,
   Favourite,
-} = require("../models/index");
-const { generateSignedUrl } = require("../utils/s3");
+} = require('../models/index');
+const { generateSignedUrl } = require('../utils/s3');
 
-async function getAllForShop(shop_id) {
+async function getAllForShop(shopId) {
   try {
-    let allItems;
-    allItems = await Item.findAll({
+    const allItems = await Item.findAll({
       where: {
-        shop_id: shop_id,
+        shop_id: shopId,
       },
     });
 
     return allItems;
   } catch (error) {
-    console.log("Error occured while getting all the Items", error);
+    console.error('Error occured while getting all the Items', error);
     throw new Error(error.message);
   }
 }
 
-async function getAllExceptShop(shop_id, user_id) {
-  console.log("shop id is " + shop_id);
+async function getAllExceptShop(shopId, userId) {
   try {
-    let itemsPromise = Item.findAll({
-      //item already has a shopid, so only getting shop name
-      include: [{ model: Shop, attributes: ["shop_name","shop_id"] }],
+    const itemsPromise = Item.findAll({
+      // item already has a shopid, so only getting shop name
+      include: [{ model: Shop, attributes: ['shop_name', 'shop_id'] }],
       where: {
         shop_id: {
-          [Op.ne]: shop_id || "",
+          [Op.ne]: shopId || '',
         },
       },
     });
-    let favouritesPromse = Favourite.findAll({
-      attributes: ["favourite_id", "item_id"],
+    const favouritesPromse = Favourite.findAll({
+      attributes: ['favourite_id', 'item_id'],
       where: {
-        user_id: user_id,
+        user_id: userId,
       },
     });
 
-    const [items, favourites, profile] = await Promise.all([
+    const [items, favourites] = await Promise.all([
       itemsPromise,
-      favouritesPromse
+      favouritesPromse,
     ]);
-    let favouriteObj = {};
+    const favouriteObj = {};
     if (favourites) {
       favourites.forEach((fav) => {
         favouriteObj[fav.item_id] = fav.favourite_id;
       });
     }
-    return { items: items, favourites: favouriteObj };
+    return { items, favourites: favouriteObj };
   } catch (error) {
-    console.log("Error occured while getting all the Items", error);
+    console.error('Error occured while getting all the Items', error);
     throw new Error(error.message);
   }
 }
@@ -62,12 +60,12 @@ async function getAllExceptShop(shop_id, user_id) {
 async function addItem(item) {
   let passedCategory = false;
   try {
-    const category = await Item_Category.findOrCreate({
-      attributes: ["name"],
+    const category = await ItemCategory.findOrCreate({
+      attributes: ['name'],
       where: { name: item.category },
     });
     passedCategory = true;
-    const createdItem = await Item.create({
+    await Item.create({
       name: item.name,
       category: category[0].name,
       description: item.description,
@@ -79,11 +77,11 @@ async function addItem(item) {
     });
     return `Item ${item.name} created successfully`;
   } catch (error) {
-    console.log("Error occured while adding item", error);
-    if (error.name && error.name === "SequelizeUniqueConstraintError") {
+    console.error('Error occured while adding item', error);
+    if (error.name && error.name === 'SequelizeUniqueConstraintError') {
       if (passedCategory) {
         throw new Error(
-          `Item ${item.name} under the category ${item.category} for the shop already exist`
+          `Item ${item.name} under the category ${item.category} for the shop already exist`,
         );
       } else {
         throw new Error(`Category already ${item.category} exists`);
@@ -96,8 +94,8 @@ async function addItem(item) {
 
 async function updateItem(item) {
   try {
-    const category = await Item_Category.findOrCreate({
-      attributes: ["name"],
+    const category = await ItemCategory.findOrCreate({
+      attributes: ['name'],
       where: { name: item.category },
     });
     const updatedItem = await Item.update(
@@ -108,26 +106,24 @@ async function updateItem(item) {
         price: item.price,
         stock: item.stock,
         item_pic_url: item.item_pic_url,
-        // sold_count: item.sold_count,
-        // shop_id: item.shop_id,
       },
       {
         where: {
           item_id: item.item_id,
         },
-      }
+      },
     );
     if (updatedItem[0] > 0) {
       return `Item ${item.name} updated successfully`;
     }
     throw new Error(
-      `Either Item ${item.name} not found or the details are similar`
+      `Either Item ${item.name} not found or the details are similar`,
     );
   } catch (error) {
-    console.log("Error occured while updating item", error);
-    if (error.name && error.name === "SequelizeUniqueConstraintError") {
+    console.error('Error occured while updating item', error);
+    if (error.name && error.name === 'SequelizeUniqueConstraintError') {
       throw new Error(
-        `Item ${item.name} under the category ${item.category} for shop already exist`
+        `Item ${item.name} under the category ${item.category} for shop already exist`,
       );
     }
     throw new Error(error.message);
@@ -136,18 +132,18 @@ async function updateItem(item) {
 
 async function additemsgetparams() {
   try {
-    const [categories, s3_upload_url] = await Promise.all([
-      Item_Category.findAll(),
+    const [categories, s3UploadUrl] = await Promise.all([
+      ItemCategory.findAll(),
       generateSignedUrl(),
     ]);
-    let returnobj = {
-      categories: categories,
-      s3_upload_url: s3_upload_url,
+    const returnobj = {
+      categories,
+      s3_upload_url: s3UploadUrl,
     };
 
     return returnobj;
   } catch (error) {
-    console.log("Error occured while getting data", error);
+    console.error('Error occured while getting data', error);
     throw new Error(error.message);
   }
 }

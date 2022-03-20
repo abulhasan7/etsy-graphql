@@ -1,30 +1,33 @@
-const { Favourite, Item,User,Shop } = require("../models/index");
+const {
+  Favourite, Item, Shop,
+} = require('../models/index');
 
-async function getAllWithUserProfile(user_id) {
+async function getAllWithUserProfile(userId) {
   try {
     const favouritesArr = await Favourite.findAll({
       attributes: {
-        exclude: ["user_id"],
+        exclude: ['user_id'],
       },
       where: {
-        user_id: user_id,
+        user_id: userId,
       },
-      include: [{model:Item,include:[Shop]}],
+      include: [{ model: Item, include: [Shop] }],
     });
-    let favourites ={};
-    if(favouritesArr){
-      favouritesArr.forEach(favourite=> favourites[favourite.item_id]=favourite);
+    const favourites = {};
+    if (favouritesArr) {
+      favouritesArr.forEach((favourite) => {
+        favourites[favourite.item_id] = favourite;
+      });
     }
-    return {favourites:favourites};
+    return { favourites };
   } catch (error) {
-    console.log("Error occurred while getting favourites", error);
+    console.error('Error occurred while getting favourites', error);
     throw new Error(error.message);
   }
 }
 
 async function add(user) {
   try {
-    console.log("user is ",user);
     const favourite = await Favourite.create({
       user_id: user.user_id,
       item_id: user.item_id,
@@ -32,29 +35,29 @@ async function add(user) {
     if (favourite) {
       return favourite.favourite_id;
     }
-    throw new Error("Some error occurred while adding favourite");
+    throw new Error('Some error occurred while adding favourite');
   } catch (error) {
-    console.log("Error occurred while adding favourite", error);
-    if(error.name && error.name ==='SequelizeUniqueConstraintError'){
-        throw new Error(`Favourite already exists`);
+    console.error('Error occurred while adding favourite', error);
+    if (error.name && error.name === 'SequelizeUniqueConstraintError') {
+      throw new Error('Favourite already exists');
     }
     throw new Error(error.message);
   }
 }
 
-async function remove(favourite_id) {
+async function remove(favouriteId) {
   try {
     const success = await Favourite.destroy({
       where: {
-        favourite_id: favourite_id,
+        favourite_id: favouriteId,
       },
     });
     if (success > 0) {
-      return "Favourite deleted successfully";
+      return 'Favourite deleted successfully';
     }
     throw new Error("Favourite already deleted or Doesn't exist");
   } catch (error) {
-    console.log("Error occurred while removing favourite", error);
+    console.error('Error occurred while removing favourite', error);
     throw new Error(error.message);
   }
 }
