@@ -13,8 +13,12 @@
     row-gap: 20px;
     padding: 20px;
     margin-top: 5%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
 }
-
+.shopreg__form:hover{
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
 .shopreg__title{
     font-size: larger;
     font-weight: bolder;
@@ -37,19 +41,23 @@
 .shopreg__button_check{
     border:none;
     border-left: 2px solid #DEDEDE;
-    background-color: white;
+    background-color: #DEDEDE;
     color: black;
     padding: 5px;
     font-size: large;
     font-weight: bold;
-    margin-right: 5px;
+    /* margin-right: 5px; */
 }
 .shopreg__button_register{
     border:none;
     border-radius: 5px;
-    background-color: black;
-    color: white;
-    padding: 5px;
+    background-color: #DEDEDE;
+    color: black;
+    padding: 10px;
+}
+.shopreg__button_register:hover,.shopreg__button_check:hover{
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+
 }
 .shopreg__statusicon{
     height: inherit !important;

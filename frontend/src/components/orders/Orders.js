@@ -18,7 +18,7 @@ function Orders(props) {
   }, []);
 
   const getOrders = () =>{
-    fetch("http://localhost:3001/orders/get", {
+    fetch(process.env.REACT_APP_BACKEND_URL+"orders/get", {
       mode: "cors",
       headers: {
         Authorization: props.token,
@@ -27,10 +27,11 @@ function Orders(props) {
     })
       .then((res) => res.json())
       .then((jsonresponse) => {
-        // console.log(jsonresponse);
-        // console.log(jsonresponse.message);
-        setOrders(jsonresponse.message)
-        console.log("success");
+        if(!jsonresponse.error){
+          setOrders(jsonresponse.message)
+          console.log("success");
+        }
+
       })
       .catch((error) => console.log(error));
   }
@@ -40,10 +41,10 @@ function Orders(props) {
       orders.map(order=>{
         return (<div className="order_container">
             <div className="order_header_container">
+            <div className='order_orderid orderdet'>Order No: {order.order_id}</div>
             <div className='order_date orderdet'>Ordered On: {order.order_date}</div>
             <div className='order_totalprice orderdet'>Total Price: {props.currency}{order.total_price}</div>
             <div className='order_totalquantity orderdet'>Total Quantity: {order.total_quantity}</div>
-            <div className='order_orderid orderdet'>Order No: {order.order_id}</div>
             </div>
             <div className="order_items">
              {order.Order_Details.map(
@@ -57,6 +58,8 @@ function Orders(props) {
             </div>
         </div>)
       })
+    }{
+      orders.length<=0 && <div className="no-orders">Oops! No Orders yet.</div>
     }
 
   </div>;

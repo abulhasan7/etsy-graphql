@@ -12,7 +12,7 @@ import "./checkout.css";
 
 function Checkout(props) {
   const [isModelOpen, setIsModelOpen] = useState(false);
-  let total_price = 0;
+  let total_price = 0.00;
   let totalItems = 0;
   let total_quantity = 0;
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ function Checkout(props) {
   const purchaseItems = () => {
     validate()
       .then(() => {
-        return fetch("http://localhost:3001/orders/create", {
+        return fetch(process.env.REACT_APP_BACKEND_URL+"orders/create", {
           method: "POST",
           mode: "cors",
           headers: {
@@ -70,7 +70,7 @@ function Checkout(props) {
   };
   return (
     <div className="checkout__container">
-      <Modal
+      {isModelOpen && <Modal
         isOpen={isModelOpen}
         // onAfterOpen={afterOpenModal}
         // onRequestClose={this.handleModelClose}
@@ -86,11 +86,13 @@ function Checkout(props) {
             Close
           </button>
         </div>
-      </Modal>
+      </Modal>}
       <div className="checkout__header">Shopping Cart</div>
-      <div className="checkout__itemcontainer">
+      {Object.keys(props.cart).length>0 && <><div className="checkout__itemcontainer">
         {Object.values(props.cart).map((item) => {
-          total_price += parseFloat(item.price).toFixed(2) * item.quantity;
+          let pp = parseFloat(item.price).toFixed(2);
+          total_price +=(pp* item.quantity);
+          console.log(total_price);
           totalItems++;
           total_quantity += item.quantity;
           return (
@@ -124,7 +126,10 @@ function Checkout(props) {
           className="checkout__btn"
           onClick={purchaseItems}
         />
-      </div>
+      </div> </>}
+      {
+        Object.keys(props.cart).length<=0 && <div className="no-cart">Oops! Nothing in the cart yet.</div>
+      }
     </div>
   );
 }

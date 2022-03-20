@@ -2,17 +2,20 @@ import React, { useEffect, useState } from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { connect } from "react-redux";
-import {getTokenCurrencyAndCart } from "../../redux/selectors";
+import { getTokenCurrencyAndCart } from "../../redux/selectors";
 import { useLocation, useNavigate } from "react-router-dom";
-import { addCart } from "../../redux/cartSlice";
+import { addCart, removeCart } from "../../redux/cartSlice";
+
 import "./itemoverview.css";
+
 
 function ItemOverview(props) {
   const { item, favouriteId: favourite_id } = useLocation().state;
 
   const [favouriteId, setFavouriteId] = useState(favourite_id);
+  const [itemInCart, setItemInCart] = useState(props.cart?props.cart[item.item_id]!=undefined:false);
 
-  const [itemQuantity,setItemQuantity] = useState();
+  const [itemQuantity, setItemQuantity] = useState();
 
   const navigate = useNavigate();
 
@@ -24,9 +27,8 @@ function ItemOverview(props) {
     }
   };
 
-
   const addFavourite = () => {
-    fetch("http://localhost:3001/favourites/add", {
+    fetch(process.env.REACT_APP_BACKEND_URL + "favourites/add", {
       method: "POST",
       mode: "cors",
       headers: {
@@ -48,7 +50,7 @@ function ItemOverview(props) {
   };
 
   const removeFavourite = () => {
-    fetch("http://localhost:3001/favourites/remove", {
+    fetch(process.env.REACT_APP_BACKEND_URL + "favourites/remove", {
       method: "DELETE",
       mode: "cors",
       headers: {
@@ -75,23 +77,34 @@ function ItemOverview(props) {
     }
   }, []);
 
-  const handleQuantitySelect = (event) =>{
-    if(event.target.value!=='Select'){
-      setItemQuantity(event.target.value)  
+  const handleQuantitySelect = (event) => {
+    if (event.target.value !== "Select") {
+      setItemQuantity(event.target.value);
     }
-  }
+  };
 
   const handleAddtoCart = () => {
     //TODO store items using ITEMID?
-    let addItem = {...item,quantity:parseInt(itemQuantity)};
+    let addItem = { ...item, quantity: parseInt(itemQuantity) };
     // console.log("additem",addItem)
     props.addCart(addItem);
+    setItemInCart(true);
     // let itemsTR = localStorage.getItem("cart") || "{}";
     // let items = JSON.parse(itemsTR);
     // items[item.item_id] = addItem;
     // localStorage.setItem("cart", JSON.stringify(items));
   };
 
+  const handleRemoveCart = () => {
+    //TODO store items using ITEMID?
+    // console.log("additem",addItem)
+    props.removeCart(item.item_id);
+    setItemInCart(false);
+    // let itemsTR = localStorage.getItem("cart") || "{}";
+    // let items = JSON.parse(itemsTR);
+    // items[item.item_id] = addItem;
+    // localStorage.setItem("cart", JSON.stringify(items));
+  };
   return (
     <div className="item-overview-container">
       <div className="item-overview-image-container">
@@ -119,12 +132,28 @@ function ItemOverview(props) {
       </div>
 
       <div className="item-overview-details-container">
-        <div className="item-overview-shop-name" onClick={()=>navigate("../../shop/home",{state:{shop_id:item.Shop.shop_id,shop_name:item.Shop.shop_name}})}>{item.Shop["shop_name"]}</div>
+        <div
+          className="item-overview-shop-name"
+          onClick={() =>
+            navigate("../../shop/home", {
+              state: {
+                shop_id: item.Shop.shop_id,
+                shop_name: item.Shop.shop_name,
+              },
+            })
+          }
+        >
+          {item.Shop["shop_name"]}
+        </div>
         <div className="item-overview-sales-count">{item.sold_count} Sales</div>
         <div className="item-overview-item-name">{item.name}</div>
-        <div className="item-overview-price">{props.currency}{item.price}</div>
+        <div className="item-overview-price">
+          {props.currency}
+          {item.price}
+        </div>
         <span className="item-overview-stock">
-          {item.stock > 0 ? "In Stock" : "Sold Out"}
+          {item.stock > 0 ? "In Stock    \u2714" : "Sold Out \u274c"}
+          {}
         </span>
         <div className="item-overview-quantity-container">
           <label
@@ -147,19 +176,39 @@ function ItemOverview(props) {
               ))}
           </select>
         </div>
-        <input
-          type={"button"}
-          value="Add to Cart"
-          disabled={item.stock < 1}
-          onClick={handleAddtoCart}
-          className="item-overview-add-cart-btn"
-        />
+        {itemInCart && <div className="addtocartmessage">Item in Cart</div>}
+        <div className="cart-buttons">
+          <input
+            type={"button"}
+            value="Add to Cart"
+            disabled={item.stock < 1}
+            onClick={handleAddtoCart}
+            className="item-overview-add-cart-btn"
+          />
+          {itemInCart && (
+            <input
+              type={"button"}
+              value="Remove from Cart"
+              onClick={handleRemoveCart}
+              className="item-overview-add-cart-btn"
+            />
+          )}
+        </div>
+        {itemInCart && (
+          <input
+            type={"button"}
+            value="Proceed to Checkout"
+            onClick={() => navigate("../checkout")}
+            className="item-overview-add-cart-btn"
+          />
+        )}
         <div className="item-overview-description-container">
           <label htmlFor="" className="item-overview-description-label">
             Description
           </label>
-          <div className="item-overview-description-text">{ item.description || 
-            `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          <div className="item-overview-description-text">
+            {item.description ||
+              `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
             ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
             aliquip ex ea commodo consequat. Duis aute irure dolor in
@@ -173,4 +222,6 @@ function ItemOverview(props) {
   );
 }
 
-export default connect(getTokenCurrencyAndCart, { addCart })(ItemOverview);
+export default connect(getTokenCurrencyAndCart, { addCart, removeCart })(
+  ItemOverview
+);

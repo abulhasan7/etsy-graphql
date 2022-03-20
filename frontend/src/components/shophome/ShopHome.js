@@ -1,7 +1,6 @@
-import { Navigate } from "react-router";
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { getToken, getTokenAndUserId } from "../../redux/selectors";
+import { getTokenAndUserId } from "../../redux/selectors";
 import { addToken } from "../../redux/tokenSlice";
 import "./shophome.css";
 import { Alert } from "@mui/material";
@@ -18,33 +17,16 @@ function ShopHome(props) {
   const [shopDetails, setShopDetails] = useState({
     shop_name: locationState.shop_name,
     shop_id: locationState.shop_id,
-    total_sales: 0,
-    user:{},
-    items:[],
-    modelItem:{},
-    isModelOpen:false
+    shop_total_sales: 0,
+    user: {},
+    items: [],
+    modelItem: {},
+    isModelOpen: false,
   });
   const [favourites, setFavourites] = useState({});
 
-  console.log("shop details are",shopDetails);
-  const isOwner = locationState.shop_id?false:true;
-  console.log("location state is",locationState);
-  // shop_pic_url: "",
-  // shop_pic_file: "",
-  // shop_name: props.shop_name,
-  // total_sales: 0,
-  // total_sales_updated: false,
-  // shop_id: props.shop_id,
-  // user: {
-  //   profile_pic_url: "",
-  //   fullname: "",
-  //   phone: "",
-  // },
-  // upload_s3_url: "",
-  // message: "",
-  // items: [],
-  // modelItem: {},
-  // isOwner: false,
+  const isOwner = locationState.shop_id ? false : true;
+
   useEffect(() => {
     if (!props.token) {
       navigate("../login", { replace: true });
@@ -61,9 +43,11 @@ function ShopHome(props) {
       return { ...prevState, isModelOpen: true, modelItem: item };
     });
   }
+
   function handleModelClose(didItemChange) {
-    this.setState((prevState, props) => {
+    setShopDetails((prevState, props) => {
       return {
+        ...prevState,
         isModelOpen: false,
         modelItem: { ...prevState.modelItem, itemChanged: didItemChange },
       };
@@ -72,9 +56,10 @@ function ShopHome(props) {
 
   function getShopDetails() {
     let url = isOwner
-      ?
-    "http://localhost:3001/shops/get"
-    : "http://localhost:3001/shops/get?shopId=" + locationState.shop_id;
+      ? process.env.REACT_APP_BACKEND_URL + "shops/get"
+      : process.env.REACT_APP_BACKEND_URL +
+        "shops/get?shopId=" +
+        locationState.shop_id;
     fetch(url, {
       credentials: "include",
       mode: "cors",
@@ -96,22 +81,16 @@ function ShopHome(props) {
               user: jsonresponse.shop.User,
               upload_s3_url: jsonresponse.upload_s3_url,
               items: jsonresponse.items,
+              shop_name: jsonresponse.shop.shop_name,
             };
           });
-          if(!isOwner){
+          if (!isOwner) {
             setFavourites(jsonresponse.favourites);
           }
         }
       })
       .catch((error) => console.log(error));
   }
-
-  // componentDidUpdate() {
-  //   if (shopDetailsmodelItem.itemChanged) {
-  //     this.getShopDetails();
-  //     this.setState({ modelItem: {} });
-  //   }
-  // }
 
   function handleChange(event) {
     console.log(event);
@@ -160,12 +139,10 @@ function ShopHome(props) {
     event.preventDefault();
     handleValidation()
       .then(() => {
-        if (shopDetails.shop_pic_file) {
-          return fetch(shopDetails.upload_s3_url, {
-            method: "PUT",
-            body: shopDetails.shop_pic_file,
-          });
-        }
+        return fetch(shopDetails.upload_s3_url, {
+          method: "PUT",
+          body: event.target.files[0],
+        });
       })
       .then((s3response) => {
         console.log("s3resoibse", s3response);
@@ -180,7 +157,7 @@ function ShopHome(props) {
         }
       })
       .then((s3url) => {
-        let url = "http://localhost:3001/shops/update";
+        let url = process.env.REACT_APP_BACKEND_URL + "shops/update";
         const body = {
           shop_pic_url: s3url,
         };
@@ -211,10 +188,14 @@ function ShopHome(props) {
         if (json.error) {
           return Promise.reject(json);
         } else {
-          let elem = <Alert onClose={handleChange}>{json.message}</Alert>;
+          let localurl = URL.createObjectURL(event.target.files[0]);
           setShopDetails((prevState) => {
-            return { ...prevState, message: elem };
+            return { ...prevState, shop_pic_url: localurl };
           });
+          // let elem = <Alert onClose={handleChange}>{json.message}</Alert>;
+          // setShopDetails((prevState) => {
+          //   return { ...prevState, message: elem };
+          // });
         }
       })
       .catch((error) => {
@@ -233,21 +214,21 @@ function ShopHome(props) {
 
   const updateSalesCount = (count, index) => {
     console.log(total_sales, count, index, shopDetails.items.length);
-    if (
-      shopDetails.total_sales_updated == false &&
-      index == shopDetails.items.length - 1 &&
-      total_sales != 0
-    ) {
-      setShopDetails((prevState) => {
-        return {
-          ...prevState,
-          total_sales: total_sales,
-          total_sales_updated: true,
-        };
-      });
-      total_sales = 0;
-    } else {
-      total_sales += count;
+    console.log(shopDetails.total_sales_updated, shopDetails.total_sales);
+    if (!shopDetails.total_sales_updated) {
+      if (index == shopDetails.items.length - 1 && total_sales != 0) {
+        setShopDetails((prevState) => {
+          console.log("prevstae is ", prevState);
+          return {
+            ...prevState,
+            shop_total_sales: total_sales,
+            total_sales_updated: true,
+          };
+        });
+        // total_sales = 0;
+      } else {
+        total_sales += count;
+      }
     }
   };
   return (
@@ -261,60 +242,56 @@ function ShopHome(props) {
       <form className="shopform" onSubmit={handleSubmit}>
         <div className="shopform__child1">
           <div className="shopform__child1_shopdetails">
-            <img
-              src={
-                shopDetails.shop_pic_url ||
-                "https://smacksportswear.com/wp-content/uploads/2019/07/storefront-icon.jpg"
-              }
-              className="shopform__image"
-              alt="Shop Pic"
-            />
-
-            {shopDetails.isOwner && (
+            <label htmlFor="file1">
+              <img
+                src={
+                  shopDetails.shop_pic_url ||
+                  "https://smacksportswear.com/wp-content/uploads/2019/07/storefront-icon.jpg"
+                }
+                className="shopform__image"
+                alt="Shop Pic"
+              />
+            </label>
+            <div className="">
+              <span className="shopform__title_main">
+                {shopDetails.shop_name}
+              </span>
+              <div className="shopform__title">
+                {shopDetails.shop_total_sales} Sales
+              </div>
+              {isOwner && (
+                <input
+                  type="button"
+                  value="Add Item"
+                  onClick={handleModelOpen}
+                  className="shopform__btn btn"
+                />
+              )}
+            </div>
+            {isOwner && (
               <div className="shopform__child1_text">
                 <input
+                  id="file1"
                   type="file"
                   name="file"
-                  className="shopform__button"
-                  onChange={handleChange}
+                  className="shopform__file_button"
+                  onChange={handleSubmit}
                 />
-
-                <input type="submit" value="Save Image" className="btn" />
               </div>
             )}
           </div>
-          <div className="shopform__middle">
-            <span className="shopform__title_main">
-              {shopDetails.shop_name}
-            </span>
-            <span className="shopform__title">
-              {shopDetails.total_sales} Sales
-            </span>
-            {isOwner && (
-              <input
-                type="button"
-                value="Add Item"
-                onClick={handleModelOpen}
-                className="shopform__btn btn"
-              />
-            )}
-          </div>
+
           <div className="ownerdetails">
             <img
               src={
                 shopDetails.user.profile_pic_url ||
                 "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png"
               }
-              className="shopform__image"
+              className="shopform__profile_image"
               alt="Shop Owner Pic"
             />
-            <div className="owner_text">
-              <div className="shopform__title">Owner Details</div>
-              <div className="owner_det">
-                Owner: {shopDetails.user.fullname}
-              </div>
-              <div className="owner_det">Contact: {shopDetails.user.phone}</div>
-            </div>
+            <div className="owner_det">{shopDetails.user.fullname}</div>
+            <div className="owner_det">Phone: {shopDetails.user.phone}</div>
           </div>
         </div>
         <div className="shopform__child2">
@@ -324,8 +301,14 @@ function ShopHome(props) {
               return (
                 <ItemCard
                   key={item.item_id}
-                  item={{...item,Shop:{shop_name:shopDetails.shop_name,shop_id:item.shop_id}}}
-                  handleModelOpen={shopDetails.isOwner?handleModelOpen:undefined}
+                  item={{
+                    ...item,
+                    Shop: {
+                      shop_name: shopDetails.shop_name,
+                      shop_id: item.shop_id,
+                    },
+                  }}
+                  handleModelOpen={isOwner ? handleModelOpen : undefined}
                   favourite={{
                     favouriteId: favourites[item.item_id],
                     updateFavourites: setFavourites,

@@ -10,7 +10,7 @@ import Home from './components/home/Home'
 import ItemOverview from './components/itemoverview/ItemOverview';
 import Favourites from './components/favourites/Favourites';
 import Checkout from './components/checkout/Checkout';
-import Orders from './components/orders/Orders'
+import Orders from './components/orders/Orders';
 
 function App() {
   return (

@@ -1,19 +1,21 @@
-const { Order, Order_Detail, sequelize, Item } = require("../models/index");
+const {
+  Order, Order_Detail: OrderDetail, Item,
+} = require('../models/index');
 
-async function get(user_id) {
+async function get(userId) {
   try {
     const orders = await Order.findAll({
       where: {
-        user_id: user_id,
+        user_id: userId,
       },
-      include: [Order_Detail],
+      include: [OrderDetail],
     });
     if (orders.length === 0) {
-      throw new Error("No orders found for the user");
+      throw new Error('No orders found for the user');
     }
     return orders;
   } catch (error) {
-    console.log("Error occurred while getting orders", error);
+    console.log('Error occurred while getting orders', error);
     throw new Error(error.message);
   }
 }
@@ -28,46 +30,42 @@ async function create(order) {
       total_quantity: order.total_quantity,
     });
     if (createdOrder) {
-      const orderdet_all = order.orderDetails.map((order_det) => {
-        return {
-          order_id: createdOrder.order_id,
-          item_quantity: order_det.quantity,
-          unit_price: order_det.price,
-          shop_id: order_det.shop_id,
-          item_name: order_det.name,
-          item_pic: order_det.item_pic_url,
-          category: order_det.category,
-          description: order_det.description,
-          shop_name:order_det.Shop.shop_name
-        };
-      });
+      const mappedOrderDetails = order.orderDetails.map((orderDetail) => ({
+        order_id: createdOrder.order_id,
+        item_quantity: orderDetail.quantity,
+        unit_price: orderDetail.price,
+        shop_id: orderDetail.shop_id,
+        item_name: orderDetail.name,
+        item_pic_url: orderDetail.item_pic_url,
+        category: orderDetail.category,
+        description: orderDetail.description,
+        shop_name: orderDetail.Shop.shop_name,
+      }));
 
       await Promise.all([
-        Order_Detail.bulkCreate(orderdet_all),
+        OrderDetail.bulkCreate(mappedOrderDetails),
         Promise.all(
-          order.orderDetails.map((order_det) =>
-            Item.increment(
-              {
-                stock: -order_det.quantity,
-                sold_count: order_det.quantity,
+          order.orderDetails.map((orderDetail) => Item.increment(
+            {
+              stock: -orderDetail.quantity,
+              sold_count: orderDetail.quantity,
+            },
+            {
+              where: {
+                item_id: orderDetail.item_id,
               },
-              {
-                where: {
-                  item_id: order_det.item_id,
-                },
-              }
-            )
-          )
+            },
+          )),
         ),
       ]);
       return `Order created successfully with OrderId:${createdOrder.order_id}`;
       // }
     }
-    throw new Error("Some error occurred while creating Order");
+    throw new Error('Some error occurred while creating Order');
   } catch (error) {
-    console.log("Error occurred while creating Order", error);
-    if (error.name && error.name === "SequelizeUniqueConstraintError") {
-      throw new Error(`Order already exists`);
+    console.log('Error occurred while creating Order', error);
+    if (error.name && error.name === 'SequelizeUniqueConstraintError') {
+      throw new Error('Order already exists');
     }
     throw new Error(error.message);
   }

@@ -20,7 +20,7 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/shops/check-availability?shopname=shop2
 ###
-POST http://localhost:3001/users/login
+POST process.env.REACT_APP_users/login
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFidWxAaGFzYS5jb20iLCJpYXQiOjE2NDYwMTE4Njh9.0pt0egax4qlMeZKyuX-z_HX-5gBxj1YBI5adp_Q1OwU
 
@@ -71,11 +71,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFidWxAa
     "user_id":"379"
 }
 ###
-GET http://localhost:3001/items/get-all
+GET process.env.REACT_APP_items/get-all
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozOSwic2hvcF9pZCI6NCwiaWF0IjoxNjQ3MzE5Nzg0fQ.0myw0fJcchJYyXaaYrtE-bPSEcr3RKSnTcfzibXnzWE
 
 ###
-GET http://localhost:3001/items/get-all-by-shop
+GET process.env.REACT_APP_items/get-all-by-shop
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozOSwic2hvcF9pZCI6NCwiaWF0IjoxNjQ3MzE5Nzg0fQ.0myw0fJcchJYyXaaYrtE-bPSEcr3RKSnTcfzibXnzWE
 ###
 POST http://localhost:3000/shops/add-item
@@ -134,7 +134,7 @@ GET http://localhost:3000/orders/get?user_id=26
 
 ###
 
-POST http://localhost:3001/orders/create
+POST process.env.REACT_APP_orders/create
 Content-Type: application/json
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozOSwic2hvcF9pZCI6NCwiaWF0IjoxNjQ3MDY2NjY1fQ.BsOE13JD4ReM2pbeOm4D_rPR_aymoNMMCXqBpTh3GNc
  

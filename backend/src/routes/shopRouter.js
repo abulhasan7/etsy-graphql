@@ -1,36 +1,28 @@
-const express = require("express");
-const router = express.Router();
-const shopService = require("../services/shopService");
+const express = require('express');
 
-router.get("/check-availability", (req, res) => {
+const router = express.Router();
+const shopService = require('../services/shopService');
+
+router.get('/check-availability', (req, res) => {
   shopService
     .checkAvailability(req.query.shop_name)
     .then((success) => res.json({ message: success }))
-    .catch((error) => res.status(400).json({ error: error }));
+    .catch((error) => res.status(400).json({ error }));
 });
 
-router.get("/get", async (req, res, next) => {
-  let isOwner = req.query.shopId ? false : true;
-  let shopId = isOwner?req.shop_id:req.query.shopId;
-  let userId = req.user_id;
-  const response = await shopService
-    .getDetails(shopId,isOwner,userId)
+router.get('/get', (req, res) => {
+  const isOwner = !req.query.shopId;
+  const shopId = isOwner ? req.shop_id : req.query.shopId;
+  const userId = req.user_id;
+  shopService
+    .getDetails(shopId, isOwner, userId)
     .then((response) => res.status(200).json(response))
     .catch((error) => {
-      res.status(400).json({ error: error });
+      res.status(400).json({ error });
     });
 });
 
-router.get("/get-user", async (req, res, next) => {
-  const response = await shopService
-    .getDetailsForUser(req.params.shop_id)
-    .then((response) => res.status(200).json(response))
-    .catch((error) => {
-      res.status(400).json({ error: error });
-    });
-});
-
-router.post("/register", async (req, res) => {
+router.post('/register', async (req, res) => {
   try {
     const success = await shopService.register({
       ...req.body,
@@ -38,16 +30,16 @@ router.post("/register", async (req, res) => {
     });
     res.json({ message: success });
   } catch (error) {
-    console.log("error is ", error);
-    res.status(400).json({ error: error });
+    console.log('error is ', error);
+    res.status(400).json({ error });
   }
 });
 
-router.post("/update", (req, res) => {
+router.post('/update', (req, res) => {
   shopService
     .update({ ...req.body, shop_id: req.shop_id })
     .then((success) => res.json({ message: success }))
-    .catch((error) => res.status(400).json({ error: error }));
+    .catch((error) => res.status(400).json({ error }));
 });
 
 module.exports = router;

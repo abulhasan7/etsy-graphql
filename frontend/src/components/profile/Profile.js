@@ -36,7 +36,7 @@ class Profile extends Component {
   }
 
   componentDidMount() {
-    let url = "http://localhost:3001/users/get";
+    let url = process.env.REACT_APP_BACKEND_URL+"users/get";
     fetch(url, {
       mode: "cors",
       headers: {
@@ -187,7 +187,7 @@ class Profile extends Component {
         }
       })
       .then((s3url) => {
-        let url = "http://localhost:3001/users/update";
+        let url = process.env.REACT_APP_BACKEND_URL+"users/update";
         const body = {
           fullname: this.state.fullname,
           gender: this.state.gender,

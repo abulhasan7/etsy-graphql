@@ -11,8 +11,8 @@
         "ecmaVersion": "latest"
     },
     "rules": {
-        "root": false,
         "linebreak-style": ["error", "windows"],
-        "no-console": "off"
+        "no-console": "off",
+        "implicit-arrow-linebreak": ["error", "below"]
     }
 }

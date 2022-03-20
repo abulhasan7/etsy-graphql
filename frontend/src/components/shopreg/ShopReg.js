@@ -4,6 +4,7 @@ import { Alert } from "@mui/material";
 import { Navigate } from "react-router-dom";
 import { connect } from "react-redux";
 import { getToken } from "../../redux/selectors";
+import {addToken} from "../../redux/tokenSlice";
 
 class ShopReg extends Component {
   constructor(props) {
@@ -48,7 +49,7 @@ class ShopReg extends Component {
 
   handleShopNameSubmit(event) {
     event.preventDefault();
-    let url = "http://localhost:3001/shops/check-availability?shop_name=";
+    let url = process.env.REACT_APP_BACKEND_URL+"shops/check-availability?shop_name=";
     url += this.state.shop_name;
     this.handleValidation()
       .then((message) => {
@@ -91,7 +92,7 @@ class ShopReg extends Component {
   handleShopRegSubmit(event) {
     event.preventDefault();
     if (this.state.isAvailable) {
-      let url = "http://localhost:3001/shops/register";
+      let url = process.env.REACT_APP_BACKEND_URL+"shops/register";
       this.handleValidation()
         .then((message) => {
           return fetch(url, {
@@ -109,6 +110,7 @@ class ShopReg extends Component {
         .then((response) => response.json())
         .then((jsonresp) => {
           if (jsonresp.message) {
+            this.props.addToken(jsonresp.message);
             this.setState({
               isRegistered: <Navigate replace to="/shop/home" />,
               isAvailable: true,
@@ -187,4 +189,4 @@ class ShopReg extends Component {
     );
   }
 }
-export default connect(getToken, null)(ShopReg);
+export default connect(getToken, {addToken})(ShopReg);

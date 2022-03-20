@@ -73,7 +73,7 @@ class Register extends Component {
   handleSubmit(event) {
     event.preventDefault();
     if (!this.handleValidation()) {
-      let url = "http://localhost:3001/users/register";
+      let url = process.env.REACT_APP_BACKEND_URL+"users/register";
       fetch(url, {
         method: "POST",
         mode: "cors",
@@ -121,7 +121,7 @@ class Register extends Component {
     return (
       <div className="parent">
         <form className="registerform" onSubmit={this.handleSubmit}>
-          <div className="registerform__heading">Etsy!</div>
+          <div className="registerform__heading">Register Here!</div>
           {this.state.message}
           <div className="registerform__formgroup">
             <label htmlFor="email" className="loginfor__label">
@@ -174,14 +174,14 @@ class Register extends Component {
           <div className="registerform__formgroupbtn">
           <input
             type="submit"
-            className="registerform__submit"
+            className="registerform__btn"
             name="register"
             value={"Register Now"}
             disabled={this.state.message}
           />
              <input
             type="button"
-            className="registerform__login"
+            className="registerform__btn"
             name="login"
             value={"Login Instead"}
             disabled={this.state.message}

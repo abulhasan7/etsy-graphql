@@ -1,7 +1,9 @@
 .shopform{
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
+    padding-left: 100px;
+    padding-right: 100px;
 }
 
 .shopform__child1{
@@ -9,38 +11,26 @@
     /* border: 2px solid #dedede; */
     display: flex;
     justify-content: flex-start;
-    padding: 10px;
+    /* padding: 10px; */
     /* width: 65%; */
     grid-column: 1/3;
-    font-size: 40px;
-    width: 100%;
+    /* font-size: 40px; */
     display: flex;
     justify-content: space-between;
     padding: 10px 25px;
     align-items: center;
-    background-color: #FDEBD2;
 }
 .shopform__child1_shopdetails{
     display: flex;
-}
-.shopform__child1_text{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: flex-start;
-}
-.shopform__middle{
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
+    
 }
 .shopform__title_main{
-    font-size: 50px;
+    font-size: 32px;
 }
 .ownerdetails{
     display: flex;
-    justify-content: flex-start;
+    flex-direction: column;
+    /* justify-content: flex-start; */
     /* align-items: center; */
 }
 .owner_text{
@@ -49,11 +39,7 @@
     justify-content: flex-start;
     /* margin: 20px; */
 }
-.ownerheading{
-}
-.owner_det,.shopform__title,.shopform__btn{
-    margin-top: 20px;
-}
+
 .shopform__itemcontainer{
     display: flex;
     flex-wrap: wrap;
@@ -63,19 +49,20 @@
 }
 
 
-.shopform__title{
-    font-size: larger;
-    font-weight: bolder;
-}
 .shopform__image{
-    width: 200px;
-    height: 200px;
+    width: 120px;
+    height: 120px;
     /* border-radius: 50%; */
     margin-right: 25px;
 }
-.shopform__button{
+.shopform__profile_image{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.shopform__file_button{
     color: rgba(255, 255, 255, 0);
-    
+    display: none;
      overflow: hidden;
      margin-right: -100px;
 }
@@ -85,4 +72,10 @@
     padding: 10px;
     background-color: #dedede;
     border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+.btn:hover{
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
 }

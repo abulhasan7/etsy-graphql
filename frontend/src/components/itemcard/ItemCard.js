@@ -22,7 +22,7 @@ function ItemCard(props) {
 
   
   const addFavourite = () => {
-    fetch("http://localhost:3001/favourites/add", {
+    fetch(process.env.REACT_APP_BACKEND_URL+"favourites/add", {
       method: "POST",
       mode: "cors",
       headers: {
@@ -51,7 +51,7 @@ function ItemCard(props) {
   };
 
   const removeFavourite = () => {
-    fetch("http://localhost:3001/favourites/remove", {
+    fetch(process.env.REACT_APP_BACKEND_URL+"favourites/remove", {
       method: "DELETE",
       mode: "cors",
       headers: {

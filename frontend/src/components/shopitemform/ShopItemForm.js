@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import Modal from "react-modal";
 import { connect } from "react-redux";
-import { getToken, getTokenAndCurrency } from "../../redux/selectors";
 import { Alert } from "@mui/material";
+import {getTokenAndCurrency} from "../../redux/selectors"
+
 import "./shopitemform.css";
 
 class ShopItemForm extends Component {
@@ -32,7 +33,7 @@ class ShopItemForm extends Component {
         top: "10%",
         left: "20%",
         right: "20%",
-        bottom: "25%",
+        bottom: "15%",
         // marginRight: '-50%',
         // transform: 'translate(-50%, -50%)',
       },
@@ -49,6 +50,7 @@ class ShopItemForm extends Component {
     // this.setState({isModelOpen:false})
   }
   handleInputChange(event) {
+    console.log("event.",event.target.name,event.target.value);
     if (event.target.name === "file") {
       let url = URL.createObjectURL(event.target.files[0]);
       this.setState({
@@ -67,7 +69,7 @@ class ShopItemForm extends Component {
       event.target.name === "category" &&
       event.target.value === "Create Category"
     ) {
-      this.setState({ manualcategory: "Create Category Here" });
+      this.setState({ category:"Create Category",manualcategory: "Create Category Here" });
     } else if (event.target.name === "category") {
       this.setState({ category: event.target.value,manualcategory:"" });
     } else if (event.target.name === "manualcategory") {
@@ -140,7 +142,7 @@ class ShopItemForm extends Component {
           item_url,
           parseFloat(this.state.price).toFixed(2)
         );
-        let url = this.props.item.item_id ? "http://localhost:3001/items/update":"http://localhost:3001/items/add"
+        let url = this.props.item.item_id ? process.env.REACT_APP_BACKEND_URL+"items/update":process.env.REACT_APP_BACKEND_URL+"items/add"
         return fetch(url, {
           method: "POST",
           body: JSON.stringify({
@@ -183,7 +185,7 @@ class ShopItemForm extends Component {
       });
   }
   componentDidMount() {
-    fetch("http://localhost:3001/items/additem-getparams", {
+    fetch(process.env.REACT_APP_BACKEND_URL+"items/additem-getparams", {
       headers: {
         Authorization: this.props.token,
       },
@@ -207,7 +209,7 @@ class ShopItemForm extends Component {
         contentLabel="Example Modal"
       >
         <form className="shopitemform" onSubmit={this.handleInputSubmit}>
-          <div className="shopitemform__heading">Add Item</div>
+          <div className="shopitemform__heading">Add/Edit Item</div>
           {this.state.alert}
           <div className="shopitemform__formmessage">{this.state.message}</div>
           <div className="shopitemform__formimagegrid">

@@ -1,8 +1,9 @@
 import React,{ useEffect,useState }  from 'react'
-import { getTokenAndFullName } from "../../redux/selectors";
+import { getTokenAndFullName, getTokenAndProfile } from "../../redux/selectors";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ItemCard from "../itemcard/ItemCard";
+import EditIcon from '@mui/icons-material/Edit';
 import './favourites.css'
 
 function Favourites(props) {
@@ -14,7 +15,7 @@ function Favourites(props) {
   const navigate = useNavigate();
 
   const getFavouritesAndProfile = () => {
-    fetch("http://localhost:3001/favourites/get-all", {
+    fetch(process.env.REACT_APP_BACKEND_URL+"favourites/get-all", {
       mode: "cors",
       headers: {
         Authorization: props.token,
@@ -47,16 +48,27 @@ function Favourites(props) {
   return (
     <div className="favourites-container">
       <div className='favourites-header-container'>
-    <div className='favourites-header'>Your Favourites!</div>
+      <div className="favourites-header__formimagegrid">
+            <img
+              src={
+                props.profile.profile_pic_url ||
+                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png"
+              }
+              className="favourites_profileimage"
+            ></img>
+          </div>
     <div className='favourites-profile'>
-      <div className='favourites-fullname'>{props.fullname}</div>
-    <input type='button' value='Edit Profile' className='btn' onClick={()=>navigate("../profile")}/>
+      <div className='favourites-fullname'>{props.profile.fullname}</div>
+    <EditIcon onClick={()=>navigate("../profile")}/>
     </div>
     </div>
-    <div className='favourites-data-container'>
+    {(Object.keys(favourites).length>0 || favourites)&& <div className='favourites-data-container'>
       <div className='favourite-search'>
-        <input placeholder='Search Here' onChange={handleSearchInput} className="fav-search"/>
+        <div className='favourite-title'>Favourite Items</div>
+        <div>
+        <input placeholder='Search your favourites' onChange={handleSearchInput} className="fav-search"/>
         <input type='button' value='Search' className='btn' onClick={handleSearch}/>
+        </div>
       </div>
     <div className='favourites-items-container'>
       {Object.values(favourites).map(favourite =>{
@@ -72,9 +84,12 @@ function Favourites(props) {
           />)
       })}
     </div>
-    </div>
+    </div> }
+    {
+      Object.keys(favourites).length<1 && <div className='no-favourites'>Oops! No favourites yet.</div>
+    }
     </div>
   )
 }
 
-	export default connect(getTokenAndFullName,null)(Favourites);
+	export default connect(getTokenAndProfile,null)(Favourites);

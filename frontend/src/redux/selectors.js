@@ -17,7 +17,8 @@ export const getTokenAndCurrency = (state) => {
   };
 };
 
-export const getTokenCurrencyAndCart = (state) => {
+export const getTokenCurrencyAndCart = (state,a) => {
+  console.log("a",a);
   return {
     cart: state.cartSlice.cart,
     token: state.tokenSlice.token,

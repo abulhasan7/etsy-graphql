@@ -18,7 +18,7 @@ function CartItem(props) {
         />
       </div>
       <div className="cartitem__content_container">
-        <div className="cartitem__name">{props.item.name}</div>
+        <div className="cartitem__name">{props.item.item_name || props.item.name}</div>
         <div className="cartitem__sellername">
           Sold By:{" "}
           {props.item.Shop ? props.item.Shop.shop_name : props.item.shop_name}
@@ -33,8 +33,8 @@ function CartItem(props) {
         <div className="cartitem__totalprice">
           Total Price: {props.currency}
           {props.item.price
-            ? props.item.price * props.item.quantity
-            : props.item.unit_price * props.item.item_quantity}
+            ? (props.item.price * props.item.quantity).toFixed(2)
+            : (props.item.unit_price * props.item.item_quantity).toFixed(2)}
         </div>
       </div>
     </div>

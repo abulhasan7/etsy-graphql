@@ -51,7 +51,7 @@ function Login(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!handleValidation()) {
-      let url = "http://localhost:3001/users/login";
+      let url = process.env.REACT_APP_BACKEND_URL+"users/login";
       fetch(url, {
         method: "POST",
         mode: "cors",
@@ -93,7 +93,7 @@ function Login(props) {
   return (
     <div className="parent">
       <form className="loginform" onSubmit={handleSubmit}>
-        <div className="loginform__heading">Etsy!</div>
+        <div className="loginform__heading">Login Here!</div>
         {error && (
           <Alert severity="error" onClose={handleChange}>
             {error}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {getTokenFullNameAndCurrency } from "../../redux/selectors";
+import { getTokenFullNameAndCurrency } from "../../redux/selectors";
 import { connect } from "react-redux";
 import ItemCard from "../itemcard/ItemCard";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -18,7 +18,7 @@ function Home(props) {
   const searchKeyword = location.state ? location.state["searchKeyword"] : "";
 
   const getAllItems = () => {
-    fetch("http://localhost:3001/items/get-all", {
+    fetch(process.env.REACT_APP_BACKEND_URL + "items/get-all", {
       mode: "cors",
       headers: {
         Authorization: props.token,
@@ -48,7 +48,7 @@ function Home(props) {
         lowRange: parseInt(lowRange.substring(1)),
         highRange: parseInt(highRange),
       });
-    }else{
+    } else {
       setFilterRange({
         lowRange: undefined,
         highRange: undefined,
@@ -62,9 +62,14 @@ function Home(props) {
 
   const sortItems = (value) => {
     let tempItems = [...items];
-    if (value === "Price: ($)") {
-      tempItems.sort((item1, item2) =>{console.log(item1.price);return (parseFloat(item1.price).toFixed(2)) - (parseFloat(item2.price).toFixed(2))});
-      console.log("items now",items);
+    if (value.startsWith("Price")) {
+      tempItems.sort((item1, item2) => {
+        console.log(item1.price);
+        return (
+          parseFloat(item1.price).toFixed(2) -
+          parseFloat(item2.price).toFixed(2)
+        );
+      });
     } else if (value === "Quantity") {
       tempItems.sort((item1, item2) => item1.stock - item2.stock);
     } else if (value === "Sales Count") {
@@ -92,51 +97,53 @@ function Home(props) {
   return (
     <div className="home-container">
       <div className="home-welcome">Welcome Back, {props.fullname}!</div>
-      <div className="home-options-container">
-        <div className="home-options-price">
-          <label htmlFor="priceFilter">Filter by Price: </label>
-          <select
-            name="filter"
-            id="priceFilter"
-            className="home-options-price-select"
-            onChange={handleFilterChange}
-          >
-            <option>Select</option>
-            <option>{props.currency}0-100</option>
-            <option>{props.currency}101-500</option>
-            <option>{props.currency}501-1000</option>
-            <option>{props.currency}1001-10000</option>
-            <option>{props.currency}10001-1000000</option>
-          </select>
+      {items.length > 0 && (
+        <div className="home-options-container">
+          <div className="home-options-price">
+            <label htmlFor="priceFilter">Filter by Price: </label>
+            <select
+              name="filter"
+              id="priceFilter"
+              className="home-options-price-select"
+              onChange={handleFilterChange}
+            >
+              <option>Select</option>
+              <option>{props.currency}0-100</option>
+              <option>{props.currency}101-500</option>
+              <option>{props.currency}501-1000</option>
+              <option>{props.currency}1001-10000</option>
+              <option>{props.currency}10001-1000000</option>
+            </select>
+          </div>
+          <div className="home-options-sortby">
+            <label htmlFor="sortyBy">Sort By: </label>
+            <select
+              name="sort"
+              id="sortBy"
+              className="home-options-price-select"
+              onChange={handleSort}
+            >
+              <option>Select</option>
+              <option>Price: ({props.currency})</option>
+              <option>Quantity</option>
+              <option>Sales Count</option>
+            </select>
+          </div>
+          <div className="home-options-checkbox">
+            <label htmlFor="checkbox">Exclude Out of Stock: </label>
+            <input
+              type="checkbox"
+              id="checkbox"
+              value={excludeOutOfStock}
+              onClick={handleOutOfStockChange}
+            ></input>
+          </div>
         </div>
-        <div className="home-options-sortby">
-          <label htmlFor="sortyBy">Sort By: </label>
-          <select
-            name="sort"
-            id="sortBy"
-            className="home-options-price-select"
-            onChange={handleSort}
-          >
-            <option>Select</option>
-            <option>Price: ({props.currency})</option>
-            <option>Quantity</option>
-            <option>Sales Count</option>
-          </select>
-        </div>
-        <div className="home-options-checkbox">
-          <label htmlFor="checkbox">Exclude Out of Stock: </label>
-          <input
-            type="checkbox"
-            id="checkbox"
-            value={excludeOutOfStock}
-            onClick={handleOutOfStockChange}
-          ></input>
-        </div>
-      </div>
+      )}
       <div className="home-items-container">
         {items.map((item) => {
           if (searchKeyword) {
-            if (searchKeyword === item.name) {
+            if (item.name.toUpperCase().includes(searchKeyword.toUpperCase())) {
               if (excludeOutOfStock) {
                 if (item.stock > 0) {
                   if (filterRange.highRange) {
@@ -195,6 +202,7 @@ function Home(props) {
             }
           }
         })}
+        {items.length < 1 && <div className="home-no-items">Oops! No Items Found.</div>}
       </div>
     </div>
   );

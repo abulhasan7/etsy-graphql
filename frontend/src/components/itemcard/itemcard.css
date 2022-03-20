@@ -10,13 +10,22 @@
     width: 250px;
     height: 320px;
     background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+.itemcard:hover,.itemcard__picwrapper:hover{
+
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 .itemcard__picwrapper{
     width: inherit;
     height: 250px;
     /* border-bottom: 1px solid #DEDEDE; */
     padding-bottom: 20px;
+    /* box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s; */
 }
+
 .itemcard__name{
     /* border-bottom: 1px solid #DEDEDE; */
     width: 100%;

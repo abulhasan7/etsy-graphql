@@ -65,7 +65,7 @@ function Navbar(props) {
   };
 
   return (
-    <div>
+    <div className="container">
       <nav className="header">
         <Link className="header__link" to="/home">
           <img className="header__logo" src={etsylogo} alt="Etsy-title" />
@@ -177,7 +177,7 @@ function Navbar(props) {
           </>
         )}
       </nav>
-      <Outlet />
+      <div className="main-content"><Outlet /></div>
       <footer className="footer">
         <div className="footer_left">
           <div className="staticfont">United States</div>
@@ -197,7 +197,7 @@ function Navbar(props) {
           <div className="pipe">|</div>
           <div className="staticfont">Privacy</div>
           <div className="pipe">|</div>
-          <div className="staticfont">Internet Based Ads</div>
+          <div className="staticfont link"><a className="link" href="https://github.com/itsabulhasan?tab=repositories">{"Developed by:  Abul Hasan Mohammed"}</a></div>
         </div>
       </footer>
     </div>
