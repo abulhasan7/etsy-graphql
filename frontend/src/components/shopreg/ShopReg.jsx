@@ -1,20 +1,20 @@
-import React, { Component } from "react";
-import "./shopreg.css";
-import { Alert } from "@mui/material";
-import { Navigate } from "react-router-dom";
-import { connect } from "react-redux";
-import { getToken } from "../../redux/selectors";
-import {addToken} from "../../redux/tokenSlice";
+import React, { Component } from 'react';
+import './shopreg.css';
+import { Alert } from '@mui/material';
+import { Navigate } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { getToken } from '../../redux/selectors';
+import { addToken } from '../../redux/tokenSlice';
 
 class ShopReg extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      shop_name: "",
+      shop_name: '',
       isAvailable: false,
-      message: "",
+      message: '',
       isRegistered: false,
-      redirectVar: this.props.token?"" : <Navigate replace to="/login"></Navigate>,
+      redirectVar: this.props.token ? '' : <Navigate replace to="/login" />,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleShopNameSubmit = this.handleShopNameSubmit.bind(this);
@@ -23,43 +23,42 @@ class ShopReg extends Component {
   }
 
   handleChange(event) {
-    if (event.target.name === "shop_name") {
+    if (event.target.name === 'shop_name') {
       this.setState({ shop_name: event.target.value });
     } else {
-      this.setState({ message: "" });
+      this.setState({ message: '' });
     }
   }
+
   handleValidation() {
     return new Promise((resolve, reject) => {
-      let message = "";
-      if (this.state.shop_name == "") {
+      let message = '';
+      if (this.state.shop_name == '') {
         message = "Shop name can't be empty";
       } else if (this.state.shop_name.length < 4) {
         message = "Shop name can't be less than 4 characters";
-      } else if (!this.state.shop_name.match("^[A-Za-z].*")) {
-        message = "Shop name has to start with a character";
+      } else if (!this.state.shop_name.match('^[A-Za-z].*')) {
+        message = 'Shop name has to start with a character';
       }
-      if (message !== "") {
+      if (message !== '') {
         reject(message);
       } else {
-        resolve("No Error");
+        resolve('No Error');
       }
     });
   }
 
   handleShopNameSubmit(event) {
     event.preventDefault();
-    let url = process.env.REACT_APP_BACKEND_URL+"shops/check-availability?shop_name=";
+    let url = `${process.env.REACT_APP_BACKEND_URL}shops/check-availability?shop_name=`;
     url += this.state.shop_name;
     this.handleValidation()
-      .then((message) => {
-        return fetch(url, {
-          mode: "cors",
-          headers: {
-            Authorization: this.props.token,
-          },
-        });
-      })
+      .then(() => fetch(url, {
+        mode: 'cors',
+        headers: {
+          Authorization: this.props.token,
+        },
+      }))
       .then((response) => response.json())
       .then((jsonresp) => {
         if (jsonresp.message) {
@@ -69,15 +68,12 @@ class ShopReg extends Component {
             ),
             isAvailable: true,
           });
-          console.log(jsonresp);
         } else {
-          console.error("error in json request", jsonresp);
           return Promise.reject(jsonresp.error);
           // throw new Error(jsonresp.error);
         }
       })
       .catch((error) => {
-        console.log(error);
         this.setState({
           message: (
             <Alert severity="error" onClose={this.handleChange}>
@@ -92,21 +88,19 @@ class ShopReg extends Component {
   handleShopRegSubmit(event) {
     event.preventDefault();
     if (this.state.isAvailable) {
-      let url = process.env.REACT_APP_BACKEND_URL+"shops/register";
+      const url = `${process.env.REACT_APP_BACKEND_URL}shops/register`;
       this.handleValidation()
-        .then((message) => {
-          return fetch(url, {
-            mode: "cors",
-            method: "POST",
-            body: JSON.stringify({
-              shop_name: this.state.shop_name,
-            }),
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: this.props.token,
-            }
-          });
-        })
+        .then((message) => fetch(url, {
+          mode: 'cors',
+          method: 'POST',
+          body: JSON.stringify({
+            shop_name: this.state.shop_name,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: this.props.token,
+          },
+        }))
         .then((response) => response.json())
         .then((jsonresp) => {
           if (jsonresp.message) {
@@ -117,7 +111,7 @@ class ShopReg extends Component {
             });
             console.log(jsonresp);
           } else {
-            console.error("error in json request", jsonresp);
+            console.error('error in json request', jsonresp);
             return Promise.reject(jsonresp.error);
             // throw new Error(jsonresp.error);
           }
@@ -137,18 +131,19 @@ class ShopReg extends Component {
       this.setState({
         message: (
           <Alert severity="error" onClose={this.handleChange}>
-            {"Shop Name not Available"}
+            Shop Name not Available
           </Alert>
         ),
         isAvailable: false,
       });
     }
   }
+
   render() {
     return (
-      
+
       <div className="shopreg__parent">
-                {this.state.redirectVar}
+        {this.state.redirectVar}
         {this.state.isRegistered}
         <form className="shopreg__form">
           <div className="shopreg__title">Name your shop</div>
@@ -163,7 +158,8 @@ class ShopReg extends Component {
               name="shop_name"
               value={this.state.shop_name}
               onChange={this.handleChange}
-            />{" "}
+            />
+            {' '}
             <input
               type="submit"
               className="shopreg__button_check"
@@ -189,4 +185,4 @@ class ShopReg extends Component {
     );
   }
 }
-export default connect(getToken, {addToken})(ShopReg);
+export default connect(getToken, { addToken })(ShopReg);

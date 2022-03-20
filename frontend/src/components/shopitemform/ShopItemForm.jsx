@@ -2,12 +2,11 @@ import React, { Component } from "react";
 import Modal from "react-modal";
 import { connect } from "react-redux";
 import { Alert } from "@mui/material";
-import {getTokenAndCurrency} from "../../redux/selectors"
+import { getTokenAndCurrency } from "../../redux/selectors";
 
 import "./shopitemform.css";
 
 class ShopItemForm extends Component {
-
   constructor(props) {
     super(props);
     this.item = this.props.item || {};
@@ -24,8 +23,8 @@ class ShopItemForm extends Component {
       alert: "",
       errmessage: "",
       manualcategory: "",
-      item_id:this.item.item_id,
-      itemChanged:false
+      item_id: this.item.item_id,
+      itemChanged: false,
     };
     Modal.setAppElement("#root");
     this.customStyles = {
@@ -42,7 +41,6 @@ class ShopItemForm extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleInputValidation = this.handleInputValidation.bind(this);
     this.handleInputSubmit = this.handleInputSubmit.bind(this);
-
   }
 
   handleModelClose() {
@@ -50,7 +48,7 @@ class ShopItemForm extends Component {
     // this.setState({isModelOpen:false})
   }
   handleInputChange(event) {
-    console.log("event.",event.target.name,event.target.value);
+    console.log("event.", event.target.name, event.target.value);
     if (event.target.name === "file") {
       let url = URL.createObjectURL(event.target.files[0]);
       this.setState({
@@ -69,12 +67,15 @@ class ShopItemForm extends Component {
       event.target.name === "category" &&
       event.target.value === "Create Category"
     ) {
-      this.setState({ category:"Create Category",manualcategory: "Create Category Here" });
+      this.setState({
+        category: "Create Category",
+        manualcategory: "Create Category Here",
+      });
     } else if (event.target.name === "category") {
-      this.setState({ category: event.target.value,manualcategory:"" });
+      this.setState({ category: event.target.value, manualcategory: "" });
     } else if (event.target.name === "manualcategory") {
-        this.setState({ manualcategory:event.target.value });
-      } else {
+      this.setState({ manualcategory: event.target.value });
+    } else {
       this.setState({ alert: "" });
     }
   }
@@ -142,7 +143,9 @@ class ShopItemForm extends Component {
           item_url,
           parseFloat(this.state.price).toFixed(2)
         );
-        let url = this.props.item.item_id ? process.env.REACT_APP_BACKEND_URL+"items/update":process.env.REACT_APP_BACKEND_URL+"items/add"
+        let url = this.props.item.item_id
+          ? process.env.REACT_APP_BACKEND_URL + "items/update"
+          : process.env.REACT_APP_BACKEND_URL + "items/add";
         return fetch(url, {
           method: "POST",
           body: JSON.stringify({
@@ -152,7 +155,7 @@ class ShopItemForm extends Component {
             price: parseFloat(this.state.price).toFixed(2),
             stock: this.state.stock,
             name: this.state.itemname,
-              item_id:this.state.item_id
+            item_id: this.state.item_id,
           }),
           headers: {
             Authorization: this.props.token,
@@ -169,7 +172,7 @@ class ShopItemForm extends Component {
               {response.message || "Success"}
             </Alert>
           );
-          this.setState({ alert: elem,itemChanged:true });
+          this.setState({ alert: elem, itemChanged: true });
         } else {
           return Promise.reject(response.error);
         }
@@ -185,7 +188,7 @@ class ShopItemForm extends Component {
       });
   }
   componentDidMount() {
-    fetch(process.env.REACT_APP_BACKEND_URL+"items/additem-getparams", {
+    fetch(process.env.REACT_APP_BACKEND_URL + "items/additem-getparams", {
       headers: {
         Authorization: this.props.token,
       },
@@ -305,8 +308,10 @@ class ShopItemForm extends Component {
             </div>
           )}
           <div className="shopitemform__formbuttoncontrol">
-            <button onClick={this.handleModelClose} className="btn">Close</button>
-            <input type="submit" value="Save" className="btn"/>
+            <button onClick={this.handleModelClose} className="btn">
+              Close
+            </button>
+            <input type="submit" value="Save" className="btn" />
           </div>
         </form>
       </Modal>

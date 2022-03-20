@@ -1,19 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+/* eslint-disable no-param-reassign */
+import { createSlice } from '@reduxjs/toolkit';
 
 export const tokenSlice = createSlice({
-  name: "token",
+  name: 'token',
   initialState: {
-    //this is the actual key that will be stored in the redux store
-    token: localStorage.getItem("token") || "",
+    // this is the actual key that will be stored in the redux store
+    token: localStorage.getItem('token') || '',
   },
   reducers: {
     addToken: (state, action) => {
       state.token = action.payload;
-      localStorage.setItem("token", action.payload);
+      localStorage.setItem('token', action.payload);
     },
-    removeToken: (state, action) => {
-      console.log("remove token");
-      state.token = "";
+    removeToken: (state) => {
+      state.token = '';
       localStorage.clear();
     },
   },
