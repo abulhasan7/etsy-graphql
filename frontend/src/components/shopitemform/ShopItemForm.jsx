@@ -56,6 +56,7 @@ class ShopItemForm extends Component {
   }
 
   handleModelClose() {
+    console.log(this.state.itemChanged);
     this.props.handleModelClose(this.state.itemChanged);
   }
 
@@ -170,7 +171,7 @@ class ShopItemForm extends Component {
       .then((response) => {
         if (response.message) {
           const elem = (
-            <Alert onClose={this.props.handleModelClose}>
+            <Alert onClose={this.handleModelClose}>
               {response.message || 'Success'}
             </Alert>
           );

@@ -135,6 +135,7 @@ class Register extends Component {
               name="email"
               value={this.state.email}
               onChange={this.handleChange}
+              data-testid="email-field"
             />
           </div>
           <div className="registerform__formgroup">
@@ -180,6 +181,7 @@ class Register extends Component {
               name="register"
               value="Register Now"
               disabled={this.state.message}
+              data-testid="register-button"
             />
             <input
               type="button"

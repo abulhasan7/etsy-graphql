@@ -132,6 +132,7 @@ function Login(props) {
             name="signin"
             value="Sign In"
             disabled={error}
+            data-testid="login-button"
           />
           <input
             type="button"

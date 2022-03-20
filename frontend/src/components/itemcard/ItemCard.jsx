@@ -93,13 +93,13 @@ function ItemCard(props) {
           <div className="item-overview-fav-icon">
             {props.favourite.favouriteId ? (
               <FavoriteIcon
-                // style={{ fontSize: 30, color: "#F1641E" }}
-                style={{ fontSize: 30, color: '#D9230F' }}
+                // style={{ fontSize: 30, color: "#F1641E"FDEBD2 D9230F }}
+                style={{ fontSize: 30, color: '#F1641E' }}
                 onClick={handleFavouriteClick}
               />
             ) : (
               <FavoriteBorderIcon
-                style={{ fontSize: 30, color: '#D9230F' }}
+                style={{ fontSize: 30, color: '#F1641E' }}
                 onClick={handleFavouriteClick}
               />
             )}

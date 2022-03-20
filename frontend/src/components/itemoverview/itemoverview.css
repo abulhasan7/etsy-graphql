@@ -31,6 +31,11 @@
 .item-overview-shop-name {
   font-size: 24px;
   text-decoration: underline;
+  border: none;
+  outline: none;
+  background-color: inherit;
+  align-self: flex-start;
+  padding-left: 0;
 }
 
 .item-overview-details-container {

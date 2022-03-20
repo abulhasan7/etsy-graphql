@@ -52,6 +52,7 @@ function ShopHome(props) {
             upload_s3_url: jsonresponse.upload_s3_url,
             items: jsonresponse.items,
             shop_name: jsonresponse.shop.shop_name,
+            itemChanged: false,
           }));
           if (!isOwner) {
             setFavourites(jsonresponse.favourites);
@@ -67,7 +68,7 @@ function ShopHome(props) {
     } else {
       getShopDetails();
     }
-  }, []);
+  }, [shopDetails.modelItem.itemChanged]);
 
   function handleModelOpen(item) {
     let tempItem = item;
@@ -78,6 +79,7 @@ function ShopHome(props) {
   }
 
   function handleModelClose(didItemChange) {
+    console.log(didItemChange);
     setShopDetails((prevState) => ({
       ...prevState,
       isModelOpen: false,
@@ -205,7 +207,7 @@ function ShopHome(props) {
           item={shopDetails.modelItem}
         />
       )}
-      <form className="shopform" onSubmit={handleSubmit}>
+      <div className="shopform">
         <div className="shopform__child1">
           <div className="shopform__child1_shopdetails">
             <label htmlFor="file1">
@@ -290,7 +292,7 @@ function ShopHome(props) {
             })}
           </div>
         </div>
-      </form>
+      </div>
     </>
   );
 }

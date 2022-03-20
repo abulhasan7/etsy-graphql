@@ -411,6 +411,7 @@ class Profile extends Component {
               name="update"
               value="Update Profile"
               className="profileform__formbutton"
+              data-testid="profileform-submit"
             />
           </div>
         </form>

@@ -71,7 +71,7 @@ function Favourites(props) {
         </div>
         <div className="favourites-items-container">
           {Object.values(favourites).map((favourite) => {
-            if (favourite == null || (searchKeyword !== '' && searchKeyword !== favourite.Item.name)) return;
+            if (favourite == null || (searchKeyword !== '' && !favourite.Item.name.toUpperCase().includes(searchKeyword.toUpperCase()))) return;
             return (
               <ItemCard
             // key={favourites[item.item_id] || item.item_id}

@@ -100,12 +100,12 @@ function ItemOverview(props) {
         <div className="item-overview-fav-icon">
           {favouriteId ? (
             <FavoriteIcon
-              style={{ fontSize: 30, color: '#D9230F' }}
+              style={{ fontSize: 30, color: '#F1641E' }}
               onClick={handleFavouriteClick}
             />
           ) : (
             <FavoriteBorderIcon
-              style={{ fontSize: 30, color: '#D9230F' }}
+              style={{ fontSize: 30, color: '#F1641E' }}
               onClick={handleFavouriteClick}
             />
           )}
