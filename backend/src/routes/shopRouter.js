@@ -9,7 +9,7 @@ router.get('/check-availability', (req, res) => {
     .then((success) =>
       res.json({ message: success }))
     .catch((error) =>
-      res.status(400).json({ error }));
+      res.status(400).json({ error: error.message }));
 });
 
 router.get('/get', (req, res) => {
