@@ -1,4 +1,6 @@
-# etsy-clone
+# Etsy-clone - NoSQL
+## Description
+  This application is similar to the previous one, in that it's a clone of ETSY, but it's different in that it uses NoSQL and improved UI.
 ## STEPS TO BUILD AND RUN THE APPLICATION.
 1. Checkout the repository using git clone.
 
