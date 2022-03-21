@@ -1,8 +1,14 @@
 const { v4: uuidv4 } = require('uuid');
 const AWS = require('aws-sdk');
 
-const s3 = new AWS.S3({ signatureVersion: 'v4', region: 'us-east-2',credentials:{  accessKeyId: process.env.accessKeyId,
-  secretAccessKey: process.env.secretAccessKey,} });
+const s3 = new AWS.S3({
+  signatureVersion: 'v4',
+  region: 'us-east-2',
+  credentials: {
+    accessKeyId: process.env.accessKeyId,
+    secretAccessKey: process.env.secretAccessKey,
+  },
+});
 AWS.config.update({
   accessKeyId: process.env.accessKeyId,
   secretAccessKey: process.env.secretAccessKey,

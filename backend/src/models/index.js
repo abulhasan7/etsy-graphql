@@ -16,7 +16,7 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     dialect: 'mysql' /* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */,
     pool: {
-      min: 1,
+      min: 5,
       max: 20,
       idle: 10000,
     },
