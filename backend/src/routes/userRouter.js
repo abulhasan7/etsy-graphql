@@ -9,10 +9,12 @@ router.post('/register', (req, res) => {
     .register(req.body)
     .then((token) =>
       res.status(200).json({ token }))
-    .catch((error) =>
+    .catch((error) => {
+      console.log('error', error);
       res
         .status(400)
-        .json({ error: error || 'Some error occured during regsitration' }));
+        .json({ error: error.message || 'Some error occured during regsitration' });
+    });
 });
 
 /* LOGIN USER */
@@ -48,7 +50,7 @@ router.put('/update', (req, res) => {
         .status(200)
         .json({ message: success }))
     .catch((error) => {
-      console.log(error);
+      console.log('in router', error);
       res
         .status(400)
         .json({ error: error || 'Some error occured during update' });

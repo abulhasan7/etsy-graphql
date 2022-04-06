@@ -50,7 +50,7 @@ class ShopItemForm extends Component {
       .then((jsonresponse) => {
         this.setState({
           s3_upload_url: jsonresponse.s3_upload_url,
-          categories: jsonresponse.categories.map((category) => category.name),
+          categories: jsonresponse.categories.categories,
         });
       });
   }

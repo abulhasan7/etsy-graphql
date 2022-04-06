@@ -1,21 +1,11 @@
-module.exports = (DataTypes) =>
+/* eslint-disable no-undef */
+module.exports = (Schema) =>
   ({
-  // Model attributes are defined here
-    favourite_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
-    },
     user_id: {
-      type: DataTypes.INTEGER,
-      // allowNull defaults to true
-      allowNull: false,
-    },
-    item_id: {
-      type: DataTypes.INTEGER,
-      // allowNull defaults to true
-      allowNull: false,
-    },
+      type: String,
 
+    },
+    item: {
+      type: Schema.Types.ObjectId, ref: 'Item',
+    },
   });

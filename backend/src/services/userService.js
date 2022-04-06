@@ -1,14 +1,14 @@
+/* eslint-disable no-else-return */
+/* eslint-disable no-underscore-dangle */
 const bcrypt = require('bcrypt');
-const { User, Country, Shop } = require('../models/index');
+const { User, Shop } = require('../models/index');
 const jwtUtil = require('../utils/jwtUtil');
 const { generateSignedUrl } = require('../utils/s3');
 
 async function login(userDetails) {
   try {
-    const dbData = await User.findOne({
-      where: { email: userDetails.email },
-      include: [{ model: Shop, attributes: ['shop_id', 'shop_name'] }],
-    });
+    const dbData = await User.findOne({ email: userDetails.email }, { __v: 0 }).exec();
+    console.log('dbdata', dbData);
     if (!dbData) {
       throw new Error('User not found');
     } else {
@@ -19,15 +19,16 @@ async function login(userDetails) {
       if (!result) {
         throw new Error('Invalid Password');
       } else {
-        const shopId = dbData.Shop ? dbData.Shop.shop_id : null;
-        dbData.setDataValue('password', null);
+        const ShopData = await Shop.findOne(
+          { user_id: dbData._id },
+        ).exec();
+        const shopId = ShopData ? ShopData._id : null;
         const obj = {
           token: jwtUtil.generateToken(
-            dbData.user_id,
+            dbData._id,
             shopId,
-            dbData.fullname,
           ),
-          profile: dbData,
+          profile: { fullname: dbData.fullname, email: dbData.email, user_id: dbData._id },
         };
         return obj;
       }
@@ -41,11 +42,10 @@ async function login(userDetails) {
 // removing profile for now, as it's being fetched during login
 async function get() {
   try {
-    const [uploads3Url, countries] = await Promise.all([
+    const [uploads3Url] = await Promise.all([
       generateSignedUrl(),
-      Country.findAll(),
     ]);
-    return { upload_s3_url: uploads3Url, countries };
+    return { upload_s3_url: uploads3Url };
   } catch (error) {
     console.error('Error occured:', error);
     throw error;
@@ -56,25 +56,22 @@ function register(userDetails) {
   return new Promise((resolve, reject) => {
     bcrypt
       .hash(userDetails.password, 10)
-      .then((hashedValue) =>
-        User.create({
+      .then((hashedValue) => {
+        const createUser = new User({
           fullname: userDetails.fullname,
           email: userDetails.email,
           password: hashedValue,
-        }))
+        });
+        return createUser.save();
+      })
       .then((createdUser) => {
-        const token = jwtUtil.generateToken(createdUser.user_id);
+        console.log(createdUser);
+        const token = jwtUtil.generateToken(createdUser._id);
         resolve(token);
       })
       .catch((error) => {
         console.log('error occured', error);
-        switch (error.name) {
-          case 'SequelizeUniqueConstraintError':
-            reject(new Error('User already registered'));
-            break;
-          default:
-            reject(new Error(error.name));
-        }
+        reject(new Error('User already registered'));
       });
   });
 }
@@ -94,11 +91,10 @@ function updateProfile(userDetails) {
       country: userDetails.country,
       profile_pic_url: userDetails.profile_pic_url,
     };
-    User.update(datatoUpdate, {
-      where: { user_id: userDetails.user_id },
-    })
+    User.updateOne({ _id: userDetails.user_id }, datatoUpdate).exec()
       .then((created) => {
-        if (created[0] > 0) {
+        console.log(created);
+        if (created.modifiedCount > 0) {
           resolve('User Profile updated successfully');
         } else {
           throw new Error('User not found or No Changes');
@@ -106,13 +102,7 @@ function updateProfile(userDetails) {
       })
       .catch((error) => {
         console.log('error occured', error);
-        switch (error.name) {
-          case 'SequelizeUniqueConstraintError':
-            reject(new Error('User already registered'));
-            break;
-          default:
-            reject(new Error(error.message));
-        }
+        reject(new Error('User already registered'));
       });
   });
 }

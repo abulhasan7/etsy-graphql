@@ -1,14 +1,12 @@
+/* eslint-disable no-undef */
 const {
-  Order, OrderDetail, Item,
+  Order, Item,
 } = require('../models/index');
 
 async function get(userId) {
   try {
-    const orders = await Order.findAll({
-      where: {
-        user_id: userId,
-      },
-      include: [OrderDetail],
+    const orders = await Order.find({
+      user_id: userId,
     });
     if (orders.length === 0) {
       throw new Error('No orders found for the user');
@@ -40,6 +38,7 @@ async function create(order) {
           category: orderDetail.category,
           description: orderDetail.description,
           shop_name: orderDetail.Shop.shop_name,
+          gift_description: orderDetail.gift_description,
         }));
 
       await Promise.all([

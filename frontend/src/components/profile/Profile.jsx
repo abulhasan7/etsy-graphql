@@ -25,7 +25,7 @@ class Profile extends Component {
       country: props.profile.country || 'Select',
       upload_s3_url: '',
       message: '',
-      countries: ['India', 'Africa'],
+      countries: ['USA', 'UK', 'CA', 'Spain', 'India', 'Africa'],
       redirectVar: this.props.token ? (
         ''
       ) : (
@@ -59,7 +59,6 @@ class Profile extends Component {
         }
         const currentState = {
           upload_s3_url: json.upload_s3_url,
-          countries: json.countries.map((c) => c.name),
         };
         this.setState(currentState);
       })

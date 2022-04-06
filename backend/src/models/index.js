@@ -1,127 +1,70 @@
-const { Sequelize, DataTypes } = require('sequelize');
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-unused-vars */
+const mongoose = require('mongoose');
 const user = require('./user');
-const country = require('./countries');
+// const country = require('./countries');
 const shop = require('./shops');
 const favourite = require('./favourites');
-const itemCategory = require('./item_categories');
 const item = require('./items');
 const order = require('./orders');
-const orderDetail = require('./orders_details');
+// const orderDetail = require('./orders_details');
+const { Schema } = mongoose;
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USERNAME,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    dialect: 'mysql' /* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */,
-    pool: {
-      min: 5,
-      max: 20,
-      idle: 10000,
-    },
+mongoose.connect('mongodb+srv://admin:admin@etsy-cluster.4ffum.mongodb.net/etsy-db?retryWrites=true&w=majority');
+const userSchema = new Schema(user);
+userSchema.set('toJSON', {
+  transform(doc, ret, options) {
+    ret.user_id = ret._id;
+    delete ret._id;
+    delete ret.__v;
   },
-);
-
-const Country = sequelize.define('Country', country(DataTypes), {
-  // Other model options go here
-  sequelize, // We need to pass the connection instance
-  //   modelName: "User", // We need to choose the model name,
-  tableName: 'countries',
-  createdAt: false,
-  updatedAt: false,
-
 });
-
-const User = sequelize.define('User', user(DataTypes), {
-  // Other model options go here
-  sequelize, // We need to pass the connection instance
-  //   modelName: "User", // We need to choose the model name,
-  tableName: 'users',
-  createdAt: false,
-  updatedAt: false,
+const shopSchema = new Schema(shop(Schema));
+shopSchema.set('toJSON', {
+  transform(doc, ret, options) {
+    ret.shop_id = ret._id;
+    delete ret._id;
+    delete ret.__v;
+  },
 });
-
-const Shop = sequelize.define('Shop', shop(DataTypes), {
-  // Other model options go here
-  sequelize, // We need to pass the connection instance
-  //   modelName: "User", // We need to choose the model name,
-  tableName: 'shops',
-  createdAt: false,
-  updatedAt: false,
+const favSchema = new Schema(favourite(Schema));
+favSchema.set('toJSON', {
+  transform(doc, ret, options) {
+    ret.favourite_id = ret._id;
+    delete ret._id;
+    delete ret.__v;
+  },
 });
-
-const Favourite = sequelize.define('Favourite', favourite(DataTypes), {
-  // Other model options go here
-  sequelize, // We need to pass the connection instance
-  //   modelName: "User", // We need to choose the model name,
-  tableName: 'favourites',
-  createdAt: false,
-  updatedAt: false,
+const itemSchema = new Schema(item(Schema));
+itemSchema.set('toJSON', {
+  transform(doc, ret, options) {
+    ret.item_id = ret._id;
+    delete ret._id;
+    delete ret.__v;
+  },
 });
-
-const ItemCategory = sequelize.define('Item_Category', itemCategory(DataTypes), {
-  // Other model options go here
-  sequelize, // We need to pass the connection instance
-  //   modelName: "User", // We need to choose the model name,
-  tableName: 'item_categories',
-  createdAt: false,
-  updatedAt: false,
+const orderSchema = new Schema(order);
+orderSchema.set('toJSON', {
+  transform(doc, ret, options) {
+    ret.favourite_id = ret._id;
+    delete ret._id;
+    delete ret.__v;
+  },
 });
-
-const Item = sequelize.define('Item', item(DataTypes), {
-  // Other model options go here
-  sequelize, // We need to pass the connection instance
-  //   modelName: "User", // We need to choose the model name,
-  tableName: 'items',
-  createdAt: false,
-  updatedAt: false,
-});
-
-const Order = sequelize.define('Order', order(DataTypes), {
-  // Other model options go here
-  sequelize, // We need to pass the connection instance
-  //   modelName: "User", // We need to choose the model name,
-  tableName: 'orders',
-  createdAt: false,
-  updatedAt: false,
-});
-
-const OrderDetail = sequelize.define('Order_Detail', orderDetail(DataTypes), {
-  // Other model options go here
-  sequelize, // We need to pass the connection instance
-  //   modelName: "User", // We need to choose the model name,
-  tableName: 'orders_details',
-  createdAt: false,
-  updatedAt: false,
-});
-
-// All Associations
-User.belongsTo(Country, { foreignKey: 'country' });
-User.hasMany(Order, { foreignKey: 'user_id' });
-User.hasMany(Favourite, { foreignKey: 'user_id' });
-User.hasOne(Shop, { foreignKey: 'user_id' });
-Shop.belongsTo(User, { foreignKey: 'user_id' });
-Shop.hasMany(Item, { foreignKey: 'shop_id' });
-Item.belongsTo(ItemCategory, { foreignKey: 'category', onUpdate: 'CASCADE' });
-Item.belongsTo(Shop, { foreignKey: 'shop_id' });
-Item.hasMany(Favourite, { foreignKey: 'item_id' });
-Order.belongsTo(User, { foreignKey: 'user_id' });
-Order.hasMany(OrderDetail, { foreignKey: 'order_id' });
-OrderDetail.belongsTo(Order, { foreignKey: 'order_id' });
-// Order_Detail.belongsTo(Item,{foreignKey:'item_id'})
-OrderDetail.belongsTo(Shop, { foreignKey: 'shop_id' });
-Favourite.belongsTo(User, { foreignKey: 'user_id' });
-Favourite.belongsTo(Item, { foreignKey: 'item_id' });
+const User = mongoose.model('User', userSchema);
+const Shop = mongoose.model('Shop', shopSchema);
+const Favourite = mongoose.model('Favourite', favSchema);
+const Item = mongoose.model('Item', itemSchema, 'items');
+const ItemCategories = mongoose.model('ItemCategories', new Schema({ _id: { type: String }, categories: [{ type: String }] }), 'item-categories');
+const Order = mongoose.model('Order', orderSchema);
 
 module.exports = {
   User,
   Shop,
-  Country,
   Favourite,
-  ItemCategory,
   Item,
+  ItemCategories,
   Order,
-  OrderDetail,
-  sequelize,
+  mongoose,
 };

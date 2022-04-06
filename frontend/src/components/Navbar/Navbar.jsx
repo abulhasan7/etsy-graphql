@@ -19,7 +19,7 @@ import { addToken, removeToken } from '../../redux/tokenSlice';
 import { getToken } from '../../redux/selectors';
 import etsylogo from '../../images/Etsy_logo.svg.png';
 
-import './navbar.css';
+import './Navbar.css';
 
 function Navbar(props) {
   // states

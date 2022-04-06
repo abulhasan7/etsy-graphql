@@ -11,13 +11,13 @@ function checkAuthenticationHeader(req, res, next) {
       try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         isError = false;
+        console.log('decoded', decoded.user_id);
         req.user_id = decoded.user_id;
-        req.fullname = decoded.fullname;
         if (decoded.shop_id) {
           req.shop_id = decoded.shop_id;
         }
       } catch (error) {
-        console.error(error);
+        console.error('ERROR while verifying token', error);
       }
     } else {
       console.error('no authorization header');

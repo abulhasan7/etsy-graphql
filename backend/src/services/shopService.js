@@ -1,5 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 const {
-  Shop, Item, User, Favourite,
+  Shop, Item, Favourite, mongoose,
 } = require('../models/index');
 const { generateSignedUrl } = require('../utils/s3');
 const { generateToken } = require('../utils/jwtUtil');
@@ -9,18 +10,12 @@ async function getDetails(shopId, isOwner, userId) {
     if (!shopId) {
       throw new Error("Shop doesn't exist");
     }
-    const itemsPromise = Item.findAll({
-      where: {
-        shop_id: shopId,
-      },
-    });
-    const shopPromise = Shop.findOne({
-      where: { shop_id: shopId },
-      include: {
-        model: User,
-        attributes: ['fullname', 'phone', 'profile_pic_url'],
-      },
-    });
+    const itemsPromise = Item.find({
+      shop_id: shopId,
+    }).exec();
+    const shopPromise = Shop.findOne(
+      { _id: shopId },
+    ).populate('user');
     const allData = {};
     if (isOwner) {
       const [items, shop, uploadS3Url] = await Promise.all([
@@ -31,10 +26,12 @@ async function getDetails(shopId, isOwner, userId) {
       allData.items = items;
       allData.shop = shop;
       allData.upload_s3_url = uploadS3Url;
+      if (!shop) {
+        throw new Error("Shop doesn't exist");
+      }
     } else {
-      const favouritesPromise = Favourite.findAll({
-        attributes: { exclude: ['user_id'] },
-        where: { user_id: userId },
+      const favouritesPromise = Favourite.find({
+        user_id: userId,
       });
       const [items, shop, favouritesArr] = await Promise.all([
         itemsPromise,
@@ -60,8 +57,9 @@ async function getDetails(shopId, isOwner, userId) {
 
 function checkAvailability(shopName) {
   return new Promise((resolve, reject) => {
-    Shop.findOne({ attributes: ['shop_name'], where: { shop_name: shopName } })
+    Shop.findOne({ shop_name: shopName }).exec()
       .then((elem) => {
+        console.log(elem);
         if (elem) {
           reject(new Error('Shop Name Not Available'));
         }
@@ -76,12 +74,15 @@ function checkAvailability(shopName) {
 
 async function register(shop) {
   try {
-    const createdShop = await Shop.create({
+    const createShop = new Shop({
+      _id: new mongoose.Types.ObjectId(),
       shop_name: shop.shop_name,
-      user_id: shop.user_id,
+      user: shop.user_id,
     });
+    const createdShop = await createShop.save();
+    console.log('created', createdShop);
     if (createdShop) {
-      return generateToken(shop.user_id, createdShop.shop_id);
+      return generateToken(shop.user_id, createdShop._id);
     }
     throw Error('Some occured while registering shop');
   } catch (error) {

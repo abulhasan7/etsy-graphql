@@ -48,7 +48,7 @@ function ShopHome(props) {
           setShopDetails((prevState) => ({
             ...prevState,
             shop_pic_url: jsonresponse.shop.shop_pic_url,
-            user: jsonresponse.shop.User,
+            user: jsonresponse.shop.user,
             upload_s3_url: jsonresponse.upload_s3_url,
             items: jsonresponse.items,
             shop_name: jsonresponse.shop.shop_name,

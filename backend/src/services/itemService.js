@@ -1,19 +1,16 @@
-const { Op } = require('sequelize');
+/* eslint-disable no-underscore-dangle */
 const {
   Item,
-  ItemCategory,
-  Shop,
+  ItemCategories,
   Favourite,
 } = require('../models/index');
 const { generateSignedUrl } = require('../utils/s3');
 
 async function getAllForShop(shopId) {
   try {
-    const allItems = await Item.findAll({
-      where: {
-        shop_id: shopId,
-      },
-    });
+    const allItems = await Item.find({
+      shop_id: shopId,
+    }).populate('shop').exec();
 
     return allItems;
   } catch (error) {
@@ -24,30 +21,24 @@ async function getAllForShop(shopId) {
 
 async function getAllExceptShop(shopId, userId) {
   try {
-    const itemsPromise = Item.findAll({
-      // item already has a shopid, so only getting shop name
-      include: [{ model: Shop, attributes: ['shop_name', 'shop_id'] }],
-      where: {
-        shop_id: {
-          [Op.ne]: shopId || '',
-        },
+    const itemsPromise = shopId ? Item.find({
+      shop_id: {
+        $ne: shopId,
       },
-    });
-    const favouritesPromse = Favourite.findAll({
-      attributes: ['favourite_id', 'item_id'],
-      where: {
-        user_id: userId,
-      },
-    });
-
+    }).populate('shop').exec() : Item.find().populate('shop').exec();
+    const favouritesPromse = Favourite.find({
+      user_id: userId,
+    }).exec();
+    console.log('fav', userId);
     const [items, favourites] = await Promise.all([
       itemsPromise,
       favouritesPromse,
     ]);
+    console.log('favourites', favourites);
     const favouriteObj = {};
     if (favourites) {
       favourites.forEach((fav) => {
-        favouriteObj[fav.item_id] = fav.favourite_id;
+        favouriteObj[fav.item] = fav._id;
       });
     }
     return { items, favourites: favouriteObj };
@@ -60,14 +51,15 @@ async function getAllExceptShop(shopId, userId) {
 async function addItem(item) {
   let passedCategory = false;
   try {
-    const category = await ItemCategory.findOrCreate({
-      attributes: ['name'],
-      where: { name: item.category },
+    await ItemCategories.updateOne({
+      _id: 'categories',
+    }, {
+      $addToSet: { categories: item.category },
     });
     passedCategory = true;
     await Item.create({
       name: item.name,
-      category: category[0].name,
+      category: item.category,
       description: item.description,
       price: item.price,
       stock: item.stock,
@@ -94,26 +86,22 @@ async function addItem(item) {
 
 async function updateItem(item) {
   try {
-    const category = await ItemCategory.findOrCreate({
-      attributes: ['name'],
-      where: { name: item.category },
+    await ItemCategories.updateOne({
+      _id: 'categories',
+    }, {
+      $addToSet: { categories: item.category },
     });
-    const updatedItem = await Item.update(
+    const updatedItem = await Item.updateOne(
       {
         name: item.name,
-        category: category[0].name,
+        category: item.category,
         description: item.description,
         price: item.price,
         stock: item.stock,
         item_pic_url: item.item_pic_url,
       },
-      {
-        where: {
-          item_id: item.item_id,
-        },
-      },
     );
-    if (updatedItem[0] > 0) {
+    if (updatedItem.modifiedCount > 0) {
       return `Item ${item.name} updated successfully`;
     }
     throw new Error(
@@ -133,7 +121,7 @@ async function updateItem(item) {
 async function additemsgetparams() {
   try {
     const [categories, s3UploadUrl] = await Promise.all([
-      ItemCategory.findAll(),
+      ItemCategories.findOne({ _id: 'categories' }),
       generateSignedUrl(),
     ]);
     const returnobj = {

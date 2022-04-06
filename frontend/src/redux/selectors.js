@@ -21,6 +21,11 @@ export const getTokenCurrencyAndCart = (state) => ({
   currency: state.currencySlice.currency,
 });
 
+export const getCurrencyAndCart = (state) => ({
+  currency: state.currencySlice.currency,
+  cart: state.cartSlice.cart,
+});
+
 export const getCurrency = (state) => ({ currency: state.currencySlice.currency });
 
 export const getFullName = (state) => state.profile.fullname;

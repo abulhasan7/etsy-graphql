@@ -1,26 +1,17 @@
-module.exports = (DataTypes) =>
+/* eslint-disable no-undef */
+module.exports = (Schema) =>
   ({
-  // Model attributes are defined here
-    shop_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
+    _id: {
+      type: Schema.Types.ObjectId,
+      alias: 'shop_id',
     },
     shop_name: {
-      type: DataTypes.STRING(60),
-      // allowNull defaults to true
-      allowNull: false,
+      type: String,
     },
     shop_pic_url: {
-      type: DataTypes.STRING(45),
-      get() {
-        if (this.getDataValue('shop_pic_url')) return this.getDataValue('shop_pic_url');
-        return '';
-      },
+      type: String,
     },
-    user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+    user: {
+      type: Schema.Types.ObjectId, ref: 'User',
     },
   });

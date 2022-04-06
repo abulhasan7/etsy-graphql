@@ -93,6 +93,7 @@ function Checkout(props) {
               <CartItem
               // key={favourites[item.item_id] || item.item_id}
                 item={item}
+                isCheckout
               />
             );
           })}

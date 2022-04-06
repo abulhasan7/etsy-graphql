@@ -118,11 +118,11 @@ function ItemOverview(props) {
           className="item-overview-shop-name"
           onClick={() => navigate('../../shop/home', {
             state: {
-              shop_id: item.Shop.shop_id,
-              shop_name: item.Shop.shop_name,
+              shop_id: item.shop.shop_id,
+              shop_name: item.shop.shop_name,
             },
           })}
-          value={item.Shop.shop_name}
+          value={item.shop.shop_name}
         />
 
         <div className="item-overview-sales-count">
@@ -147,6 +147,8 @@ function ItemOverview(props) {
             Quantity Required
           </label>
           <select
+            defaultValue={props.cart
+              && props.cart[item.item_id] ? props.cart[item.item_id].quantity : undefined}
             disabled={item.stock < 1}
             className="item-overview-quantity-select"
             id="quantity-select"

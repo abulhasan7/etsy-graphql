@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const createError = require('http-errors');
 
 const express = require('express');
@@ -74,7 +75,7 @@ app.use((req, res, next) => {
 
 // error handler
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   console.log('in error handler');
 
   // set locals, only providing error in development
@@ -83,11 +84,7 @@ app.use((err, req, res) => {
 
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-
   res.status(err.status || 400).json({ error: err.message });
-
-  // res.render('error');
 });
 
 module.exports = app;

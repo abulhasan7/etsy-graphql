@@ -75,7 +75,7 @@ function Favourites(props) {
             return (
               <ItemCard
             // key={favourites[item.item_id] || item.item_id}
-                item={favourite.Item}
+                item={favourite.item}
                 favourite={{
                   favouriteId: favourite.favourite_id,
                   updateFavourites: setFavourites,
