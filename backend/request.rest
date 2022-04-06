@@ -1,4 +1,4 @@
-GET http://localhost:3000/shops/get?shopname=shop1
+GET http://localhost:3001/shops/get?shopname=shop1
 ###
 POST http://localhost:3000/shops/register
 Content-Type: application/json
@@ -20,24 +20,28 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/shops/check-availability?shopname=shop2
 ###
-POST process.env.REACT_APP_users/login
+GET http://localhost:3001/users/get
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjI0Y2Y5NzQ5YzAzODZmNjk4M2U3ZDhiIiwiaWF0IjoxNjQ5MjE2MDQzfQ.-sb7dRfIGJS-LJA6YESGu_VKbGcYO1_yRXQ4aXkDAhI
+
+###
+POST http://localhost:3001/users/login
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFidWxAaGFzYS5jb20iLCJpYXQiOjE2NDYwMTE4Njh9.0pt0egax4qlMeZKyuX-z_HX-5gBxj1YBI5adp_Q1OwU
 
 {
-    "email":"abulhasan.mohammed@sjsu.edu",
-    "password":"Password"
+    "email":"abul@hasa3.com",
+    "password":"password"
 }
 
 ###
 
-POST http://localhost:3000/users/register
+POST http://localhost:3001/users/register
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFidWxAaGFzYS5jb20iLCJpYXQiOjE2NDYwMTE4Njh9.0pt0egax4qlMeZKyuX-z_HX-5gBxj1YBI5adp_Q1OwU
 
 {
     "fullname":"Abul hasan",
-    "email":"abul@hasa3.com",
+    "email":"abulhasan.mohammed@sjsu.edu",
     "password":"password",
     "phone":"3413455083",
     "gender":"M",
@@ -51,12 +55,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFidWxAa
 }
 ###
 
-POST http://localhost:3000/users/update
+PUT  http://localhost:3001/users/update
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFidWxAaGFzYS5jb20iLCJpYXQiOjE2NDYwMTE4Njh9.0pt0egax4qlMeZKyuX-z_HX-5gBxj1YBI5adp_Q1OwU
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjI0Y2Y5NzQ5YzAzODZmNjk4M2U3ZDhiIiwiaWF0IjoxNjQ5MjE2MDQzfQ.-sb7dRfIGJS-LJA6YESGu_VKbGcYO1_yRXQ4aXkDAhI
 
 {
-    "fullname":"Abul hasan Mohammed",
+    "fullname":"Abul hasan Mohammedd",
     "email":"abul@hasa3.com",
     "password":"password",
     "phone":"3413455083",
@@ -68,7 +72,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFidWxAa
     "address_1":"529 S 10th street",
     "address_2":"7",
     "profile_pic":"",
-    "user_id":"379"
+    "user_id":"624cf9749c0386f6983e7d8b"
 }
 ###
 GET process.env.REACT_APP_items/get-all
