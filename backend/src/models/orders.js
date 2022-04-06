@@ -4,7 +4,7 @@ module.exports = {
     type: Date,
   },
   user_id: {
-    type: Number,
+    type: String,
   },
   total_price: {
     // dec
@@ -15,10 +15,6 @@ module.exports = {
   },
   order_details: [
     {
-      order_id: {
-        type: Number,
-      },
-
       item_quantity: {
         type: Number,
       },
@@ -27,7 +23,7 @@ module.exports = {
         type: String,
       },
       shop_id: {
-        type: Number,
+        type: String,
       },
       item_name: {
         type: String,

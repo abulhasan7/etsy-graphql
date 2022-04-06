@@ -47,7 +47,7 @@ itemSchema.set('toJSON', {
 const orderSchema = new Schema(order);
 orderSchema.set('toJSON', {
   transform(doc, ret, options) {
-    ret.favourite_id = ret._id;
+    ret.order_id = ret._id;
     delete ret._id;
     delete ret.__v;
   },

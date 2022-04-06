@@ -86,7 +86,7 @@ function Checkout(props) {
         <div className="checkout__itemcontainer">
           {Object.values(props.cart).map((item) => {
             const pp = parseFloat(item.price).toFixed(2);
-            totalPrice += (pp * item.quantity);
+            totalPrice = (totalPrice + (pp * item.quantity)).toFixed(2);
             totalItems += 1;
             totalQuantity += item.quantity;
             return (

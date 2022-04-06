@@ -60,7 +60,7 @@ function Orders(props) {
             </div>
           </div>
           <div className="order_items">
-            {order.Order_Details.map(
+            {order.order_details.map(
               (item) => (
                 <CartItem
                  // key={favourites[item.item_id] || item.item_id}
