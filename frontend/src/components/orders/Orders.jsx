@@ -47,7 +47,7 @@ function Orders(props) {
             </div>
             <div className="order_date orderdet">
               Ordered On:
-              {order.order_date}
+              { order.order_date.substring(0, 10)}
             </div>
             <div className="order_totalprice orderdet">
               Total Price:

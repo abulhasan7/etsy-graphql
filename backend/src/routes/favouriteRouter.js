@@ -2,35 +2,36 @@ const express = require('express');
 
 const router = express.Router();
 const favouriteService = require('../services/favouriteService');
+const { checkAuth } = require('../utils/passport');
 
-router.get('/get-all', async (req, res) => {
+router.get('/get-all', checkAuth, async (req, res) => {
   try {
-    const success = await favouriteService.getAllWithUserProfile(req.user_id);
+    const success = await favouriteService.getAllWithUserProfile(req.user.userId);
     res.json({ message: success });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
-router.get('/check-favourite', async (req, res) => {
+router.get('/check-favourite', checkAuth, async (req, res) => {
   try {
-    const success = await favouriteService.isFavourite(req.user_id, req.query.item_id);
+    const success = await favouriteService.isFavourite(req.user.userId, req.query.item_id);
     res.json({ message: success });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
-router.post('/add', async (req, res) => {
+router.post('/add', checkAuth, async (req, res) => {
   try {
-    const favouriteId = await favouriteService.add({ ...req.body, user_id: req.user_id });
+    const favouriteId = await favouriteService.add({ ...req.body, user_id: req.user.userId });
     res.json({ message: favouriteId });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
-router.delete('/remove', async (req, res) => {
+router.delete('/remove', checkAuth, async (req, res) => {
   try {
     const success = await favouriteService.remove(req.body.favourite_id);
     res.json({ message: success });

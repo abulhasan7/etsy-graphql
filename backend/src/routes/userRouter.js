@@ -2,6 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 const userService = require('../services/userService');
+const { checkAuth } = require('../utils/passport');
 
 /* REGISTER USER */
 router.post('/register', (req, res) => {
@@ -30,8 +31,9 @@ router.post('/login', async (req, res) => {
 });
 
 /* GET USER DETAILS */
-router.get('/get', async (req, res) => {
+router.get('/get', checkAuth, async (req, res) => {
   try {
+    console.log('req', req);
     const userDetails = await userService.get();
     res.status(200).json(userDetails);
   } catch (error) {
@@ -42,9 +44,9 @@ router.get('/get', async (req, res) => {
 });
 
 /* UPDATE PROFILE */
-router.put('/update', (req, res) => {
+router.put('/update', checkAuth, (req, res) => {
   userService
-    .updateProfile({ ...req.body, user_id: req.user_id })
+    .updateProfile({ ...req.body, user_id: req.user.userId })
     .then((success) =>
       res
         .status(200)

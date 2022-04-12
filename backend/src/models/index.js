@@ -1,17 +1,31 @@
+/* eslint-disable no-shadow */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
 const mongoose = require('mongoose');
 const user = require('./user');
-// const country = require('./countries');
 const shop = require('./shops');
 const favourite = require('./favourites');
 const item = require('./items');
 const order = require('./orders');
-// const orderDetail = require('./orders_details');
+
 const { Schema } = mongoose;
 
-mongoose.connect('mongodb+srv://admin:admin@etsy-cluster.4ffum.mongodb.net/etsy-db?retryWrites=true&w=majority');
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  maxPoolSize: 500,
+};
+
+mongoose.connect(process.env.mongoUrl, options, (err, res) => {
+  if (err) {
+    console.log(err);
+    console.log('MongoDB Connection Failed');
+  } else {
+    console.log('MongoDB Connected');
+  }
+});
+
 const userSchema = new Schema(user);
 userSchema.set('toJSON', {
   transform(doc, ret, options) {
