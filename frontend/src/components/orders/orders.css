@@ -10,6 +10,7 @@
     align-self: stretch;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.3s;
+    height: 100px;
 }
 .orders_header:hover{
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
@@ -19,7 +20,9 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
+    /* min-height: 100vh; */
+    overflow: auto;
+    /* margin-top: 20px; */
 }
 .order_container{
     display: flex;
@@ -47,4 +50,15 @@
 .no-orders{
     margin-top: 250px;
     font-size: 50px;
+}
+
+.orderPerPageContainer{
+    margin-top: 10px;
+}
+.ordersPerPage{
+    border: 2px solid #DEDEDE;
+    border-radius: 5px;
+    outline: none;
+    margin-left: 5px;
+    width: 40px;
 }

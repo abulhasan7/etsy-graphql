@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getTokenAndCurrency } from '../../redux/selectors';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 import CartItem from '../cartitem/CartItem';
+import { getTokenAndCurrency } from '../../redux/selectors';
 import './orders.css';
 
 function Orders(props) {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
+  const [page, setPage] = useState(1);
+  const [ordersPerPage, setOrdersPerPage] = useState(5);
+  const [startIndex, setstartIndex] = useState(0);
+  const [endIndex, setendIndex] = useState(5);
+
+  const handleChange = (event, value) => {
+    setstartIndex((value - 1) * ordersPerPage);
+    setendIndex(Math.min(value * ordersPerPage, orders.length));
+    setPage(value);
+    console.log(startIndex, endIndex);
+  };
 
   const getOrders = () => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}orders/get`, {
@@ -21,6 +34,7 @@ function Orders(props) {
       .then((jsonresponse) => {
         if (!jsonresponse.error) {
           setOrders(jsonresponse.message);
+          setendIndex(Math.min(page * ordersPerPage, jsonresponse.message.length));
         }
       })
       .catch((error) => console.error(error));
@@ -34,11 +48,30 @@ function Orders(props) {
     }
   }, []);
 
+  const handleordersPerPageChange = (event) => {
+    const ordersPerPageVal = parseInt(event.target.value, 10);
+    setOrdersPerPage(ordersPerPageVal);
+    setstartIndex(0);
+    setendIndex(Math.min(ordersPerPageVal, orders.length));
+    setPage(1);
+  };
   return (
     <div className="orders_container">
       <div className="orders_header">Orders</div>
       {
-      orders.map((order) => (
+        orders.length > 1 && (
+        <div className="orderPerPageContainer">
+          <label htmlFor="ordersPerPage">Orders Per Page:</label>
+          <select className="ordersPerPage" onChange={handleordersPerPageChange}>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+          </select>
+        </div>
+        )
+      }
+      {
+      orders.slice(startIndex, endIndex).map((order) => (
         <div className="order_container">
           <div className="order_header_container">
             <div className="order_orderid orderdet">
@@ -72,6 +105,18 @@ function Orders(props) {
         </div>
       ))
     }
+      {
+      orders.length > 1 && (
+      <Stack spacing="2">
+        <Pagination
+          count={parseInt(Math.ceil(orders.length / ordersPerPage), 10)}
+          page={page}
+          onChange={handleChange}
+        />
+      </Stack>
+      )
+    }
+
       {
       orders.length <= 0 && <div className="no-orders">Oops! No Orders yet.</div>
     }

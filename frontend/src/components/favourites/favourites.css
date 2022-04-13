@@ -1,4 +1,6 @@
 .favourites-container{
+    height: 100vh;
+
 }
 .favourites-header{
     font-size: larger;

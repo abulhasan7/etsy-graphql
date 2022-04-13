@@ -184,7 +184,8 @@ function Navbar(props) {
           </>
         )}
       </nav>
-      <div className="main-content"><Outlet /></div>
+      <Outlet />
+      {/* <div className="main-content"></div> */}
       <footer className="footer">
         <div className="footer_left">
           <div className="staticfont">United States</div>
