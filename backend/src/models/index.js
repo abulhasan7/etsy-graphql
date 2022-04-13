@@ -14,7 +14,7 @@ const { Schema } = mongoose;
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  maxPoolSize: 500,
+  maxPoolSize: 100,
 };
 
 mongoose.connect(process.env.mongoUrl, options, (err, res) => {

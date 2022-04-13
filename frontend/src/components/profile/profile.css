@@ -4,11 +4,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    /* justify-content: center; */
     /* grid-template-columns: 1fr 1fr 1fr; */
     /* row-gap: 15px; */
     margin-top: 50px;
-    height: 100vh;
+    flex: 1;
 
 }
 

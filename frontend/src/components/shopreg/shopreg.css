@@ -2,7 +2,7 @@
     display: grid;
     justify-items: center;
     align-items: start;
-    height: 100vh;
+    flex: 1;
 }
 
 .shopreg__form{

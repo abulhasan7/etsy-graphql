@@ -63,9 +63,9 @@ function Orders(props) {
         <div className="orderPerPageContainer">
           <label htmlFor="ordersPerPage">Orders Per Page:</label>
           <select className="ordersPerPage" onChange={handleordersPerPageChange}>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
+            <option>5</option>
+            <option>10</option>
+            <option>15</option>
           </select>
         </div>
         )

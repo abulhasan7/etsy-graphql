@@ -2,11 +2,14 @@
     display: grid;
     grid-template-columns: 2fr 1fr;
     /* grid-template-rows: 250px; */
-    height: 100vh;
+    flex: 1;
+    grid-template-rows: 100px auto;
+    row-gap: 20px;
 }
 
 .checkout__itemcontainer{
     grid-column: 1/2;
+    grid-row-start: 2;
 }
 
 .checkout__header{
@@ -21,6 +24,7 @@
     font-size: 35px;
     font-weight: bolder;
     height: 100px;
+    margin-top: 0;
 }
 .checkout__header:hover{
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
