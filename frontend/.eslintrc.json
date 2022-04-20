@@ -18,9 +18,7 @@
         "react"
     ],
     "rules": {
-        "react/destructuring-assignment": [0,"never"],
-        "linebreak-style": ["error", "windows"],
-        //had to disable as doing more than just reutning in map, inorder to optimize
+        "react/destructuring-assignment": [0,"never"],        //had to disable as doing more than just reutning in map, inorder to optimize
         "consistent-return": [0],
         //have to disable for functional components, no other way
         "react/jsx-no-bind": 0,
