@@ -39,7 +39,7 @@ router.get('/get', checkAuth, async (req, res) => {
   } catch (error) {
     res
       .status(401)
-      .json({ error: error.message || 'Some error occured during login' });
+      .json({ error: error.message || 'Some error occured during getting user details' });
   }
 });
 
@@ -55,7 +55,7 @@ router.put('/update', checkAuth, (req, res) => {
       console.log('in router', error);
       res
         .status(400)
-        .json({ error: error || 'Some error occured during update' });
+        .json({ error: error || 'Some error occured during updating profile' });
     });
 });
 

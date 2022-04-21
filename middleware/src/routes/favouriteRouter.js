@@ -13,15 +13,6 @@ router.get('/get-all', checkAuth, async (req, res) => {
   }
 });
 
-router.get('/check-favourite', checkAuth, async (req, res) => {
-  try {
-    const success = await favouriteService.isFavourite(req.user.userId, req.query.item_id);
-    res.json({ message: success });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
 router.post('/add', checkAuth, async (req, res) => {
   try {
     const favouriteId = await favouriteService.add({ ...req.body, user_id: req.user.userId });

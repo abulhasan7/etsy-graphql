@@ -18,7 +18,7 @@
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.5.1",
-    "kafka-node": "^5.0.0",
+    "kafkajs": "^1.16.0",
     "mongodb": "^4.5.0",
     "mongoose": "^6.2.10",
     "morgan": "~1.9.1",
