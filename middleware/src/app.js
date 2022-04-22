@@ -45,7 +45,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/users', usersRouter);
 
-// app.use('/shops', shopsRouter);
+app.use('/shops', shopsRouter);
 
 // app.use('/items', itemsRouter);
 

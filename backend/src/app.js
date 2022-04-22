@@ -13,17 +13,20 @@ require('dotenv').config();
 
 const cors = require('cors');
 
-const usersRouter = require('./routes/userRouter');
+require('./kafka/producer');
+require('./kafka/usersConsumer');
+require('./kafka/shopsConsumer');
+// const usersRouter = require('./routes/userRouter');
 
-const shopsRouter = require('./routes/shopRouter');
+// const shopsRouter = require('./routes/shopRouter');
 
-const itemsRouter = require('./routes/itemRouter');
+// const itemsRouter = require('./routes/itemRouter');
 
-const ordersRouter = require('./routes/orderRouter');
+// const ordersRouter = require('./routes/orderRouter');
 
-const favouritesRouter = require('./routes/favouriteRouter');
+// const favouritesRouter = require('./routes/favouriteRouter');
 
-const { checkAuthenticationHeader } = require('./middlewares/authentication');
+// const { checkAuthenticationHeader } = require('./middlewares/authentication');
 
 const corsOptions = {
   origin: true,
@@ -57,15 +60,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // app.use(checkAuthenticationHeader);
 
-app.use('/users', usersRouter);
+// app.use('/users', usersRouter);
 
-app.use('/shops', shopsRouter);
+// app.use('/shops', shopsRouter);
 
-app.use('/items', itemsRouter);
+// app.use('/items', itemsRouter);
 
-app.use('/orders', ordersRouter);
+// app.use('/orders', ordersRouter);
 
-app.use('/favourites', favouritesRouter);
+// app.use('/favourites', favouritesRouter);
 
 // catch 404 and forward to error handler
 

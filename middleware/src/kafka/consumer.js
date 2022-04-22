@@ -10,28 +10,44 @@ const consumer = kafka.consumer({ groupId: "middleware-consumers" });
   });
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
-      const headers = JSON.parse(message.headers.toString());
-      const messageJSON = JSON.parse(message.value.toString());
-      const callback = idToCallBackMap[headers.id];
-      if (messageJSON.data) {
-        callback(null, messageJSON.data);
-      } else {
-        callback(messageJSON.error, null);
-      }
+      responseHandler(message)
     },
   });
 })();
 const idToCallBackMap = {};
 
 const addCallBacktoCallBackMap = async (id, callback) => {
-  const tId = setInterval(
+  const tId = setTimeout(
     () => {
+      callback("Request Timeout, Please try again!",null);
       delete idToCallBackMap.id;
     },
-    id,
-    process.env.RESPONSE_WAIT_TIMEOUT
+    process.env.RESPONSE_WAIT_TIMEOUT,id
   );
-  idToCallBackMap.id = { callback, tId };
+  idToCallBackMap[id] = { callback, tId };
+};
+const responseHandler = async (message) => {
+  const id = message.headers.id.toString();
+  try {
+    const messageJSON = JSON.parse(message.value.toString());
+    console.log('id from header is ',id);
+    // console.log('maps is',idToCallBackMap);
+    console.error('messagejson is',messageJSON)
+    const entry = idToCallBackMap[id];
+    if(entry){
+      if (messageJSON.data) {
+        entry.callback(null, messageJSON.data);
+      } else {
+        entry.callback(messageJSON.error, null);
+      }
+      clearTimeout(entry.tId);
+    }else{
+      console.error('response received after slo',messageJSON)
+    }
+
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 module.exports = { addCallBacktoCallBackMap };

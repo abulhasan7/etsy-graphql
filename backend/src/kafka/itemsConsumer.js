@@ -1,12 +1,11 @@
 const { kafka } = require("./kafkaClient");
 
-const consumer = kafka.consumer({ groupId: "middleware-consumers" });
+const consumer = kafka.consumer({ groupId: "backend-items-consumers" });
 
 (async () => {
   await consumer.connect();
   await consumer.subscribe({
-    topic: process.env.RESPONSE_TOPIC,
-    fromBeginning: true,
+    topic: process.env.ITEMS_TOPIC,
   });
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
@@ -21,17 +20,3 @@ const consumer = kafka.consumer({ groupId: "middleware-consumers" });
     },
   });
 })();
-const idToCallBackMap = {};
-
-const addCallBacktoCallBackMap = async (id, callback) => {
-  const tId = setInterval(
-    () => {
-      delete idToCallBackMap.id;
-    },
-    id,
-    process.env.RESPONSE_WAIT_TIMEOUT
-  );
-  idToCallBackMap.id = { callback, tId };
-};
-
-module.exports = { addCallBacktoCallBackMap };

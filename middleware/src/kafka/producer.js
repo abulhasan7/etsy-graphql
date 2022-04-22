@@ -11,6 +11,7 @@ const sendMessage = async (topic, message, action, callback) => {
     //todo send callback to consumer queue
     const id = uuid();
     await addCallBacktoCallBackMap(id,callback);
+    console.log(`pushing message:${message} to topic:${topic} with id:${id}`);
     await producer.send({
       topic,
       messages: [
@@ -28,16 +29,4 @@ const sendMessage = async (topic, message, action, callback) => {
   }
 };
 
-// const consumer = kafka.consumer({ groupId: "response-listeners" });
-// await consumer.connect();
-// await consumer.subscribe({ topic: "user", fromBeginning: true });
-
-// await consumer.run({
-//   eachMessage: async ({ topic, partition, message }) => {
-//     console.log(
-//       JSON.parse(message.value.toString(), message.headers.toString())
-//     );
-//   },
-// });
-// await producer.disconnect();
 module.exports = { sendMessage };

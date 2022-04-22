@@ -7,6 +7,7 @@ const { generateSignedUrl } = require('../utils/s3');
 
 async function login(userDetails) {
   try {
+    console.log('logincalled with ',userDetails);
     const dbData = await User.findOne({ email: userDetails.email }, { __v: 0 }).exec();
     console.log('dbdata', dbData);
     if (!dbData) {
@@ -20,7 +21,7 @@ async function login(userDetails) {
         throw new Error('Invalid Password');
       } else {
         const ShopData = await Shop.findOne(
-          { user_id: dbData._id },
+          { user: dbData._id },
         ).exec();
         const shopId = ShopData ? ShopData._id : null;
         const obj = {
@@ -68,7 +69,7 @@ function register(userDetails) {
       .then((createdUser) => {
         console.log(createdUser);
         const token = jwtUtil.generateToken(createdUser._id);
-        resolve(token);
+        resolve({token});
       })
       .catch((error) => {
         console.log('error occured', error);
