@@ -48,16 +48,21 @@ router.get("/get", checkAuth, async (req, res) => {
 
 /* UPDATE PROFILE */
 router.put("/update", checkAuth, (req, res) => {
-  sendMessage(process.env.USERS_TOPIC, {...req.body,user_id:req.user.userId}, "UPDATE", (error, data) => {
-    if (data) {
-      res.status(200).json({message:data});
-    } else {
-      console.log("error", error);
-      res.status(400).json({
-        error: error || "Some error occured during update",
-      });
+  sendMessage(
+    process.env.USERS_TOPIC,
+    { ...req.body, user_id: req.user.userId },
+    "UPDATE",
+    (error, data) => {
+      if (data) {
+        res.status(200).json({ message: data });
+      } else {
+        console.log("error", error);
+        res.status(400).json({
+          error: error || "Some error occured during update",
+        });
+      }
     }
-  });
+  );
 });
 
 module.exports = router;

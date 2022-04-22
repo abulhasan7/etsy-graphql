@@ -17,6 +17,8 @@ require('./kafka/producer');
 require('./kafka/usersConsumer');
 require('./kafka/shopsConsumer');
 require('./kafka/ordersConsumer');
+require('./kafka/itemsConsumer');
+require('./kafka/favouritesConsumer');
 
 const corsOptions = {
   origin: true,

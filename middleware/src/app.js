@@ -15,11 +15,11 @@ const usersRouter = require('./routes/userRouter');
 
 const shopsRouter = require('./routes/shopRouter');
 
-// const itemsRouter = require('./routes/itemRouter');
+const itemsRouter = require('./routes/itemRouter');
 
 const ordersRouter = require('./routes/orderRouter');
 
-// const favouritesRouter = require('./routes/favouriteRouter');
+const favouritesRouter = require('./routes/favouriteRouter');
 
 const corsOptions = {
   origin: true,
@@ -47,11 +47,11 @@ app.use('/users', usersRouter);
 
 app.use('/shops', shopsRouter);
 
-// app.use('/items', itemsRouter);
+app.use('/items', itemsRouter);
 
 app.use('/orders', ordersRouter);
 
-// app.use('/favourites', favouritesRouter);
+app.use('/favourites', favouritesRouter);
 
 // catch 404 and forward to error handler
 
