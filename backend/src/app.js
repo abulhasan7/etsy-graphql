@@ -16,17 +16,7 @@ const cors = require('cors');
 require('./kafka/producer');
 require('./kafka/usersConsumer');
 require('./kafka/shopsConsumer');
-// const usersRouter = require('./routes/userRouter');
-
-// const shopsRouter = require('./routes/shopRouter');
-
-// const itemsRouter = require('./routes/itemRouter');
-
-// const ordersRouter = require('./routes/orderRouter');
-
-// const favouritesRouter = require('./routes/favouriteRouter');
-
-// const { checkAuthenticationHeader } = require('./middlewares/authentication');
+require('./kafka/ordersConsumer');
 
 const corsOptions = {
   origin: true,
@@ -57,18 +47,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, 'public')));
-
-// app.use(checkAuthenticationHeader);
-
-// app.use('/users', usersRouter);
-
-// app.use('/shops', shopsRouter);
-
-// app.use('/items', itemsRouter);
-
-// app.use('/orders', ordersRouter);
-
-// app.use('/favourites', favouritesRouter);
 
 // catch 404 and forward to error handler
 

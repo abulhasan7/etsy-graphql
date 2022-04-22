@@ -15,11 +15,11 @@ const usersRouter = require('./routes/userRouter');
 
 const shopsRouter = require('./routes/shopRouter');
 
-const itemsRouter = require('./routes/itemRouter');
+// const itemsRouter = require('./routes/itemRouter');
 
 const ordersRouter = require('./routes/orderRouter');
 
-const favouritesRouter = require('./routes/favouriteRouter');
+// const favouritesRouter = require('./routes/favouriteRouter');
 
 const corsOptions = {
   origin: true,
@@ -49,7 +49,7 @@ app.use('/shops', shopsRouter);
 
 // app.use('/items', itemsRouter);
 
-// app.use('/orders', ordersRouter);
+app.use('/orders', ordersRouter);
 
 // app.use('/favourites', favouritesRouter);
 
