@@ -117,14 +117,14 @@ class Profile extends Component {
         message = 'Profile picture has to be an image file only';
       } else if (this.state.fullname === '') {
         message = "Full Name can't be empty";
-      } else if (this.state.fullname.length < 8) {
-        message = "Full Name can't be less than 8 characters";
+      } else if (this.state.fullname.length < 4) {
+        message = "Full Name can't be less than 4 characters";
       } else if (this.state.gender === '') {
         message = "Gender can't be empty";
       } else if (this.state.address_1 === '') {
         message = "Street Address can't be empty";
-      } else if (this.state.address_1.length < 8) {
-        message = "Street Address can't be less than 8 characters";
+      } else if (this.state.address_1.length < 4) {
+        message = "Street Address can't be less than 4 characters";
       } else if (this.state.address_2 === '') {
         message = "Apartment No can't be empty";
       } else if (this.state.city === '') {
