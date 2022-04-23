@@ -11,9 +11,9 @@ function Orders(props) {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [page, setPage] = useState(1);
-  const [ordersPerPage, setOrdersPerPage] = useState(5);
+  const [ordersPerPage, setOrdersPerPage] = useState(2);
   const [startIndex, setstartIndex] = useState(0);
-  const [endIndex, setendIndex] = useState(5);
+  const [endIndex, setendIndex] = useState(2);
 
   const handleChange = (event, value) => {
     setstartIndex((value - 1) * ordersPerPage);
@@ -63,9 +63,9 @@ function Orders(props) {
         <div className="orderPerPageContainer">
           <label htmlFor="ordersPerPage">Orders Per Page:</label>
           <select className="ordersPerPage" onChange={handleordersPerPageChange}>
+            <option>2</option>
             <option>5</option>
             <option>10</option>
-            <option>15</option>
           </select>
         </div>
         )

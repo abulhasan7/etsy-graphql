@@ -66,10 +66,10 @@ function CartItem(props) {
             {props.isCheckout && (
             <>
               <select onChange={handleQuantityChange} defaultValue={props.item.quantity} className="cartitem-quantity-select" id="cartitem__quantityselect">
-                {Array(props.item.stock)
-                  .fill().map((v, i) => (
+                {Array(props.item.stock + 1)
+                  .fill(0).map((v, i) => (
                     <option>
-                      {i + 1}
+                      {i}
                     </option>
                   ))}
               </select>

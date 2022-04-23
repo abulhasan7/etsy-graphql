@@ -41,8 +41,6 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: false }));
 
-// app.use(checkAuthenticationHeader);
-
 app.use('/users', usersRouter);
 
 app.use('/shops', shopsRouter);

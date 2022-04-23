@@ -1,9 +1,9 @@
-const { Kafka } = require("kafkajs");
+const { Kafka } = require('kafkajs');
 
-//Initialize Kafka Client
+// Initialize Kafka Client
 const kafka = new Kafka({
-  clientId: "middleware-system",
-  brokers: ["localhost:9092"],
+  clientId: 'middleware-system',
+  brokers: ['localhost:9092'],
 });
 
 module.exports = { kafka };

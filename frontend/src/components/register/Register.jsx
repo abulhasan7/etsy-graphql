@@ -49,12 +49,12 @@ class Register extends Component {
       message = 'Email is not valid, enter valid email';
     } else if (this.state.fullname === '') {
       message = "Full Name can't be empty";
-    } else if (this.state.fullname.length < 8) {
-      message = "Full Name can't be less than 8 characters";
+    } else if (this.state.fullname.length < 4) {
+      message = "Full Name can't be less than 4 characters";
     } else if (this.state.password === '') {
       message = "Password can't be empty";
-    } else if (this.state.password.length < 8) {
-      message = "Password can't be less than 8 characters";
+    } else if (this.state.password.length < 4) {
+      message = "Password can't be less than 4 characters";
     } else if (this.state.confirmpassword === '') {
       message = "ConfirmPassword can't be empty";
     } else if (this.state.password !== this.state.confirmpassword) {

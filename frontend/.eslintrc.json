@@ -25,6 +25,7 @@
         //this doesn't work for some reason, tried nesting elements as well as htmlFor
         "jsx-a11y/label-has-associated-control": 0,
         //is this really required for functional components, why not use TS instead?
-        "react/prop-types": [0] 
+        "react/prop-types": [0] ,
+        "array-callback-return":"off"
     }
 }

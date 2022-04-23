@@ -11,8 +11,11 @@
         "ecmaVersion": "latest"
     },
     "rules": {
-        "linebreak-style": ["error", "windows"],
         "no-console": "off",
-        "implicit-arrow-linebreak": ["error", "below"]
+        "implicit-arrow-linebreak": ["error", "below"],
+        "no-use-before-define": "off",
+        "no-unused-vars": "off",
+        "no-else-return":"off",
+        "no-underscore-dangle":"off"
     }
 }

@@ -17,16 +17,7 @@ passport.use(new JwtStrategy(opts, (jwtPayload, callback) => {
   if (jwtPayload.shop_id) {
     shopId = jwtPayload.shop_id;
   }
-  console.log('jwt payload is ',jwtPayload);
-  //   User.findOne({ id }, (err, results) => {
-  //     if (err) {
-  //       return callback(err, false);
-  //     }
-  //     if (results) {
-  //       return callback(null, results);
-  //     }
-  //     return callback(null, false);
-  //   });
+  console.log('jwt payload is ', jwtPayload);
   return callback(null, { userId, shopId });
 }));
 

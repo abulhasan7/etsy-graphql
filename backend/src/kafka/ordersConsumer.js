@@ -1,8 +1,8 @@
-const { kafka } = require("./kafkaClient");
+const { kafka } = require('./kafkaClient');
 
-const consumer = kafka.consumer({ groupId: "backend-orders-consumers" });
-const orderService = require("../services/orderService");
-const { sendMessage } = require("./producer");
+const consumer = kafka.consumer({ groupId: 'backend-orders-consumers' });
+const orderService = require('../services/orderService');
+const { sendMessage } = require('./producer');
 
 (async () => {
   await consumer.connect();
@@ -22,14 +22,14 @@ const actionHandler = async (message) => {
   try {
     const messageJSON = JSON.parse(message.value.toString());
     console.log(
-      `received message with action:${action} and message:${messageJSON}`
+      `received message with action:${action} and message:${messageJSON}`,
     );
     let response;
     switch (action) {
-      case "CREATE":
+      case 'CREATE':
         response = await orderService.create(messageJSON);
         break;
-      case "GET":
+      case 'GET':
         response = await orderService.get(messageJSON.userId);
         break;
       default:
@@ -41,9 +41,9 @@ const actionHandler = async (message) => {
     sendMessage(
       {
         error:
-          error.message || "Some error occured during processing order request",
+          error.message || 'Some error occured during processing order request',
       },
-      id
+      id,
     );
   }
 };

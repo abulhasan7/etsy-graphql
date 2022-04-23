@@ -53,7 +53,7 @@ function Checkout(props) {
         body: JSON.stringify({
           total_price: totalPrice,
           total_quantity: totalQuantity,
-          orderDetails: Object.values(props.cart),
+          orderDetails: Object.values(props.cart).filter((item) => item.quantity > 0),
         }),
       }))
       .then((res) => res.json())
@@ -85,10 +85,13 @@ function Checkout(props) {
       <>
         <div className="checkout__itemcontainer">
           {Object.values(props.cart).map((item) => {
-            const pp = parseFloat(item.price).toFixed(2);
-            totalPrice = (totalPrice + (pp * item.quantity)).toFixed(2);
-            totalItems += 1;
-            totalQuantity += item.quantity;
+            if (item.quantity > 0) {
+              const pp = parseFloat(item.price).toFixed(2);
+              const itemPrice = +(pp * item.quantity).toFixed(2);
+              totalPrice = +(totalPrice + itemPrice).toFixed(2);
+              totalItems += 1;
+              totalQuantity += item.quantity;
+            }
             return (
               <CartItem
               // key={favourites[item.item_id] || item.item_id}
@@ -121,6 +124,7 @@ function Checkout(props) {
             value="Purchase Items"
             className="checkout__btn"
             onClick={purchaseItems}
+            disabled={totalItems === 0}
           />
         </div>
       </>

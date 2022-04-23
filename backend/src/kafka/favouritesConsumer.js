@@ -1,8 +1,8 @@
-const { kafka } = require("./kafkaClient");
+const { kafka } = require('./kafkaClient');
 
-const consumer = kafka.consumer({ groupId: "backend-favourites-consumers" });
-const favouriteService = require("../services/favouriteService");
-const { sendMessage } = require("./producer");
+const consumer = kafka.consumer({ groupId: 'backend-favourites-consumers' });
+const favouriteService = require('../services/favouriteService');
+const { sendMessage } = require('./producer');
 
 (async () => {
   await consumer.connect();
@@ -22,17 +22,17 @@ const actionHandler = async (message) => {
   try {
     const messageJSON = JSON.parse(message.value.toString());
     console.log(
-      `received message with action:${action} and message:${messageJSON}`
+      `received message with action:${action} and message:${messageJSON}`,
     );
     let response;
     switch (action) {
-      case "GET-ALL":
+      case 'GET-ALL':
         response = await favouriteService.getAllWithUserProfile(messageJSON.userId);
         break;
-      case "ADD":
+      case 'ADD':
         response = await favouriteService.add(messageJSON);
         break;
-      case "REMOVE":
+      case 'REMOVE':
         response = await favouriteService.remove(messageJSON.favouriteId);
         break;
       default:
@@ -44,9 +44,9 @@ const actionHandler = async (message) => {
     sendMessage(
       {
         error:
-          error.message || "Some error occured during processing order request",
+          error.message || 'Some error occured during processing order request',
       },
-      id
+      id,
     );
   }
 };

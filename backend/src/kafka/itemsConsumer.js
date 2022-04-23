@@ -1,8 +1,8 @@
-const { kafka } = require("./kafkaClient");
+const { kafka } = require('./kafkaClient');
 
-const consumer = kafka.consumer({ groupId: "backend-items-consumers" });
+const consumer = kafka.consumer({ groupId: 'backend-items-consumers' });
 const itemService = require('../services/itemService');
-const { sendMessage } = require("./producer");
+const { sendMessage } = require('./producer');
 
 (async () => {
   await consumer.connect();
@@ -22,14 +22,14 @@ const actionHandler = async (message) => {
   try {
     const messageJSON = JSON.parse(message.value.toString());
     console.log(
-      `received message with action:${action} and message:${messageJSON}`
+      `received message with action:${action} and message:${messageJSON}`,
     );
     let response;
     switch (action) {
-      case "GET-ALL-EXC-SHOP":
-        response = await itemService.getAllExceptShop(messageJSON.shopId,messageJSON.userId);
+      case 'GET-ALL-EXC-SHOP':
+        response = await itemService.getAllExceptShop(messageJSON.shopId, messageJSON.userId);
         break;
-      case "GET-ALL-FOR-SHOP":
+      case 'GET-ALL-FOR-SHOP':
         response = await itemService.getAllForShop(messageJSON.shopId);
         break;
       case 'ADD':
@@ -50,9 +50,9 @@ const actionHandler = async (message) => {
     sendMessage(
       {
         error:
-          error.message || "Some error occured during processing items request",
+          error.message || 'Some error occured during processing items request',
       },
-      id
+      id,
     );
   }
 };

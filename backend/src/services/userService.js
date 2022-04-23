@@ -1,5 +1,3 @@
-/* eslint-disable no-else-return */
-/* eslint-disable no-underscore-dangle */
 const bcrypt = require('bcrypt');
 const { User, Shop } = require('../models/index');
 const jwtUtil = require('../utils/jwtUtil');
@@ -7,7 +5,7 @@ const { generateSignedUrl } = require('../utils/s3');
 
 async function login(userDetails) {
   try {
-    console.log('logincalled with ',userDetails);
+    console.log('logincalled with ', userDetails);
     const dbData = await User.findOne({ email: userDetails.email }, { __v: 0 }).exec();
     console.log('dbdata', dbData);
     if (!dbData) {
@@ -31,7 +29,7 @@ async function login(userDetails) {
           ),
           profile: dbData,
         };
-        obj.profile.user_id=dbData._id
+        obj.profile.user_id = dbData._id;
         return obj;
       }
     }
@@ -69,7 +67,7 @@ function register(userDetails) {
       .then((createdUser) => {
         console.log(createdUser);
         const token = jwtUtil.generateToken(createdUser._id);
-        resolve({token});
+        resolve({ token });
       })
       .catch((error) => {
         console.log('error occured', error);

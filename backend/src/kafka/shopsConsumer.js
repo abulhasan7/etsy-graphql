@@ -1,8 +1,8 @@
-const { kafka } = require("./kafkaClient");
+const { kafka } = require('./kafkaClient');
 
-const consumer = kafka.consumer({ groupId: "backend-shops-consumers" });
-const shopService = require("../services/shopService");
-const { sendMessage } = require("./producer");
+const consumer = kafka.consumer({ groupId: 'backend-shops-consumers' });
+const shopService = require('../services/shopService');
+const { sendMessage } = require('./producer');
 
 (async () => {
   await consumer.connect();
@@ -24,16 +24,20 @@ const actionHandler = async (message) => {
     console.log(`received message with action:${action} and message:${messageJSON}`);
     let response;
     switch (action) {
-      case "CHECK":
+      case 'CHECK':
         response = await shopService.checkAvailability(messageJSON);
         break;
-      case "GET":
-        response = await shopService.getDetails(messageJSON.shopId,messageJSON.isOwner,messageJSON.userId);
+      case 'GET':
+        response = await shopService.getDetails(
+          messageJSON.shopId,
+          messageJSON.isOwner,
+          messageJSON.userId,
+        );
         break;
-      case "REGISTER":
+      case 'REGISTER':
         response = await shopService.register(messageJSON);
         break;
-      case "UPDATE":
+      case 'UPDATE':
         response = await shopService.update(messageJSON);
         break;
       default:
@@ -43,8 +47,8 @@ const actionHandler = async (message) => {
   } catch (error) {
     console.error(error);
     sendMessage(
-      { error: error.message || "Some error occured during processing shop request" },
-      id
+      { error: error.message || 'Some error occured during processing shop request' },
+      id,
     );
   }
 };
