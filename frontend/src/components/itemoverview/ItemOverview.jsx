@@ -14,7 +14,7 @@ function ItemOverview(props) {
   const [itemInCart, setItemInCart] = useState(props.cart
     ? props.cart[item.item_id] !== undefined : false);
 
-  const [itemQuantity, setItemQuantity] = useState();
+  const [itemQuantity, setItemQuantity] = useState(1);
 
   const navigate = useNavigate();
 
@@ -71,7 +71,7 @@ function ItemOverview(props) {
   }, []);
 
   const handleQuantitySelect = (event) => {
-    if (event.target.value !== 'Select') {
+    if (event.target.value !== 'Select an option') {
       setItemQuantity(event.target.value);
     }
   };
