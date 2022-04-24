@@ -11,7 +11,7 @@ async function getDetails(shopId, isOwner, userId) {
       throw new Error("Shop doesn't exist");
     }
     const itemsPromise = Item.find({
-      shop_id: shopId,
+      shop: shopId,
     }).exec();
     const shopPromise = Shop.findOne({ _id: shopId }).populate('user');
     const allData = {};
