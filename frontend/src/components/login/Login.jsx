@@ -43,8 +43,8 @@ function Login(props) {
       message = 'Email is not valid, enter valid email';
     } else if (password === '') {
       message = "Password can't be empty";
-    } else if (password.length < 8) {
-      message = "Password can't be less than 8 characters";
+    } else if (password.length < 4) {
+      message = "Password can't be less than 4 characters";
     }
     if (message !== '') {
       setError(message);
