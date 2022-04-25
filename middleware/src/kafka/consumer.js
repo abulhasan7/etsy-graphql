@@ -44,6 +44,7 @@ const responseHandler = async (message) => {
       } else {
         entry.callback(messageJSON.error, null);
       }
+      delete idToCallBackMap.id;
       clearTimeout(entry.tId);
     } else {
       console.error('response received after slo', messageJSON);
