@@ -1,6 +1,9 @@
+/* eslint-disable no-unused-vars */
 const createError = require('http-errors');
 
 const express = require('express');
+
+const path = require('path');
 
 const logger = require('morgan');
 
@@ -8,12 +11,15 @@ require('dotenv').config();
 
 const cors = require('cors');
 
-require('./kafka/producer');
-require('./kafka/usersConsumer');
-require('./kafka/shopsConsumer');
-require('./kafka/ordersConsumer');
-require('./kafka/itemsConsumer');
-require('./kafka/favouritesConsumer');
+const usersRouter = require('./routes/userRouter');
+
+const shopsRouter = require('./routes/shopRouter');
+
+const itemsRouter = require('./routes/itemRouter');
+
+const ordersRouter = require('./routes/orderRouter');
+
+const favouritesRouter = require('./routes/favouriteRouter');
 
 const corsOptions = {
   origin: true,
@@ -32,6 +38,18 @@ app.use(cors(corsOptions));
 app.use(logger('dev'));
 
 app.use(express.json());
+
+app.use(express.urlencoded({ extended: false }));
+
+app.use('/users', usersRouter);
+
+app.use('/shops', shopsRouter);
+
+app.use('/items', itemsRouter);
+
+app.use('/orders', ordersRouter);
+
+app.use('/favourites', favouritesRouter);
 
 // catch 404 and forward to error handler
 

@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable consistent-return */
 const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
 const { ExtractJwt } = require('passport-jwt');
@@ -14,6 +17,7 @@ passport.use(new JwtStrategy(opts, (jwtPayload, callback) => {
   if (jwtPayload.shop_id) {
     shopId = jwtPayload.shop_id;
   }
+  console.log('jwt payload is ', jwtPayload);
   return callback(null, { userId, shopId });
 }));
 
