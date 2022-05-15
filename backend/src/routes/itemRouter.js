@@ -8,11 +8,11 @@ const itemService = require('../services/itemService');
 router.get('/get-all', checkAuth, async (req, res) => {
   try {
     const data = itemService.getAllExceptShop({ shopId: req.user.shopId, userId: req.user.userId });
-    res.status(200).json({ message: data });
+    res.status(200).json(data);
   } catch (error) {
     console.log('error', error);
     res.status(400).json({
-      error: error || 'Some error occured during add favourites',
+      error: error.message || 'Some error occured during add favourites',
     });
   }
 });
@@ -21,11 +21,11 @@ router.get('/get-all', checkAuth, async (req, res) => {
 router.get('/get-all-for-shop', checkAuth, async (req, res) => {
   try {
     const data = itemService.getAllForShop({ shopId: req.user.shopId });
-    res.status(200).json({ message: data });
+    res.status(200).json(data);
   } catch (error) {
     console.log('error', error);
     res.status(400).json({
-      error: error || 'Some error occured during add favourites',
+      error: error.message || 'Some error occured during add favourites',
     });
   }
 });
@@ -33,11 +33,11 @@ router.get('/get-all-for-shop', checkAuth, async (req, res) => {
 router.post('/add', checkAuth, async (req, res) => {
   try {
     const data = itemService.addItem({ ...req.body, shop_id: req.user.shopId });
-    res.status(200).json({ message: data });
+    res.status(200).json(data);
   } catch (error) {
     console.log('error', error);
     res.status(400).json({
-      error: error || 'Some error occured during add favourites',
+      error: error.message || 'Some error occured during add favourites',
     });
   }
 });
@@ -45,11 +45,11 @@ router.post('/add', checkAuth, async (req, res) => {
 router.post('/update', checkAuth, async (req, res) => {
   try {
     const data = itemService.updateItem(req.body);
-    res.status(200).json({ message: data });
+    res.status(200).json(data);
   } catch (error) {
     console.log('error', error);
     res.status(400).json({
-      error: error || 'Some error occured during add favourites',
+      error: error.message || 'Some error occured during add favourites',
     });
   }
 });
@@ -58,11 +58,11 @@ router.post('/update', checkAuth, async (req, res) => {
 router.get('/additem-getparams', checkAuth, async (req, res) => {
   try {
     const data = itemService.additemsgetparams();
-    res.status(200).json({ message: data });
+    res.status(200).json(data);
   } catch (error) {
     console.log('error', error);
     res.status(400).json({
-      error: error || 'Some error occured during add favourites',
+      error: error.message || 'Some error occured during add favourites',
     });
   }
 });

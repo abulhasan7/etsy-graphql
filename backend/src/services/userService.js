@@ -9,14 +9,14 @@ async function login(userDetails) {
     const dbData = await User.findOne({ email: userDetails.email }, { __v: 0 }).exec();
     console.log('dbdata', dbData);
     if (!dbData) {
-      throw new Error('User not found');
+      throw Error('User not found');
     } else {
       const result = await bcrypt.compare(
         userDetails.password,
         dbData.password,
       );
       if (!result) {
-        throw new Error('Invalid Password');
+        throw Error('Invalid Password');
       } else {
         const ShopData = await Shop.findOne(
           { user: dbData._id },
@@ -42,6 +42,7 @@ async function login(userDetails) {
 // removing profile for now, as it's being fetched during login
 async function get() {
   try {
+    console.log('In get signed url');
     const [uploads3Url] = await Promise.all([
       generateSignedUrl(),
     ]);

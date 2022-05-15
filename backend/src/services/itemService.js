@@ -37,13 +37,15 @@ async function getAllExceptShop(shopId, userId) {
       favouritesPromse,
     ]);
     console.log('favourites', favourites);
-    const favouriteObj = {};
+    const favouritesArr = [];
     if (favourites) {
       favourites.forEach((fav) => {
-        favouriteObj[fav.item] = fav._id;
+        favouritesArr.push({ itemId: fav.item, favId: fav._id });
+        // favouriteObj[fav.item] = fav._id;
       });
     }
-    return { items, favourites: favouriteObj };
+    console.log(`returning ${JSON.stringify({ items, favourites: favouritesArr })}`);
+    return { items, favourites: favouritesArr };
   } catch (error) {
     console.error('Error occured while getting all the Items', error);
     throw new Error(error.message);
@@ -139,7 +141,7 @@ async function additemsgetparams() {
       categories,
       s3_upload_url: s3UploadUrl,
     };
-
+    console.log(`returnobj is ${JSON.stringify(returnobj)}`);
     return returnobj;
   } catch (error) {
     console.error('Error occured while getting data', error);

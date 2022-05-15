@@ -9,11 +9,11 @@ const favouriteService = require('../services/favouriteService');
 router.get('/get-all', checkAuth, async (req, res) => {
   try {
     const data = favouriteService.getAllWithUserProfile(req.user.userId);
-    res.status(200).json({ message: data });
+    res.status(200).json(data);
   } catch (error) {
     console.log('error', error);
     res.status(400).json({
-      error: error || 'Some error occured during getting all favourites',
+      error: error.message || 'Some error occured during getting all favourites',
     });
   }
 });
@@ -21,11 +21,11 @@ router.get('/get-all', checkAuth, async (req, res) => {
 router.post('/add', checkAuth, async (req, res) => {
   try {
     const data = favouriteService.add({ ...req.body, user_id: req.user.userId });
-    res.status(200).json({ message: data });
+    res.status(200).json(data);
   } catch (error) {
     console.log('error', error);
     res.status(400).json({
-      error: error || 'Some error occured during add favourites',
+      error: error.message || 'Some error occured during add favourites',
     });
   }
 });
@@ -33,11 +33,11 @@ router.post('/add', checkAuth, async (req, res) => {
 router.delete('/remove', checkAuth, async (req, res) => {
   try {
     const data = favouriteService.delete({ favouriteId: req.body.favourite_id });
-    res.status(200).json({ message: data });
+    res.status(200).json(data);
   } catch (error) {
     console.log('error', error);
     res.status(400).json({
-      error: error || 'Some error occured during add favourites',
+      error: error.message || 'Some error occured during add favourites',
     });
   }
 });

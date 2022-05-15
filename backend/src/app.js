@@ -11,6 +11,117 @@ require('dotenv').config();
 
 const cors = require('cors');
 
+const { graphqlHTTP } = require('express-graphql');
+const { buildSchema } = require('graphql');
+const userService = require('./services/userService');
+const shopService = require('./services/shopService');
+const orderService = require('./services/orderService');
+const itemService = require('./services/itemService');
+
+// Construct a schema, using GraphQL schema language
+const schema = buildSchema(`
+
+  type SignedUrl{
+      upload_s3_url:String,
+  }
+
+  type User{
+    fullname:String,
+    email:String,
+    phone:String,
+    gender:String,
+    dob:String,
+    about:String,
+    profile_pic_url:String,
+    address_1:String,
+    city:String,
+    country:String
+  }
+
+  type Shop{
+    shop_id:String,
+    shop_name:String,
+    shop_pic_url:String,
+    user:User
+  }
+
+  type Item{
+    name:String,
+    item_pic_url:String,
+    category:String,
+    description:String,
+    price:String,
+    stock:Int,
+    sold_count:Int,
+    shop:Shop
+  }
+  type ShopDetails{
+    items:[Item],
+    shop:Shop,
+    upload_s3_url:String
+  }
+  type OrderDetails{
+    item_quantity:Int,
+    unit_price:String,
+    shop_id:String,
+    item_name:String,
+    item_pic_url:String,
+    category:String,
+    description:String,
+    shop_name:String,
+    gift_description:String,
+
+  }
+  type Order{
+    order_date:String,
+    user_id:String,
+    total_price:String,
+    total_quantity:Int,
+    order_details: [OrderDetails]
+  }
+  type Category{
+    categories:[String]
+  }
+  type AddItemParams{
+    categories:Category
+    s3_upload_url:String
+  }
+  type ItemFavourite{
+    itemId:String,
+    favId:String
+  }
+  type ItemsWFavourites{
+    items:[Item]
+    favourites:[ItemFavourite]
+  }
+
+  type Query {
+    getSignedUrl:SignedUrl,
+    checkShopAvailability(shopName:String!):String,
+    getShopDetails(shopId:String):ShopDetails,
+    getAllOrders(userId:String):[Order],
+    getParamsForAddItem:AddItemParams,
+    getAllItems(shopId:String,userId:String):ItemsWFavourites,
+  }
+  
+`);
+
+// The root provides a resolver function for each API endpoint
+const root = {
+  getSignedUrl: () =>
+    userService.get(),
+  checkShopAvailability: async ({ shopName }) =>
+    shopService.checkAvailability(shopName),
+  getShopDetails: ({ shopId }) =>
+    shopService.getDetails(shopId, true),
+  getAllOrders: ({ userId }) =>
+    orderService.get(userId),
+  getParamsForAddItem: () =>
+    itemService.additemsgetparams(),
+  getAllItems: ({ shopId, userId }) =>
+    itemService.getAllExceptShop(shopId, userId),
+};
+
 const usersRouter = require('./routes/userRouter');
 
 const shopsRouter = require('./routes/shopRouter');
@@ -32,6 +143,12 @@ const corsOptions = {
 };
 
 const app = express();
+
+app.use('/graphql', graphqlHTTP({
+  schema,
+  rootValue: root,
+  graphiql: true,
+}));
 
 app.use(cors(corsOptions));
 
