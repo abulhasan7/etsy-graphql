@@ -34,10 +34,25 @@ const schema = buildSchema(`
     about:String,
     profile_pic_url:String,
     address_1:String,
+    address_2:String,
     city:String,
     country:String
+    user_id:String
   }
-
+  input UserInput{
+    fullname:String,
+    email:String,
+    phone:String,
+    gender:String,
+    dob:String,
+    about:String,
+    profile_pic_url:String,
+    address_1:String,
+    address_2:String,
+    city:String,
+    country:String
+    user_id:String
+  }
   type Shop{
     shop_id:String,
     shop_name:String,
@@ -53,7 +68,18 @@ const schema = buildSchema(`
     price:String,
     stock:Int,
     sold_count:Int,
-    shop:Shop
+    shop:Shop,
+  }
+  input ItemInput{
+    name:String,
+    item_pic_url:String,
+    category:String,
+    description:String,
+    price:String,
+    stock:Int,
+    sold_count:Int,
+    shop:Shop,
+    item_id:String
   }
   type ShopDetails{
     items:[Item],
@@ -103,7 +129,34 @@ const schema = buildSchema(`
     getParamsForAddItem:AddItemParams,
     getAllItems(shopId:String,userId:String):ItemsWFavourites,
   }
-  
+
+  input AuthInput{
+    email:String,
+    password:String,
+    fullname:String
+  }
+  type LoginOutput{
+    token:String,
+    profile:User
+  }
+  type RegisterOutput{
+    token:String
+  }
+  input ShopInput{
+    shop_name:String,
+    user_id:String
+    shop_id:String,
+    shop_pic_url:String
+  }
+  type Mutation{
+    login(loginInput:AuthInput):LoginOutput,
+    register(registerInput:AuthInput):RegisterOutput,
+    updateProfile(userInput:UserInput):String,
+    registerShop(shopInput:ShopInput):String,
+    updateShop(shopInput:ShopInput):String,
+    addItem(itemInput:ItemInput):String
+    updateItem(itemInput:ItemInput):String
+  }
 `);
 
 // The root provides a resolver function for each API endpoint
@@ -120,6 +173,20 @@ const root = {
     itemService.additemsgetparams(),
   getAllItems: ({ shopId, userId }) =>
     itemService.getAllExceptShop(shopId, userId),
+  login: ({ loginInput }) =>
+    userService.login(loginInput),
+  register: ({ registerInput }) =>
+    userService.register(registerInput),
+  updateProfile: ({ userInput }) =>
+    userService.updateProfile(userInput),
+  registerShop: ({ shopInput }) =>
+    shopService.register(shopInput),
+  updateShop: ({ shopInput }) =>
+    shopService.update(shopInput),
+  addItem: ({ itemInput }) =>
+    itemService.addItem(itemInput),
+  updateItem: ({ itemInput }) =>
+    itemService.updateItem(itemInput),
 };
 
 const usersRouter = require('./routes/userRouter');
