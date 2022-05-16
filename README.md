@@ -1,17 +1,17 @@
-# Etsy-clone - NoSQL
+# Etsy-GraphQL
 ## Description
-  This application is similar to the previous one, in that it's a clone of ETSY, but it's different in that it uses NoSQL and improved UI.
+  This application is built using graphql on the server side.
 ## STEPS TO BUILD AND RUN THE APPLICATION.
 1. Checkout the repository using git clone.
 
 ## For backend:
 1. cd into backend and do npm install.
 2. Create an env file and update it with the following keys
-3. ACCESS_TOKEN_SECRET, DB_NAME,DB_USERNAME,DB_PASSWORD, DB_HOST. bucketName, dirName, region, accessKeyId, secretAccessKey
+3. ACCESS_TOKEN_SECRET, DB_NAME,DB_USERNAME,DB_PASSWORD, DB_HOST,bucketName, dirName, region, accessKeyId, secretAccessKey and mongoUrl
 4. Do npm start to start the server (runs on 3001 by default).
 ## For frontend:
 1. cd into frontend and do npm install.
-2. Create an env file and update it with  REACT_APP_BACKEND_URL=<backendpath>
+2. Create an env file and update it with  REACT_APP_BACKEND_URL=<backendpath> and REACT_APP_BACKEND_URL_GRAPHQL = <backendgraphqlpath>
 3. Do npm start to start the application.  
 
 ## Enjoy!
