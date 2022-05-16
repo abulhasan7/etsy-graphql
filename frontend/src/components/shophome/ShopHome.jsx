@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable prefer-promise-reject-errors */
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -8,6 +9,8 @@ import { addToken } from '../../redux/tokenSlice';
 import ShopItemForm from '../shopitemform/ShopItemForm';
 import ItemCard from '../itemcard/ItemCard';
 import './shophome.css';
+import { getShopDetailsOwnerQuery, getShopDetailsQuery } from '../../graphql/queries';
+import { updateShopMutation } from '../../graphql/mutations';
 
 function ShopHome(props) {
   let totalSales = 0;
@@ -33,29 +36,34 @@ function ShopHome(props) {
       : `${process.env.REACT_APP_BACKEND_URL
       }shops/get?shopId=${
         locationState.shop_id}`;
-    fetch(url, {
+    fetch(process.env.REACT_APP_BACKEND_URL_GRAPHQL, {
+      method: 'POST',
       credentials: 'include',
       mode: 'cors',
-      headers: { Authorization: props.token },
+      headers: { Authorization: props.token, 'content-type': 'application/json' },
+      body: JSON.stringify({
+        query: isOwner ? getShopDetailsOwnerQuery : getShopDetailsQuery,
+        variables: { shopId: locationState.shop_id },
+      }),
     })
       .then((response) => response.json())
       .then((jsonresponse) => {
-        if (jsonresponse.error) {
-          if (jsonresponse.error === "Shop doesn't exist") {
+        if (jsonresponse.errors) {
+          if (jsonresponse.errors[0].message === "Shop doesn't exist") {
             navigate('../../shop/register');
           }
         } else {
           setShopDetails((prevState) => ({
             ...prevState,
-            shop_pic_url: jsonresponse.shop.shop_pic_url,
-            user: jsonresponse.shop.user,
-            upload_s3_url: jsonresponse.upload_s3_url,
-            items: jsonresponse.items,
-            shop_name: jsonresponse.shop.shop_name,
+            shop_pic_url: jsonresponse.data.getShopDetails.shop.shop_pic_url,
+            user: jsonresponse.data.getShopDetails.shop.user,
+            upload_s3_url: jsonresponse.data.getShopDetails.upload_s3_url,
+            items: jsonresponse.data.getShopDetails.items,
+            shop_name: jsonresponse.data.getShopDetails.shop.shop_name,
             itemChanged: false,
           }));
           if (!isOwner) {
-            setFavourites(jsonresponse.favourites);
+            setFavourites(jsonresponse.data.getShopDetails.favourites);
           }
         }
       })
@@ -71,8 +79,9 @@ function ShopHome(props) {
   }, [shopDetails.modelItem.itemChanged]);
 
   function handleModelOpen(item) {
+    console.log('item is ', item);
     let tempItem = item;
-    if (!item.item_id) {
+    if (!item._id) {
       tempItem = {};
     }
     setShopDetails((prevState) => ({ ...prevState, isModelOpen: true, modelItem: tempItem }));
@@ -141,14 +150,11 @@ function ShopHome(props) {
         return Promise.resolve(shopDetails.shop_pic_url);
       })
       .then((s3url) => {
-        const url = `${process.env.REACT_APP_BACKEND_URL}shops/update`;
-        const body = {
-          shop_pic_url: s3url,
-        };
+        const url = process.env.REACT_APP_BACKEND_URL_GRAPHQL;
         return fetch(url, {
           method: 'POST',
           mode: 'cors',
-          body: JSON.stringify(body),
+          body: JSON.stringify({ query: updateShopMutation, variables: { shopUrl: s3url } }),
           headers: {
             Authorization: props.token,
             'Content-type': 'application/json',
@@ -274,7 +280,7 @@ function ShopHome(props) {
               updateSalesCount(item.sold_count, index);
               return (
                 <ItemCard
-                  key={item.item_id}
+                  key={item._id}
                   item={{
                     ...item,
                     Shop: {

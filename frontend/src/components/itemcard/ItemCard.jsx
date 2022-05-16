@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import React from 'react';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -18,7 +19,7 @@ function ItemCard(props) {
         'Content-type': 'application/json',
       },
       body: JSON.stringify({
-        item_id: props.item.item_id,
+        item_id: props.item._id,
       }),
     })
       .then((res) => res.json())
@@ -26,7 +27,7 @@ function ItemCard(props) {
         props.favourite.updateFavourites(
           (prevState) => ({
             ...prevState,
-            [(props.item).item_id]: jsonresponse.message,
+            [(props.item)._id]: jsonresponse.data,
           }),
 
         );
@@ -48,11 +49,11 @@ function ItemCard(props) {
     })
       .then((res) => res.json())
       .then((jsonresponse) => {
-        if (jsonresponse.message) {
+        if (jsonresponse.data) {
           props.favourite.updateFavourites(
             (prevState) => ({
               ...prevState,
-              [(props.item).item_id]: null,
+              [(props.item)._id]: null,
             }),
           );
         }
@@ -68,6 +69,7 @@ function ItemCard(props) {
     }
   };
   const handleCardClick = () => {
+    console.log('props item is ', props.item);
     if (props.handleModelOpen) {
       props.handleModelOpen({ ...props.item });
     } else {

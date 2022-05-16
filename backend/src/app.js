@@ -30,8 +30,8 @@ const root = {
     checkUserAuth(user, shopService.checkAvailability, shopName),
   getShopDetails: ({ shopId }, { user }) =>
     checkUserAuth(user, shopService.getDetails, shopId, user.shopId, user.userId),
-  getAllOrders: ({ userId }, { user }) =>
-    checkUserAuth(user, orderService.get, userId),
+  getAllOrders: (noparam, { user }) =>
+    checkUserAuth(user, orderService.get, user.userId),
   createOrder: ({ orderInput }, { user }) =>
     checkUserAuth(user, orderService.create, { ...orderInput, user_id: user.userId }),
   getParamsForAddItem: (no, { user }) =>
@@ -49,7 +49,7 @@ const root = {
   updateShop: ({ shopInput }, { user }) =>
     checkUserAuth(user, shopService.update, { ...shopInput, shop_id: user.shopId }),
   addItem: ({ itemInput }, { user }) =>
-    checkUserAuth(user, itemService.addItem, { itemInput, shop_id: user.shopId }),
+    checkUserAuth(user, itemService.addItem, { ...itemInput, shop_id: user.shopId }),
   updateItem: ({ itemInput }, { user }) =>
     checkUserAuth(user, itemService.updateItem, itemInput),
 };
@@ -59,7 +59,9 @@ const checkUserAuth = (userDetails, func, ...args) => {
   if (!userDetails) {
     throw new Error('No Authorization Header provided');
   }
-  return func.apply(this, args);
+  const re = func.apply(this, args);
+  console.log('req', re);
+  return re;
 };
 
 const usersRouter = require('./routes/userRouter');

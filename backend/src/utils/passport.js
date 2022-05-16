@@ -22,6 +22,4 @@ passport.use(new JwtStrategy(opts, (jwtPayload, callback) => {
 }));
 
 // exports.auth = auth;
-exports.checkAuth = passport.authenticate('jwt', { session: false }, (error, user) => {
-  console.log('in check auth');
-});
+exports.checkAuth = passport.authenticate('jwt', { session: false });

@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable array-callback-return */
 /* eslint-disable consistent-return */
 import React, { useEffect, useState } from 'react';
@@ -98,7 +99,7 @@ function Home(props) {
       // key={favourites[item.item_id] || item.item_id}
       item={item}
       favourite={{
-        favouriteId: favourites[item.item_id],
+        favouriteId: favourites[item._id],
         updateFavourites: setFavourites,
       }}
     />

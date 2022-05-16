@@ -6,6 +6,7 @@ const { generateSignedUrl } = require('../utils/s3');
 const { generateToken } = require('../utils/jwtUtil');
 
 async function getDetails(queryshopId, tokenShopId, userId) {
+  console.log(queryshopId, tokenShopId, userId);
   const isOwner = !queryshopId;
   const shopId = isOwner ? tokenShopId : queryshopId;
   try {
@@ -32,7 +33,7 @@ async function getDetails(queryshopId, tokenShopId, userId) {
     } else {
       const favouritesPromise = Favourite.find({
         user_id: userId,
-      });
+      }).exec();
       const [items, shop, favouritesArr] = await Promise.all([
         itemsPromise,
         shopPromise,
@@ -40,11 +41,13 @@ async function getDetails(queryshopId, tokenShopId, userId) {
       ]);
       allData.items = items;
       allData.shop = shop;
+      console.log('fav', favouritesArr);
       if (favouritesArr) {
-        const favourites = {};
+        const favourites = [];
         favouritesArr.forEach((favourite) => {
-          favourites[favourite.item_id] = favourite.favourite_id;
+          favourites.push({ itemId: favourite.item.toString(), favId: favourite._id.toString() });
         });
+        console.log('fav2', favourites);
         allData.favourites = favourites;
       }
     }

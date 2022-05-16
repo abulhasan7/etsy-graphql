@@ -47,6 +47,7 @@ type Item{
   stock:Int,
   sold_count:Int,
   shop:Shop,
+  _id:String
 }
 input ItemInput{
   name:String,
@@ -56,12 +57,12 @@ input ItemInput{
   price:String,
   stock:Int,
   sold_count:Int,
-  shop:String,
   item_id:String
 }
 type ShopDetails{
   items:[Item],
   shop:Shop,
+  favourites:[ItemFavourite],
   upload_s3_url:String
 }
 type OrderDetails{
@@ -103,7 +104,7 @@ type Query {
   getSignedUrl:SignedUrl,
   checkShopAvailability(shopName:String!):String,
   getShopDetails(shopId:String):ShopDetails,
-  getAllOrders(userId:String):[Order],
+  getAllOrders:[Order],
   getParamsForAddItem:AddItemParams,
   getAllItems:ItemsWFavourites,
 }

@@ -5,6 +5,8 @@ import { Navigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getToken } from '../../redux/selectors';
 import { addToken } from '../../redux/tokenSlice';
+import { checkShopAvailabilityQuery } from '../../graphql/queries';
+import { registerShopMutation } from '../../graphql/mutations';
 
 class ShopReg extends Component {
   constructor(props) {
@@ -50,26 +52,30 @@ class ShopReg extends Component {
 
   handleShopNameSubmit(event) {
     event.preventDefault();
-    let url = `${process.env.REACT_APP_BACKEND_URL}shops/check-availability?shop_name=`;
-    url += this.state.shop_name;
     this.handleValidation()
-      .then(() => fetch(url, {
+      .then(() => fetch(process.env.REACT_APP_BACKEND_URL_GRAPHQL, {
+        method: 'POST',
         mode: 'cors',
         headers: {
           Authorization: this.props.token,
+          'content-type': 'application/json',
         },
+        body: JSON.stringify({
+          query: checkShopAvailabilityQuery,
+          variables: { shopName: this.state.shop_name },
+        }),
       }))
       .then((response) => response.json())
       .then((jsonresp) => {
-        if (jsonresp.message) {
+        if (jsonresp.data.checkShopAvailability) {
           this.setState({
             message: (
-              <Alert onClose={this.handleChange}>{jsonresp.message}</Alert>
+              <Alert onClose={this.handleChange}>{jsonresp.data.checkShopAvailability}</Alert>
             ),
             isAvailable: true,
           });
         } else {
-          return Promise.reject(jsonresp.error);
+          return Promise.reject(jsonresp.errors[0].message);
           // throw new Error(jsonresp.error);
         }
       })
@@ -88,13 +94,15 @@ class ShopReg extends Component {
   handleShopRegSubmit(event) {
     event.preventDefault();
     if (this.state.isAvailable) {
-      const url = `${process.env.REACT_APP_BACKEND_URL}shops/register`;
+      const url = process.env.REACT_APP_BACKEND_URL_GRAPHQL;
       this.handleValidation()
         .then(() => fetch(url, {
           mode: 'cors',
           method: 'POST',
           body: JSON.stringify({
-            shop_name: this.state.shop_name,
+            // shop_name: this.state.shop_name,
+            query: registerShopMutation,
+            variables: { shopName: this.state.shop_name },
           }),
           headers: {
             'Content-Type': 'application/json',
@@ -103,8 +111,8 @@ class ShopReg extends Component {
         }))
         .then((response) => response.json())
         .then((jsonresp) => {
-          if (jsonresp.message) {
-            this.props.addToken(jsonresp.message);
+          if (jsonresp.data.registerShop) {
+            this.props.addToken(jsonresp.data.registerShop);
             this.setState({
               isRegistered: <Navigate replace to="/shop/home" />,
               isAvailable: true,

@@ -32,7 +32,7 @@ function ItemOverview(props) {
     })
       .then((res) => res.json())
       .then((jsonresponse) => {
-        setFavouriteId(jsonresponse.message);
+        setFavouriteId(jsonresponse.data);
       })
       .catch((error) => console.log(error));
   };

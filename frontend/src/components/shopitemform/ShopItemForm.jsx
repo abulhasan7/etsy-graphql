@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable prefer-promise-reject-errors */
 import React, { Component } from 'react';
 import Modal from 'react-modal';
@@ -5,6 +6,8 @@ import { connect } from 'react-redux';
 import { Alert } from '@mui/material';
 import { getTokenAndCurrency } from '../../redux/selectors';
 import './shopitemform.css';
+import { getParamsForAddItemQuery } from '../../graphql/queries';
+import { addItemMutation, updateItemMutation } from '../../graphql/mutations';
 
 class ShopItemForm extends Component {
   constructor(props) {
@@ -22,7 +25,7 @@ class ShopItemForm extends Component {
       s3_upload_url: '',
       alert: '',
       manualcategory: '',
-      item_id: this.item.item_id,
+      _id: this.item._id,
       itemChanged: false,
     };
     Modal.setAppElement('#root');
@@ -41,16 +44,22 @@ class ShopItemForm extends Component {
   }
 
   componentDidMount() {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}items/additem-getparams`, {
+    fetch(process.env.REACT_APP_BACKEND_URL_GRAPHQL, {
+      method: 'POST',
+      mode: 'cors',
       headers: {
         Authorization: this.props.token,
+        'content-type': 'application/json',
       },
+      body: JSON.stringify({
+        query: getParamsForAddItemQuery,
+      }),
     })
       .then((response) => response.json())
       .then((jsonresponse) => {
         this.setState({
-          s3_upload_url: jsonresponse.s3_upload_url,
-          categories: jsonresponse.categories.categories,
+          s3_upload_url: jsonresponse.data.getParamsForAddItem.s3_upload_url,
+          categories: jsonresponse.data.getParamsForAddItem.categories.categories,
         });
       });
   }
@@ -146,38 +155,37 @@ class ShopItemForm extends Component {
         }
         return Promise.resolve(this.state.item_pic_url);
       })
-      .then((itemUrl) => {
-        const url = this.props.item.item_id
-          ? `${process.env.REACT_APP_BACKEND_URL}items/update`
-          : `${process.env.REACT_APP_BACKEND_URL}items/add`;
-        return fetch(url, {
-          method: 'POST',
-          body: JSON.stringify({
+      .then((itemUrl) => fetch(process.env.REACT_APP_BACKEND_URL_GRAPHQL, {
+        method: 'POST',
+        body: JSON.stringify({
+          query: !this.props.item._id
+            ? addItemMutation : updateItemMutation,
+          variables: {
             item_pic_url: itemUrl,
             category: this.state.manualcategory || this.state.category,
             description: this.state.description,
             price: parseFloat(this.state.price).toFixed(2),
-            stock: this.state.stock,
+            stock: parseInt(this.state.stock, 10),
             name: this.state.itemname,
-            item_id: this.state.item_id,
-          }),
-          headers: {
-            Authorization: this.props.token,
-            'Content-type': 'application/json',
+            item_id: this.state._id,
           },
-        });
-      })
+        }),
+        headers: {
+          Authorization: this.props.token,
+          'Content-type': 'application/json',
+        },
+      }))
       .then((response) => response.json())
       .then((response) => {
-        if (response.message) {
+        if (!response.errors) {
           const elem = (
             <Alert onClose={this.handleModelClose}>
-              {response.message || 'Success'}
+              {response.data.addItem || response.data.updateItem || 'Success'}
             </Alert>
           );
           this.setState({ alert: elem, itemChanged: true });
         } else {
-          return Promise.reject(response.error);
+          return Promise.reject(response.errors[0].message);
         }
       })
       .catch((error) => {

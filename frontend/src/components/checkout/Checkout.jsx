@@ -43,7 +43,7 @@ function Checkout(props) {
   });
   const purchaseItems = () => {
     validate()
-      .then(() => fetch(`${process.env.REACT_APP_BACKEND_URL}orders/create`, {
+      .then(() => fetch(process.env.REACT_APP_BACKEND_URL, {
         method: 'POST',
         mode: 'cors',
         headers: {

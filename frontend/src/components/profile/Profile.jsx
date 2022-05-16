@@ -7,6 +7,8 @@ import { Navigate } from 'react-router-dom';
 import { getTokenAndProfile } from '../../redux/selectors';
 import { addProfile } from '../../redux/profileSlice';
 import './profile.css';
+import { getSignedUrlQuery } from '../../graphql/queries';
+import { updateProfileMutation } from '../../graphql/mutations';
 
 class Profile extends Component {
   constructor(props) {
@@ -38,12 +40,17 @@ class Profile extends Component {
   }
 
   componentDidMount() {
-    const url = `${process.env.REACT_APP_BACKEND_URL}users/get`;
+    const url = process.env.REACT_APP_BACKEND_URL_GRAPHQL;
     fetch(url, {
+      method: 'POST',
       mode: 'cors',
       headers: {
         Authorization: this.props.token,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        query: getSignedUrlQuery,
+      }),
     })
       .then((response) => {
         if (response.status === 200 || response.status === 400) {
@@ -54,11 +61,11 @@ class Profile extends Component {
         });
       })
       .then((json) => {
-        if (json.error) {
+        if (!json.data) {
           return Promise.reject(json);
         }
         const currentState = {
-          upload_s3_url: json.upload_s3_url,
+          upload_s3_url: json.data.getSignedUrl.upload_s3_url,
         };
         this.setState(currentState);
       })
@@ -182,7 +189,7 @@ class Profile extends Component {
         return Promise.resolve(this.state.profile_pic_url);
       })
       .then((s3url) => {
-        const url = `${process.env.REACT_APP_BACKEND_URL}users/update`;
+        const url = process.env.REACT_APP_BACKEND_URL_GRAPHQL;
         const body = {
           fullname: this.state.fullname,
           gender: this.state.gender,
@@ -196,9 +203,12 @@ class Profile extends Component {
           profile_pic_url: s3url,
         };
         fetch(url, {
-          method: 'PUT',
+          method: 'POST',
           mode: 'cors',
-          body: JSON.stringify(body),
+          body: JSON.stringify({
+            query: updateProfileMutation,
+            variables: body,
+          }),
           headers: {
             Authorization: this.props.token,
             'Content-type': 'application/json',
@@ -217,11 +227,11 @@ class Profile extends Component {
             });
           })
           .then((json) => {
-            if (json.error) {
+            if (!json.data) {
               return Promise.reject(json);
             }
             const elem = (
-              <Alert onClose={this.handleChange}>{json.message}</Alert>
+              <Alert onClose={this.handleChange}>{json.data.updateProfile}</Alert>
             );
             this.setState({ message: elem });
             this.props.addProfile({
@@ -235,7 +245,7 @@ class Profile extends Component {
             console.log(error);
             const elem = (
               <Alert severity="error" onClose={this.handleChange}>
-                {error.error}
+                {error.errors[0].message}
               </Alert>
             );
             this.setState({ message: elem });

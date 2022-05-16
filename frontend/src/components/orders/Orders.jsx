@@ -6,6 +6,7 @@ import Stack from '@mui/material/Stack';
 import CartItem from '../cartitem/CartItem';
 import { getTokenAndCurrency } from '../../redux/selectors';
 import './orders.css';
+import { getAllOrdersQuery } from '../../graphql/queries';
 
 function Orders(props) {
   const navigate = useNavigate();
@@ -23,12 +24,15 @@ function Orders(props) {
   };
 
   const getOrders = () => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}orders/get`, {
+    fetch(process.env.REACT_APP_BACKEND_URL_GRAPHQL, {
       mode: 'cors',
       headers: {
         Authorization: props.token,
         'Content-type': 'application/json',
       },
+      body: JSON.stringify({
+        query: getAllOrdersQuery,
+      }),
     })
       .then((res) => res.json())
       .then((jsonresponse) => {
