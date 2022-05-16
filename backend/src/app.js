@@ -8,185 +8,59 @@ const path = require('path');
 const logger = require('morgan');
 
 require('dotenv').config();
-
 const cors = require('cors');
-
+// eslint-disable-next-line semi
 const { graphqlHTTP } = require('express-graphql');
 const { buildSchema } = require('graphql');
+const passport = require('passport');
+const graphQLSchema = require('./graphql/schema');
+const checkAuth = require('./utils/passport');
 const userService = require('./services/userService');
 const shopService = require('./services/shopService');
 const orderService = require('./services/orderService');
 const itemService = require('./services/itemService');
 
 // Construct a schema, using GraphQL schema language
-const schema = buildSchema(`
-
-  type SignedUrl{
-      upload_s3_url:String,
-  }
-
-  type User{
-    fullname:String,
-    email:String,
-    phone:String,
-    gender:String,
-    dob:String,
-    about:String,
-    profile_pic_url:String,
-    address_1:String,
-    address_2:String,
-    city:String,
-    country:String
-    user_id:String
-  }
-  input UserInput{
-    fullname:String,
-    email:String,
-    phone:String,
-    gender:String,
-    dob:String,
-    about:String,
-    profile_pic_url:String,
-    address_1:String,
-    address_2:String,
-    city:String,
-    country:String
-    user_id:String
-  }
-  type Shop{
-    shop_id:String,
-    shop_name:String,
-    shop_pic_url:String,
-    user:User
-  }
-
-  type Item{
-    name:String,
-    item_pic_url:String,
-    category:String,
-    description:String,
-    price:String,
-    stock:Int,
-    sold_count:Int,
-    shop:Shop,
-  }
-  input ItemInput{
-    name:String,
-    item_pic_url:String,
-    category:String,
-    description:String,
-    price:String,
-    stock:Int,
-    sold_count:Int,
-    shop:String,
-    item_id:String
-  }
-  type ShopDetails{
-    items:[Item],
-    shop:Shop,
-    upload_s3_url:String
-  }
-  type OrderDetails{
-    item_quantity:Int,
-    unit_price:String,
-    shop_id:String,
-    item_name:String,
-    item_pic_url:String,
-    category:String,
-    description:String,
-    shop_name:String,
-    gift_description:String,
-
-  }
-  type Order{
-    order_date:String,
-    user_id:String,
-    total_price:String,
-    total_quantity:Int,
-    order_details: [OrderDetails]
-  }
-  type Category{
-    categories:[String]
-  }
-  type AddItemParams{
-    categories:Category
-    s3_upload_url:String
-  }
-  type ItemFavourite{
-    itemId:String,
-    favId:String
-  }
-  type ItemsWFavourites{
-    items:[Item]
-    favourites:[ItemFavourite]
-  }
-
-  type Query {
-    getSignedUrl:SignedUrl,
-    checkShopAvailability(shopName:String!):String,
-    getShopDetails(shopId:String):ShopDetails,
-    getAllOrders(userId:String):[Order],
-    getParamsForAddItem:AddItemParams,
-    getAllItems(shopId:String,userId:String):ItemsWFavourites,
-  }
-
-  input AuthInput{
-    email:String,
-    password:String,
-    fullname:String
-  }
-  type LoginOutput{
-    token:String,
-    profile:User
-  }
-  type RegisterOutput{
-    token:String
-  }
-  input ShopInput{
-    shop_name:String,
-    user_id:String
-    shop_id:String,
-    shop_pic_url:String
-  }
-  type Mutation{
-    login(loginInput:AuthInput):LoginOutput,
-    register(registerInput:AuthInput):RegisterOutput,
-    updateProfile(userInput:UserInput):String,
-    registerShop(shopInput:ShopInput):String,
-    updateShop(shopInput:ShopInput):String,
-    addItem(itemInput:ItemInput):String
-    updateItem(itemInput:ItemInput):String
-  }
-`);
+const schema = buildSchema(graphQLSchema);
 
 // The root provides a resolver function for each API endpoint
 const root = {
-  getSignedUrl: () =>
-    userService.get(),
-  checkShopAvailability: async ({ shopName }) =>
-    shopService.checkAvailability(shopName),
-  getShopDetails: ({ shopId }) =>
-    shopService.getDetails(shopId, true),
-  getAllOrders: ({ userId }) =>
-    orderService.get(userId),
-  getParamsForAddItem: () =>
-    itemService.additemsgetparams(),
-  getAllItems: ({ shopId, userId }) =>
-    itemService.getAllExceptShop(shopId, userId),
+  getSignedUrl: (no, { user }) =>
+    checkUserAuth(user, userService.get),
+  checkShopAvailability: ({ shopName }, { user }) =>
+    checkUserAuth(user, shopService.checkAvailability, shopName),
+  getShopDetails: ({ shopId }, { user }) =>
+    checkUserAuth(user, shopService.getDetails, shopId, user.shopId, user.userId),
+  getAllOrders: ({ userId }, { user }) =>
+    checkUserAuth(user, orderService.get, userId),
+  createOrder: ({ orderInput }, { user }) =>
+    checkUserAuth(user, orderService.create, { ...orderInput, user_id: user.userId }),
+  getParamsForAddItem: (no, { user }) =>
+    checkUserAuth(user, itemService.additemsgetparams),
+  getAllItems: (no, { user }) =>
+    checkUserAuth(user, itemService.getAllExceptShop, { shopId: user.shopId, userId: user.userId }),
   login: ({ loginInput }) =>
     userService.login(loginInput),
   register: ({ registerInput }) =>
     userService.register(registerInput),
-  updateProfile: ({ userInput }) =>
-    userService.updateProfile(userInput),
-  registerShop: ({ shopInput }) =>
-    shopService.register(shopInput),
-  updateShop: ({ shopInput }) =>
-    shopService.update(shopInput),
-  addItem: ({ itemInput }) =>
-    itemService.addItem(itemInput),
-  updateItem: ({ itemInput }) =>
-    itemService.updateItem(itemInput),
+  updateProfile: ({ userInput }, { user }) =>
+    checkUserAuth(user, userService.updateProfile, { ...userInput, user_id: user.userId }),
+  registerShop: ({ shopInput }, { user }) =>
+    checkUserAuth(user, shopService.register, { ...shopInput, user_id: user.userId }),
+  updateShop: ({ shopInput }, { user }) =>
+    checkUserAuth(user, shopService.update, { ...shopInput, shop_id: user.shopId }),
+  addItem: ({ itemInput }, { user }) =>
+    checkUserAuth(user, itemService.addItem, { itemInput, shop_id: user.shopId }),
+  updateItem: ({ itemInput }, { user }) =>
+    checkUserAuth(user, itemService.updateItem, itemInput),
+};
+
+const checkUserAuth = (userDetails, func, ...args) => {
+  console.log('checkuserauth', userDetails);
+  if (!userDetails) {
+    throw new Error('No Authorization Header provided');
+  }
+  return func.apply(this, args);
 };
 
 const usersRouter = require('./routes/userRouter');
@@ -211,11 +85,41 @@ const corsOptions = {
 
 const app = express();
 
-app.use('/graphql', graphqlHTTP({
-  schema,
-  rootValue: root,
-  graphiql: true,
-}));
+app.use(passport.initialize());
+// app.use((req, res, next) => {
+//   passport.authenticate('jwt', { session: false }, (error, user, info) => {
+//     console.log('error', error);
+//     console.log('user', user);
+//     console.log('info', info);
+//     console.log('in check auth');
+//     console.log('req.user', req.user);
+//     next();
+//   });
+// });
+app.use((req, res, next) => {
+  passport.authenticate(
+    'jwt',
+    { session: false, failWithError: true },
+    (error, user, info) => {
+      console.log('error', error);
+      console.log('user', user);
+      console.log('info', info);
+      // console.log('in check auth', next);
+      // console.log('req.user', req.user);
+      req.user = user;
+      next(null, user);
+    // eslint-disable-next-line no-undef
+    },
+  )(req, res, next);
+});
+app.use('/graphql', graphqlHTTP((req, res, params) =>
+  ({
+    schema,
+    rootValue: root,
+    graphiql: true,
+    // eslint-disable-next-line consistent-return
+    context: { user: req.user },
+  })));
 
 app.use(cors(corsOptions));
 

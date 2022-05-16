@@ -34,7 +34,7 @@ router.post('/login', async (req, res) => {
 
 /* GET USER DETAILS */
 
-router.get('/get', checkAuth, async (req, res) => {
+router.get('/get', async (req, res) => {
   try {
     const data = userService.get(req.body);
     res.status(200).json(data);

@@ -53,6 +53,7 @@ async function getAllExceptShop(shopId, userId) {
 }
 
 async function addItem(item) {
+  console.log('itempassed', item.name);
   let passedCategory = false;
   try {
     await ItemCategories.updateOne(

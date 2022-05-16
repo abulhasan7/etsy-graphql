@@ -12,14 +12,16 @@ const opts = {
 };
 
 passport.use(new JwtStrategy(opts, (jwtPayload, callback) => {
+  console.log('jwt payload is ', jwtPayload);
   const userId = jwtPayload.user_id;
   let shopId;
   if (jwtPayload.shop_id) {
     shopId = jwtPayload.shop_id;
   }
-  console.log('jwt payload is ', jwtPayload);
   return callback(null, { userId, shopId });
 }));
 
 // exports.auth = auth;
-exports.checkAuth = passport.authenticate('jwt', { session: false });
+exports.checkAuth = passport.authenticate('jwt', { session: false }, (error, user) => {
+  console.log('in check auth');
+});

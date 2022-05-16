@@ -5,7 +5,9 @@ const {
 const { generateSignedUrl } = require('../utils/s3');
 const { generateToken } = require('../utils/jwtUtil');
 
-async function getDetails(shopId, isOwner, userId) {
+async function getDetails(queryshopId, tokenShopId, userId) {
+  const isOwner = !queryshopId;
+  const shopId = isOwner ? tokenShopId : queryshopId;
   try {
     if (!shopId) {
       throw new Error("Shop doesn't exist");
