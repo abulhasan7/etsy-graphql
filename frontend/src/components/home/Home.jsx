@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { getTokenFullNameAndCurrency } from '../../redux/selectors';
 import ItemCard from '../itemcard/ItemCard';
 import './home.css';
+import { getAllItemsQuery } from '../../graphql/queries';
 
 function Home(props) {
   // States
@@ -20,18 +21,28 @@ function Home(props) {
   const searchKeyword = location.state ? location.state.searchKeyword : '';
 
   const getAllItems = () => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}items/get-all`, {
+    fetch(process.env.REACT_APP_BACKEND_URL_GRAPHQL, {
+      method: 'POST',
       mode: 'cors',
       headers: {
         Authorization: props.token,
+        'Content-type': 'application/json',
       },
+      body: JSON.stringify({
+        query: getAllItemsQuery,
+      }),
     })
       .then((res) => res.json())
       .then((jsonresponse) => {
-        setItems(jsonresponse.message.items);
-        setFavourites(jsonresponse.message.favourites);
+        setItems(jsonresponse.data.getAllItems.items);
+        const favouritesObj = {};
+        jsonresponse.data.getAllItems.favourites.forEach(
+          // eslint-disable-next-line no-return-assign
+          (obj) => favouritesObj[obj.itemId] = obj.favId,
+        );
+        setFavourites(favouritesObj);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error.errors[0].message));
   };
 
   useEffect(() => {

@@ -37,7 +37,7 @@ const root = {
   getParamsForAddItem: (no, { user }) =>
     checkUserAuth(user, itemService.additemsgetparams),
   getAllItems: (no, { user }) =>
-    checkUserAuth(user, itemService.getAllExceptShop, { shopId: user.shopId, userId: user.userId }),
+    checkUserAuth(user, itemService.getAllExceptShop, user.shopId, user.userId),
   login: ({ loginInput }) =>
     userService.login(loginInput),
   register: ({ registerInput }) =>
