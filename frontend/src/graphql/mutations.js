@@ -28,7 +28,9 @@ export const registerMutation = `mutation register($email:String,$password:Strin
     }
 }`;
 
-export const createOrderMutation = '';
+export const createOrderMutation = `mutation createOrder($orderInput:OrderInput!){
+    createOrder(orderInput:$orderInput)
+}`;
 
 export const updateProfileMutation = `mutation updateProfile($fullname:String,$email:String,$phone:String,$gender:String,
                     $dob:String,$about:String,$profile_pic_url:String,$address_1:String,$address_2:String,$city:String,$country:String){
