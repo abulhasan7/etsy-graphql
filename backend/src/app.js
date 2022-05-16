@@ -78,7 +78,7 @@ const schema = buildSchema(`
     price:String,
     stock:Int,
     sold_count:Int,
-    shop:Shop,
+    shop:String,
     item_id:String
   }
   type ShopDetails{
