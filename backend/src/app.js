@@ -55,7 +55,6 @@ const root = {
 };
 
 const checkUserAuth = (userDetails, func, ...args) => {
-  console.log('checkuserauth', userDetails);
   if (!userDetails) {
     throw new Error('No Authorization Header provided');
   }
