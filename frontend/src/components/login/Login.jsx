@@ -11,6 +11,7 @@ import { addToken } from '../../redux/tokenSlice';
 import { addProfile } from '../../redux/profileSlice';
 import { getToken } from '../../redux/selectors';
 import './login.css';
+import { loginMutation } from '../../graphql/mutations';
 
 function Login(props) {
   const [email, setEmail] = useState('');
@@ -56,13 +57,13 @@ function Login(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!handleValidation()) {
-      const url = `${process.env.REACT_APP_BACKEND_URL}users/login`;
+      const url = process.env.REACT_APP_BACKEND_URL_GRAPHQL;
       fetch(url, {
         method: 'POST',
         mode: 'cors',
         body: JSON.stringify({
-          email,
-          password,
+          query: loginMutation,
+          variables: { email, password },
         }),
         headers: {
           'Content-type': 'application/json',
@@ -81,12 +82,12 @@ function Login(props) {
           });
         })
         .then((json) => {
-          if (json.token) {
-            props.addToken(json.token);
-            props.addProfile(json.profile);
+          if (json.data && json.data.login) {
+            props.addToken(json.data.login.token);
+            props.addProfile(json.data.login.profile);
             navigate('../home');
           } else {
-            return Promise.reject(json.error);
+            return Promise.reject(json.errors[0].message);
           }
         })
         .catch((promError) => setError(promError));

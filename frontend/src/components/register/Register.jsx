@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { getToken } from '../../redux/selectors';
 import { addToken } from '../../redux/tokenSlice';
 import { addProfile } from '../../redux/profileSlice';
+import { registerMutation } from '../../graphql/mutations';
 
 class Register extends Component {
   constructor(props) {
@@ -76,14 +77,17 @@ class Register extends Component {
   handleSubmit(event) {
     event.preventDefault();
     if (!this.handleValidation()) {
-      const url = `${process.env.REACT_APP_BACKEND_URL}users/register`;
+      const url = process.env.REACT_APP_BACKEND_URL_GRAPHQL;
       fetch(url, {
         method: 'POST',
         mode: 'cors',
         body: JSON.stringify({
-          email: this.state.email,
-          fullname: this.state.fullname,
-          password: this.state.password,
+          query: registerMutation,
+          variables: {
+            email: this.state.email,
+            fullname: this.state.fullname,
+            password: this.state.password,
+          },
         }),
         headers: {
           'Content-type': 'application/json',
@@ -98,10 +102,10 @@ class Register extends Component {
           });
         })
         .then((json) => {
-          if (json.error) {
+          if (!json.data) {
             return Promise.reject(json);
           }
-          this.props.addToken(json.token);
+          this.props.addToken(json.data.register.token);
           this.props.addProfile({ fullname: this.state.fullname, email: this.state.email });
           const elem = <Navigate to="/home" />;
           this.setState({ message: elem });
@@ -110,7 +114,7 @@ class Register extends Component {
           console.log(error);
           const elem = (
             <Alert severity="error" onClose={this.handleChange}>
-              {error.error}
+              {error.errors[0].message}
             </Alert>
           );
           this.setState({ message: elem });

@@ -14,7 +14,6 @@ const { graphqlHTTP } = require('express-graphql');
 const { buildSchema } = require('graphql');
 const passport = require('passport');
 const graphQLSchema = require('./graphql/schema');
-const checkAuth = require('./utils/passport');
 const userService = require('./services/userService');
 const shopService = require('./services/shopService');
 const orderService = require('./services/orderService');
@@ -84,7 +83,7 @@ const corsOptions = {
 };
 
 const app = express();
-
+app.use(cors(corsOptions));
 app.use(passport.initialize());
 // app.use((req, res, next) => {
 //   passport.authenticate('jwt', { session: false }, (error, user, info) => {
@@ -112,6 +111,12 @@ app.use((req, res, next) => {
     },
   )(req, res, next);
 });
+
+app.use(logger('dev'));
+
+app.use(express.json());
+
+app.use(express.urlencoded({ extended: false }));
 app.use('/graphql', graphqlHTTP((req, res, params) =>
   ({
     schema,
@@ -120,15 +125,6 @@ app.use('/graphql', graphqlHTTP((req, res, params) =>
     // eslint-disable-next-line consistent-return
     context: { user: req.user },
   })));
-
-app.use(cors(corsOptions));
-
-app.use(logger('dev'));
-
-app.use(express.json());
-
-app.use(express.urlencoded({ extended: false }));
-
 app.use('/users', usersRouter);
 
 app.use('/shops', shopsRouter);

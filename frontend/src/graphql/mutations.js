@@ -1,0 +1,29 @@
+export const loginMutation = `mutation mutateLogin($email:String,$password:String) {
+    login(loginInput:{
+        email:$email,
+        password:$password
+    }){
+        profile{
+            profile_pic_url,
+            phone,
+            gender,
+            fullname,
+            email,
+            dob,
+            country,
+            city,
+            address_1,
+            about
+        }
+        token
+    }
+}`;
+export const registerMutation = `mutation register($email:String,$password:String,$fullname:String){
+    register(registerInput:{
+        email:$email,
+        password:$password,
+        fullname:$fullname
+    }){
+        token
+    }
+}`;

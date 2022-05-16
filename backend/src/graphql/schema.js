@@ -127,7 +127,7 @@ input ShopInput{
   shop_pic_url:String
 }
  
-input OrderDetail{
+input OrderDetailsInput{
     quantity:Int,
     price:String,
     shop_id:String,
@@ -141,7 +141,7 @@ input OrderDetail{
 input OrderInput{
     total_price:String,
     total_quantity:Int,
-    order_details: [OrderDetails]
+    order_details: [OrderDetailsInput]
 }
 type Mutation{
   login(loginInput:AuthInput):LoginOutput,
