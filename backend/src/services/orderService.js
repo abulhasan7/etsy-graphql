@@ -19,12 +19,13 @@ async function get(userId) {
 }
 
 async function create(order) {
+  console.log('order is ', order);
   try {
-    const mappedOrderDetails = order.orderDetails.map((orderDetail) =>
+    const mappedOrderDetails = order.order_details.map((orderDetail) =>
       ({
         item_quantity: orderDetail.quantity,
         unit_price: orderDetail.price,
-        shop_id: orderDetail.shop_id,
+        shop_id: orderDetail.shop.shop_id,
         item_name: orderDetail.name,
         item_pic_url: orderDetail.item_pic_url,
         category: orderDetail.category,
@@ -41,10 +42,10 @@ async function create(order) {
     }).save();
     await Promise.all([
       Promise.all(
-        order.orderDetails.map((orderDetail) =>
+        order.order_details.map((orderDetail) =>
           Item.updateOne(
             {
-              _id: orderDetail.item_id,
+              _id: orderDetail._id,
             },
             {
               $inc: {

@@ -25,6 +25,7 @@ function Orders(props) {
 
   const getOrders = () => {
     fetch(process.env.REACT_APP_BACKEND_URL_GRAPHQL, {
+      method: 'POST',
       mode: 'cors',
       headers: {
         Authorization: props.token,
@@ -36,12 +37,12 @@ function Orders(props) {
     })
       .then((res) => res.json())
       .then((jsonresponse) => {
-        if (!jsonresponse.error) {
-          setOrders(jsonresponse.message);
-          setendIndex(Math.min(page * ordersPerPage, jsonresponse.message.length));
+        if (!jsonresponse.errors) {
+          setOrders(jsonresponse.data.getAllOrders);
+          setendIndex(Math.min(page * ordersPerPage, jsonresponse.data.getAllOrders.length));
         }
       })
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error.errors[0].message));
   };
 
   useEffect(() => {

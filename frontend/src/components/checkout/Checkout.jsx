@@ -9,6 +9,7 @@ import {
 import { addCart, removeAllCart } from '../../redux/cartSlice';
 import CartItem from '../cartitem/CartItem';
 import './checkout.css';
+import { createOrderMutation } from '../../graphql/mutations';
 
 function Checkout(props) {
   const [isModelOpen, setIsModelOpen] = useState(false);
@@ -43,23 +44,31 @@ function Checkout(props) {
   });
   const purchaseItems = () => {
     validate()
-      .then(() => fetch(process.env.REACT_APP_BACKEND_URL, {
+      .then(() => fetch(process.env.REACT_APP_BACKEND_URL_GRAPHQL, {
         method: 'POST',
         mode: 'cors',
         headers: {
           Authorization: props.token,
           'Content-type': 'application/json',
         },
-        body: JSON.stringify({
-          total_price: totalPrice,
-          total_quantity: totalQuantity,
-          orderDetails: Object.values(props.cart).filter((item) => item.quantity > 0),
-        }),
+        body: JSON.stringify(
+          {
+            query: createOrderMutation,
+            variables: {
+              orderInput: {
+                total_price: `${totalPrice}`,
+                total_quantity: totalQuantity,
+                order_details: Object.values(props.cart).filter((item) => item.quantity > 0),
+              },
+            }
+            ,
+          },
+        ),
       }))
       .then((res) => res.json())
       .then(() => {
-        props.removeAllCart();
-        navigate('../orders');
+        // props.removeAllCart();
+        // navigate('../orders');
       })
       .catch((error) => console.error(error));
   };

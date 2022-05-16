@@ -138,6 +138,9 @@ input OrderDetailsInput{
     description:String,
     shop:ShopInput,
     gift_description:String,
+    stock:Int,
+    sold_count:Int,
+    _id:String
   }
 input OrderInput{
     total_price:String,
@@ -152,6 +155,6 @@ type Mutation{
   updateShop(shopInput:ShopInput):String,
   addItem(itemInput:ItemInput):String,
   updateItem(itemInput:ItemInput):String,
-  createOrder(orderInput:OrderInput):String
+  createOrder(orderInput:OrderInput!):String
 }
 `;
